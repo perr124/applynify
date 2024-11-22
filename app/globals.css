@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+/* :root {
+  --p: #0d824a;
+  --pf: 10 97 56;
+  --pc: 255 255 255;
+} */
+
+/* [data-theme='dark'] {
+  --p: #0d824a;
+  --pf: 10 97 56;
+  --pc: 255 255 255;
+} */
+
 html,
 body {
   scroll-behavior: smooth !important;
@@ -18,5 +30,11 @@ progress::-webkit-progress-value {
   }
   .btn {
     @apply !capitalize;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-[#0d824a] hover:bg-[#0a6138] text-white focus:outline-none;
   }
 }
