@@ -1,14 +1,21 @@
-import NextAuth from "next-auth";
-import type { NextAuthOptions } from "next-auth";
-import GoogleProvider from "next-auth/providers/google";
-import EmailProvider from "next-auth/providers/email";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import config from "@/config";
-import connectMongo from "./mongo";
+import NextAuth from 'next-auth';
+import type { NextAuthOptions } from 'next-auth';
+import GoogleProvider from 'next-auth/providers/google';
+import CredentialsProvider from 'next-auth/providers/credentials';
+import EmailProvider from 'next-auth/providers/email';
+import bcrypt from 'bcrypt';
+import { MongoDBAdapter } from '@auth/mongodb-adapter';
+import config from '@/config';
+import connectMongo from './mongo';
 
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter: any;
 }
+
+const getUsersCollection = async () => {
+  const client = await connectMongo;
+  return client.db().collection('users');
+};
 
 export const authOptions: NextAuthOptionsExtended = {
   // Set any random key in .env.local
@@ -38,6 +45,32 @@ export const authOptions: NextAuthOptionsExtended = {
           }),
         ]
       : []),
+    // Credentials Provider for email/password login
+    // CredentialsProvider({
+    //   name: 'Credentials',
+    //   credentials: {
+    //     email: { label: 'Email', type: 'text' },
+    //     password: { label: 'Password', type: 'password' },
+    //   },
+    //   async authorize(credentials) {
+    //     const usersCollection = await getUsersCollection();
+
+    //     // Find the user in the database
+    //     const user = await usersCollection.findOne({ email: credentials.email });
+    //     if (!user) {
+    //       throw new Error('No user found with this email');
+    //     }
+
+    //     // Validate the password
+    //     const isValid = await bcrypt.compare(credentials.password, user.password);
+    //     if (!isValid) {
+    //       throw new Error('Incorrect password');
+    //     }
+
+    //     // Return user object if successful
+    //     return { id: user._id.toString(), email: user.email, name: user.name };
+    //   },
+    // }),
   ],
   // New users will be saved in Database (MongoDB Atlas). Each user (model) has some fields like name, email, image, etc..
   // Requires a MongoDB database. Set MONOGODB_URI env variable.
@@ -53,13 +86,13 @@ export const authOptions: NextAuthOptionsExtended = {
     },
   },
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   theme: {
     brandColor: config.colors.main,
     // Add you own logo below. Recommended size is rectangle (i.e. 200x50px) and show your logo + name.
     // It will be used in the login flow to display your logo. If you don't add it, it will look faded.
-    logo: `https://${config.domainName}/logoAndName.png`,
+    // logo: `https://${config.domainName}/logoAndName.png`,
   },
 };
 

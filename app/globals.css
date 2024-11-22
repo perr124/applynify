@@ -36,5 +36,6 @@ progress::-webkit-progress-value {
 @layer components {
   .btn-primary {
     @apply bg-[#0d824a] hover:bg-[#0a6138] text-white focus:outline-none;
+    box-shadow: none;
   }
 }
