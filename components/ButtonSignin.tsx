@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import { useSession, signIn } from 'next-auth/react';
@@ -6,30 +5,36 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import config from '@/config';
 
-// A simple button to sign in with our providers (Google & Magic Links).
-// It automatically redirects user to callbackUrl (config.auth.callbackUrl) after login, which is normally a private page for users to manage their accounts.
-// If the user is already logged in, it will show their profile picture & redirect them to callbackUrl immediately.
-const ButtonSignin = ({
-  text = 'Get started',
-  extraStyle,
-}: {
-  text?: string;
-  extraStyle?: string;
-}) => {
+const ButtonSignin = ({ text = 'Login', extraStyle }: { text?: string; extraStyle?: string }) => {
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const handleClick = () => {
+  const handleClick = async () => {
     if (status === 'authenticated') {
       router.push(config.auth.callbackUrl);
     } else {
-      signIn(undefined, { callbackUrl: config.auth.callbackUrl });
+      try {
+        // Use Google provider explicitly
+        const result = await signIn('google', {
+          callbackUrl: config.auth.callbackUrl,
+          redirect: true,
+        });
+
+        console.log('Sign in result:', result);
+
+        // Handle failed sign in
+        if (result?.error) {
+          console.error('Sign in error:', result.error);
+        }
+      } catch (error) {
+        console.error('Sign in error:', error);
+      }
     }
   };
 
   if (status === 'authenticated') {
     return (
-      <Link href={config.auth.callbackUrl} className={`btn ${extraStyle ? extraStyle : ''}`}>
+      <Link href={config.auth.callbackUrl} className={`btn ${extraStyle || ''}`}>
         {session.user?.image ? (
           <img
             src={session.user?.image}
@@ -50,7 +55,7 @@ const ButtonSignin = ({
   }
 
   return (
-    <button className={`btn ${extraStyle ? extraStyle : ''}`} onClick={handleClick}>
+    <button className={`btn ${extraStyle || ''}`} onClick={handleClick}>
       {text}
     </button>
   );

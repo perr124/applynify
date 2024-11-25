@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import toJSON from "./plugins/toJSON";
+// models/User.ts
+import mongoose from 'mongoose';
+import toJSON from './plugins/toJSON';
 
-// USER SCHEMA
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -21,20 +21,38 @@ const userSchema = new mongoose.Schema(
     customerId: {
       type: String,
       validate(value: string) {
-        return value.includes("cus_");
+        return value.includes('cus_');
       },
     },
     // Used in the Stripe webhook. should match a plan in config.js file.
     priceId: {
       type: String,
       validate(value: string) {
-        return value.includes("price_");
+        return value.includes('price_');
       },
     },
     // Used to determine if the user has access to the product—it's turn on/off by the Stripe webhook
     hasAccess: {
       type: Boolean,
       default: false,
+    },
+    // Make sure these fields are not excluded
+    onboardingComplete: {
+      type: Boolean,
+      default: false,
+      select: true,
+    },
+    jobPreferences: {
+      type: mongoose.Schema.Types.Mixed,
+      select: true,
+    },
+    experience: {
+      type: mongoose.Schema.Types.Mixed,
+      select: true,
+    },
+    availability: {
+      type: mongoose.Schema.Types.Mixed,
+      select: true,
     },
   },
   {
@@ -43,7 +61,13 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-// add plugin that converts mongoose to json
+// Ensure the toJSON plugin isn't excluding these fields
 userSchema.plugin(toJSON);
 
-export default mongoose.models.User || mongoose.model("User", userSchema);
+// Add a pre-save hook to verify the data
+userSchema.pre('save', function (next) {
+  console.log('Saving user with data:', this.toObject());
+  next();
+});
+
+export default mongoose.models.User || mongoose.model('User', userSchema);

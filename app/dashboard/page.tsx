@@ -14,6 +14,7 @@ import {
   Menu as MenuIcon,
   X,
 } from 'lucide-react';
+import ButtonAccount from '@/components/ButtonAccount';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home, current: true },
@@ -26,7 +27,7 @@ const navigation = [
 const userNavigation = [
   { name: 'Your Profile', href: '/dashboard/profile' },
   { name: 'Settings', href: '/dashboard/settings' },
-  { name: 'Sign out', href: '/auth/signout' },
+  // { name: 'Sign out', href: '/auth/signout' },
 ];
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
@@ -98,36 +99,7 @@ export default function Dashboard() {
               <div className='hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10' />
 
               {/* Profile dropdown */}
-              <Menu as='div' className='relative'>
-                <Menu.Button className='-m-1.5 flex items-center p-1.5'>
-                  <img
-                    src='/api/placeholder/32/32'
-                    alt='Profile'
-                    className='h-8 w-8 rounded-full bg-gray-50'
-                  />
-                  <span className='hidden lg:flex lg:items-center'>
-                    <span className='ml-4 text-sm font-semibold text-gray-900'>John Doe</span>
-                    <ChevronDown className='ml-2 h-5 w-5 text-gray-400' />
-                  </span>
-                </Menu.Button>
-                <Menu.Items className='absolute right-0 z-10 mt-2.5 w-32 origin-top-right rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none'>
-                  {userNavigation.map((item) => (
-                    <Menu.Item key={item.name}>
-                      {({ active }) => (
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            active ? 'bg-gray-50' : '',
-                            'block px-3 py-1 text-sm text-gray-900'
-                          )}
-                        >
-                          {item.name}
-                        </a>
-                      )}
-                    </Menu.Item>
-                  ))}
-                </Menu.Items>
-              </Menu>
+              <ButtonAccount />
             </div>
           </div>
         </div>

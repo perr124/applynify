@@ -10,11 +10,11 @@ import config from '@/config';
 // You can also add custom static UI elements like a Navbar, Sidebar, Footer, etc..
 // See https://shipfa.st/docs/tutorials/private-page
 export default async function LayoutPrivate({ children }: { children: ReactNode }) {
-  // const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions);
 
-  // if (!session) {
-  //   redirect(config.auth.loginUrl);
-  // }
+  if (!session) {
+    redirect(config.auth.loginUrl);
+  }
 
   return <>{children}</>;
 }
