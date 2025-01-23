@@ -25,7 +25,6 @@ if (!uri) {
 } else if (process.env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
-    console.log(client, 'cc');
     global._mongoClientPromise = client.connect();
   }
   clientPromise = global._mongoClientPromise;
