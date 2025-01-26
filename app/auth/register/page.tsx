@@ -19,13 +19,14 @@ export default function Register() {
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
     const password = formData.get('password') as string;
-    const name = formData.get('name') as string;
+    const firstName = formData.get('firstName') as string;
+    const lastName = formData.get('lastName') as string;
 
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, name }),
+        body: JSON.stringify({ email, password, firstName, lastName }),
       });
 
       const data = await res.json();
@@ -64,18 +65,33 @@ export default function Register() {
             </div>
           )}
           <div className='space-y-4'>
-            <div>
-              <label htmlFor='name' className='sr-only'>
-                Full name
-              </label>
-              <input
-                id='name'
-                name='name'
-                type='text'
-                required
-                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
-                placeholder='Full name'
-              />
+            <div className='grid grid-cols-2 gap-4'>
+              <div>
+                <label htmlFor='firstName' className='sr-only'>
+                  First name
+                </label>
+                <input
+                  id='firstName'
+                  name='firstName'
+                  type='text'
+                  required
+                  className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
+                  placeholder='First name'
+                />
+              </div>
+              <div>
+                <label htmlFor='lastName' className='sr-only'>
+                  Last name
+                </label>
+                <input
+                  id='lastName'
+                  name='lastName'
+                  type='text'
+                  required
+                  className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
+                  placeholder='Last name'
+                />
+              </div>
             </div>
             <div>
               <label htmlFor='email' className='sr-only'>

@@ -46,10 +46,10 @@ const ButtonSignin = ({ text = 'Login', extraStyle }: { text?: string; extraStyl
           />
         ) : (
           <span className='w-6 h-6 bg-base-300 flex justify-center items-center rounded-full shrink-0'>
-            {session.user?.name?.charAt(0) || session.user?.email?.charAt(0)}
+            {session.user?.name?.split(' ')[0]?.[0] || session.user?.email?.[0]}
           </span>
         )}
-        {session.user?.name || session.user?.email || 'Account'}
+        {session.user?.name?.split(' ')[0] || session.user?.email || 'Account'}
       </Link>
     );
   }

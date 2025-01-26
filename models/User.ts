@@ -5,9 +5,15 @@ import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
+    firstName: {
       type: String,
       trim: true,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      trim: true,
+      required: true,
     },
     email: {
       type: String,
@@ -91,6 +97,11 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password!, salt);
   }
   return next();
+});
+
+// Add virtual for full name
+userSchema.virtual('name').get(function () {
+  return `${this.firstName} ${this.lastName}`;
 });
 
 export default mongoose.models.User || mongoose.model('User', userSchema);
