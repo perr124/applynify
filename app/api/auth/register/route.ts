@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, firstName, lastName } = await req.json();
+    const { email, password, name, firstName, lastName } = await req.json();
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
@@ -19,6 +19,7 @@ export async function POST(req: Request) {
     await usersCollection.insertOne({
       email,
       password: hashedPassword,
+      name,
       firstName,
       lastName,
       createdAt: new Date(),

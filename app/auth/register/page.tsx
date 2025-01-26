@@ -23,10 +23,17 @@ export default function Register() {
     const lastName = formData.get('lastName') as string;
 
     try {
+      // First register the user
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, firstName, lastName }),
+        body: JSON.stringify({
+          email,
+          password,
+          firstName,
+          lastName,
+          name: `${firstName} ${lastName}`,
+        }),
       });
 
       const data = await res.json();
@@ -35,8 +42,21 @@ export default function Register() {
         throw new Error(data.error || 'Something went wrong');
       }
 
-      // Redirect to sign in page after successful registration
-      router.push('/auth/signin');
+      // Then automatically sign them in
+      const signInResult = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        throw new Error(signInResult.error);
+      }
+
+      router.refresh();
+      // After successful registration and sign in, redirect to onboarding
+      router.push('/onboarding');
+      router.refresh();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {

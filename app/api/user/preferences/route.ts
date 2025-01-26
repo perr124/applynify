@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     const { jobPreferences, experience, availability } = data;
 
-    await connectMongo;
+    await connectMongo();
 
     const updatedUser = await User.findOneAndUpdate(
       { email: session.user.email },
@@ -75,7 +75,7 @@ export async function GET() {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await connectMongo;
+    await connectMongo();
 
     const user = await User.findOne(
       { email: session.user.email },
