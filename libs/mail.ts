@@ -14,3 +14,31 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     `,
   });
 }
+
+export async function sendVerificationEmail(email: string, token: string) {
+  if (!process.env.NEXTAUTH_URL) {
+    console.error('NEXTAUTH_URL environment variable is not set');
+    throw new Error('Missing NEXTAUTH_URL configuration');
+  }
+
+  const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify?token=${token}`;
+  console.log('Verification URL:', verificationUrl);
+
+  const html = `
+    <h1>Verify your email</h1>
+    <p>Click the link below to verify your email address:</p>
+    <a href="${verificationUrl}">Verify Email</a>
+  `;
+
+  try {
+    await sendEmail({
+      to: email,
+      subject: 'Verify your email',
+      html,
+    });
+    console.log('Email sent successfully to:', email);
+  } catch (error) {
+    console.error('Error in sendVerificationEmail:', error);
+    throw error;
+  }
+}

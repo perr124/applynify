@@ -55,7 +55,7 @@ export default function Register() {
 
       router.refresh();
       // After successful registration and sign in, redirect to onboarding
-      router.push('/onboarding');
+      router.push('/auth/verify-email');
       router.refresh();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'An error occurred');

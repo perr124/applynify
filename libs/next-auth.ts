@@ -32,6 +32,7 @@ export const authOptions: NextAuthOptionsExtended = {
           name: profile.given_name ? profile.given_name : profile.name,
           email: profile.email,
           image: profile.picture,
+          emailVerified: true,
           createdAt: new Date(),
         };
       },
@@ -153,6 +154,39 @@ export async function resetPassword(token: string, newPassword: string) {
     {
       $set: { password: hashedPassword },
       $unset: { resetPasswordToken: 1, resetPasswordExpires: 1 },
+    }
+  );
+}
+
+export async function generateVerificationToken(email: string) {
+  const usersCollection = await getUsersCollection();
+  const token = randomBytes(32).toString('hex');
+
+  await usersCollection.updateOne(
+    { email },
+    {
+      $set: {
+        verificationToken: token,
+      },
+    }
+  );
+
+  return token;
+}
+
+export async function verifyEmail(token: string) {
+  const usersCollection = await getUsersCollection();
+  const user = await usersCollection.findOne({ verificationToken: token });
+
+  if (!user) {
+    throw new Error('Invalid verification token');
+  }
+
+  await usersCollection.updateOne(
+    { _id: user._id },
+    {
+      $set: { emailVerified: true },
+      $unset: { verificationToken: 1 },
     }
   );
 }

@@ -2,15 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import {
-  ChevronRight,
-  ChevronLeft,
-  Briefcase,
-  MapPin,
-  DollarSign,
-  GraduationCap,
-  Clock,
-} from 'lucide-react';
+import { ChevronRight, ChevronLeft } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 
 type FormData = {
@@ -124,8 +116,6 @@ export default function OnboardingQuestionnaire() {
     } catch (error) {
       console.error('Error:', error);
       setError('Something went wrong. Please try again.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

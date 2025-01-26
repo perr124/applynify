@@ -13,22 +13,37 @@ export default withAuth(
       return NextResponse.redirect(new URL('/auth/signin', req.url));
     }
 
-    // If trying to access dashboard, check if onboarding is completed
-    if (path.startsWith('/dashboard')) {
-      try {
-        const res = await fetch(`${req.nextUrl.origin}/api/user/onboarding-status`, {
+    try {
+      // Check email verification first for both dashboard and onboarding
+      if (path.startsWith('/dashboard') || path.startsWith('/onboarding')) {
+        const verificationRes = await fetch(`${req.nextUrl.origin}/api/user/verification-status`, {
           headers: {
             cookie: req.headers.get('cookie') || '',
           },
         });
 
-        const data = await res.json();
-        if (!data.onboardingComplete) {
-          return NextResponse.redirect(new URL('/onboarding', req.url));
+        const verificationData = await verificationRes.json();
+        console.log('verificationData', verificationData);
+        if (!verificationData.emailVerified) {
+          return NextResponse.redirect(new URL('/auth/verify-email', req.url));
         }
-      } catch (error) {
-        console.error('Error checking onboarding status:', error);
+
+        // Only check onboarding status for dashboard route
+        if (path.startsWith('/dashboard')) {
+          const onboardingRes = await fetch(`${req.nextUrl.origin}/api/user/onboarding-status`, {
+            headers: {
+              cookie: req.headers.get('cookie') || '',
+            },
+          });
+
+          const onboardingData = await onboardingRes.json();
+          if (!onboardingData.onboardingComplete) {
+            return NextResponse.redirect(new URL('/onboarding', req.url));
+          }
+        }
       }
+    } catch (error) {
+      console.error('Error checking user status:', error);
     }
 
     return NextResponse.next();
