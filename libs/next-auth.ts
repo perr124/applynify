@@ -27,10 +27,23 @@ export const authOptions: NextAuthOptionsExtended = {
       clientId: process.env.GOOGLE_ID!,
       clientSecret: process.env.GOOGLE_SECRET!,
       async profile(profile) {
+        // Parse first and last name from Google profile
+        let firstName = profile.given_name || '';
+        let lastName = profile.family_name || '';
+
+        // If given_name/family_name not available, try to parse from name
+        if (!firstName && !lastName && profile.name) {
+          const nameParts = profile.name.split(' ');
+          firstName = nameParts[0] || '';
+          lastName = nameParts.slice(1).join(' ') || '';
+        }
+
         return {
           id: profile.sub,
-          name: profile.given_name ? profile.given_name : profile.name,
           email: profile.email,
+          name: profile.name,
+          firstName,
+          lastName,
           image: profile.picture,
           emailVerified: true,
           createdAt: new Date(),
