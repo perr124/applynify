@@ -55,9 +55,9 @@ const ButtonSignin = ({ text = 'Login', extraStyle }: { text?: string; extraStyl
   }
 
   return (
-    <button className={`btn ${extraStyle || ''}`} onClick={handleClick}>
+    <Link href='/auth/signin' className={`btn ${extraStyle || ''}`}>
       {text}
-    </button>
+    </Link>
   );
 };
 

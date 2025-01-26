@@ -73,7 +73,7 @@ export default function Register() {
                 name='name'
                 type='text'
                 required
-                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
                 placeholder='Full name'
               />
             </div>
@@ -86,7 +86,7 @@ export default function Register() {
                 name='email'
                 type='email'
                 required
-                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
                 placeholder='Email address'
               />
             </div>
@@ -99,7 +99,7 @@ export default function Register() {
                 name='password'
                 type='password'
                 required
-                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
                 placeholder='Password'
               />
             </div>
@@ -109,7 +109,7 @@ export default function Register() {
             <button
               type='submit'
               disabled={isLoading}
-              className='group relative flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70'
+              className='group relative flex w-full justify-center rounded-lg bg-[#0d824a] px-4 py-3 text-sm font-semibold text-white hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#0d824a] focus:ring-offset-2 disabled:opacity-70'
             >
               {isLoading ? 'Creating account...' : 'Create account'}
             </button>
@@ -128,7 +128,7 @@ export default function Register() {
             <button
               type='button'
               onClick={handleGoogleSignIn}
-              className='flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+              className='flex w-full items-center justify-center rounded-lg border border-gray-300 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0d824a] focus:ring-offset-2'
             >
               <img
                 className='mr-2 h-5 w-5'
@@ -141,7 +141,7 @@ export default function Register() {
 
           <div className='text-center text-sm'>
             <span className='text-gray-500'>Already have an account?</span>{' '}
-            <Link href='/auth/signin' className='font-medium text-indigo-600 hover:text-indigo-500'>
+            <Link href='/auth/signin' className='font-medium text-[#0d824a] hover:opacity-80'>
               Sign in
             </Link>
           </div>

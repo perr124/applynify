@@ -51,8 +51,8 @@ export default function ForgotPassword() {
         </div>
 
         {success ? (
-          <div className='rounded-lg bg-green-50 p-4'>
-            <div className='text-sm text-green-700'>
+          <div className='rounded-lg bg-[#0d824a]/10 p-4'>
+            <div className='text-sm text-[#0d824a]'>
               If an account exists with that email, we've sent password reset instructions.
             </div>
           </div>
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
                 name='email'
                 type='email'
                 required
-                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+                className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
                 placeholder='Email address'
               />
             </div>
@@ -81,7 +81,7 @@ export default function ForgotPassword() {
               <button
                 type='submit'
                 disabled={isLoading}
-                className='group relative flex w-full justify-center rounded-lg bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-70'
+                className='group relative flex w-full justify-center rounded-lg bg-[#0d824a] px-4 py-3 text-sm font-semibold text-white hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-[#0d824a] focus:ring-offset-2 disabled:opacity-70'
               >
                 {isLoading ? 'Sending...' : 'Send reset instructions'}
               </button>
@@ -89,10 +89,7 @@ export default function ForgotPassword() {
 
             <div className='text-center text-sm'>
               <span className='text-gray-500'>Remember your password?</span>{' '}
-              <Link
-                href='/auth/signin'
-                className='font-medium text-indigo-600 hover:text-indigo-500'
-              >
+              <Link href='/auth/signin' className='font-medium text-[#0d824a] hover:opacity-80'>
                 Sign in
               </Link>
             </div>
