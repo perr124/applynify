@@ -20,7 +20,9 @@ const config = {
       {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:
-          process.env.NODE_ENV === 'development' ? 'price_1QNxiSDnSxQsct78CVPnE5iz' : 'price_456',
+          process.env.NODE_ENV === 'development'
+            ? 'price_1QNxiSDnSxQsct78CVPnE5iz'
+            : 'price_1QNxiSDnSxQsct78CVPnE5iz',
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: 'Starter',
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
@@ -40,7 +42,9 @@ const config = {
       },
       {
         priceId:
-          process.env.NODE_ENV === 'development' ? 'price_1O5KtcAxyNprDp7iftKnrrpw' : 'price_456',
+          process.env.NODE_ENV === 'development'
+            ? 'price_1QoemEDnSxQsct788bRfFdlr'
+            : 'price_1QoemEDnSxQsct788bRfFdlr',
         // This plan will look different on the pricing page, it will be highlighted. You can only have one plan with isFeatured: true
         isFeatured: true,
         name: 'Advanced',

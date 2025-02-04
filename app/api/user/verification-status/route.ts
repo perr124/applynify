@@ -1,10 +1,12 @@
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
+import dbConnect from '@/libs/mongoose';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
+    await dbConnect();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

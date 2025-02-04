@@ -1,8 +1,8 @@
-import Stripe from "stripe";
+import Stripe from 'stripe';
 
 interface CreateCheckoutParams {
   priceId: string;
-  mode: "payment" | "subscription";
+  mode: 'payment' | 'subscription';
   successUrl: string;
   cancelUrl: string;
   couponId?: string | null;
@@ -18,6 +18,15 @@ interface CreateCustomerPortalParams {
   returnUrl: string;
 }
 
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('STRIPE_SECRET_KEY is missing in environment variables');
+}
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  // @ts-ignore
+  apiVersion: '2023-10-16',
+});
+
 // This is used to create a Stripe Checkout for one-time payments. It's usually triggered with the <ButtonCheckout /> component. Webhooks are used to update the user's state in the database.
 export const createCheckout = async ({
   user,
@@ -29,28 +38,29 @@ export const createCheckout = async ({
   couponId,
 }: CreateCheckoutParams): Promise<string> => {
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2023-08-16", // TODO: update this when Stripe updates their API
-      typescript: true,
+    console.log('Creating checkout session with:', {
+      priceId,
+      mode,
+      clientReferenceId,
     });
 
     const extraParams: {
       customer?: string;
-      customer_creation?: "always";
+      customer_creation?: 'always';
       customer_email?: string;
       invoice_creation?: { enabled: boolean };
-      payment_intent_data?: { setup_future_usage: "on_session" };
+      payment_intent_data?: { setup_future_usage: 'on_session' };
       tax_id_collection?: { enabled: boolean };
     } = {};
 
     if (user?.customerId) {
       extraParams.customer = user.customerId;
     } else {
-      if (mode === "payment") {
-        extraParams.customer_creation = "always";
+      if (mode === 'payment') {
+        extraParams.customer_creation = 'always';
         // The option below costs 0.4% (up to $2) per invoice. Alternatively, you can use https://zenvoice.io/ to create unlimited invoices automatically.
         // extraParams.invoice_creation = { enabled: true };
-        extraParams.payment_intent_data = { setup_future_usage: "on_session" };
+        extraParams.payment_intent_data = { setup_future_usage: 'on_session' };
       }
       if (user?.email) {
         extraParams.customer_email = user.email;
@@ -58,7 +68,7 @@ export const createCheckout = async ({
       extraParams.tax_id_collection = { enabled: true };
     }
 
-    const stripeSession = await stripe.checkout.sessions.create({
+    const session = await stripe.checkout.sessions.create({
       mode,
       allow_promotion_codes: true,
       client_reference_id: clientReferenceId,
@@ -80,10 +90,11 @@ export const createCheckout = async ({
       ...extraParams,
     });
 
-    return stripeSession.url;
-  } catch (e) {
-    console.error(e);
-    return null;
+    // @ts-ignore
+    return session.url;
+  } catch (error) {
+    console.error('Stripe checkout error:', error);
+    throw error;
   }
 };
 
@@ -92,11 +103,6 @@ export const createCustomerPortal = async ({
   customerId,
   returnUrl,
 }: CreateCustomerPortalParams): Promise<string> => {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-    apiVersion: "2023-08-16", // TODO: update this when Stripe updates their API
-    typescript: true,
-  });
-
   const portalSession = await stripe.billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
@@ -108,13 +114,8 @@ export const createCustomerPortal = async ({
 // This is used to get the uesr checkout session and populate the data so we get the planId the user subscribed to
 export const findCheckoutSession = async (sessionId: string) => {
   try {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2023-08-16", // TODO: update this when Stripe updates their API
-      typescript: true,
-    });
-
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ["line_items"],
+      expand: ['line_items'],
     });
 
     return session;
@@ -123,3 +124,5 @@ export const findCheckoutSession = async (sessionId: string) => {
     return null;
   }
 };
+
+export default stripe;
