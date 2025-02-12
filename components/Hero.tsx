@@ -33,7 +33,9 @@ const Hero = () => {
         </div>
 
         <div className='flex flex-col items-center gap-8'>
-          <button className='btn bg-primary-500 text-white btn-wide btn-lg'>Get Started</button>
+          <button className='btn bg-primary-500 text-white btn-wide btn-lg hover:bg-primary-800'>
+            Get Started
+          </button>
           <TestimonialsAvatars priority={true} />
         </div>
 

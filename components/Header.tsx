@@ -27,7 +27,9 @@ const links: {
   },
 ];
 
-const cta: JSX.Element = <ButtonSignin extraStyle='bg-primary-500 text-white' />;
+const cta: JSX.Element = (
+  <ButtonSignin extraStyle='bg-primary-500 text-white hover:bg-primary-800' />
+);
 
 // A header with a logo on the left, links in the center (like Pricing, etc...), and a CTA (like Get Started or Login) on the right.
 // The header is responsive, and on mobile, the links are hidden behind a burger button.
