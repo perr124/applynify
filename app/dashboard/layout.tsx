@@ -106,7 +106,7 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <img src='/api/placeholder/32/32' alt='Your Company' className='h-8 w-auto' />
+        <img src='/api/placeholder/32/32' alt='Applynify' className='h-8 w-auto' />
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

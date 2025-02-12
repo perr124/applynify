@@ -191,29 +191,3 @@ export default function DashboardHome() {
     </div>
   );
 }
-
-function SidebarContent() {
-  return (
-    <>
-      <div className='flex h-16 shrink-0 items-center'>
-        <img src='/api/placeholder/32/32' alt='Your Company' className='h-8 w-auto' />
-      </div>
-      <nav className='flex flex-1 flex-col'>
-        <ul role='list' className='flex flex-1 flex-col gap-y-7'>
-          <li>
-            <ul role='list' className='-mx-2 space-y-1'></ul>
-          </li>
-          <li className='mt-auto'>
-            <a
-              href='/dashboard/settings'
-              className='group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold text-primary-200 hover:bg-primary-700 hover:text-white'
-            >
-              <Settings className='h-6 w-6 shrink-0' />
-              Settings
-            </a>
-          </li>
-        </ul>
-      </nav>
-    </>
-  );
-}
