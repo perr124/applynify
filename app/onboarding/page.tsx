@@ -191,24 +191,6 @@ export default function OnboardingQuestionnaire() {
 
           const uploadData = await uploadResponse.json();
           resumeUrl = uploadData.url;
-
-          // After successful upload, add to resumes collection
-          const resumeResponse = await fetch('/api/resumes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              filename: formData.availability.resume.file.name,
-              url: resumeUrl,
-              uploadedAt: new Date().toISOString(),
-              status: 'active',
-            }),
-          });
-
-          if (!resumeResponse.ok) {
-            console.error('Failed to save resume to collection');
-          }
         } catch (uploadError) {
           console.error('Resume upload error:', uploadError);
           setError('Failed to upload resume. Please try again.');

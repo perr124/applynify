@@ -8,19 +8,20 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      console.error('Unauthorized access attempt');
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
 
     if (!file) {
-      return new NextResponse('No file provided', { status: 400 });
+      console.error('No file provided');
+      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Here you would implement your file upload logic
-    // This could be to AWS S3, Google Cloud Storage, or another storage service
-    // For now, we'll return a mock URL
+    // For now, we'll use a mock URL since we don't have actual file storage
+    // In production, you would upload to S3, Google Cloud Storage, etc.
     const mockUrl = `https://storage.example.com/${Date.now()}-${file.name}`;
 
     // Create a new resume object
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
       status: 'active',
     };
 
-    // Update the user's record in the database
+    // Update user's resumes array
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
       {
@@ -47,12 +48,17 @@ export async function POST(request: Request) {
     );
 
     if (!user) {
-      return new NextResponse('User not found', { status: 404 });
+      console.error('User not found');
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ url: mockUrl });
+    return NextResponse.json({
+      message: 'Resume uploaded successfully',
+      url: mockUrl,
+      resume: newResume,
+    });
   } catch (error) {
     console.error('Error uploading resume:', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

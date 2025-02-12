@@ -138,7 +138,10 @@ export default function ResumeBank() {
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Failed to upload resume');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to upload resume');
+      }
 
       const data = await response.json();
 
@@ -156,9 +159,12 @@ export default function ResumeBank() {
 
       setShowSuccess(true);
       setTimeout(() => setShowSuccess(false), 3000);
+
+      // Refresh the resumes list
+      await fetchResumes();
     } catch (error) {
       console.error('Error:', error);
-      setError('Failed to upload resume');
+      setError(error instanceof Error ? error.message : 'Failed to upload resume');
     } finally {
       setIsUploading(false);
     }
@@ -269,12 +275,19 @@ export default function ResumeBank() {
           <h3 className='text-lg font-medium text-gray-900'>Your Resumes</h3>
         </div>
         <div className='divide-y divide-gray-200'>
-          {resumes.map((resume) => (
+          {resumes.map((resume, index) => (
             <div key={resume.id} className='px-6 py-4 flex items-center justify-between'>
               <div className='flex items-center'>
                 <FileText className='h-8 w-8 text-gray-400' />
                 <div className='ml-4'>
-                  <h4 className='text-sm font-medium text-gray-900'>{resume.filename}</h4>
+                  <div className='flex items-center gap-2'>
+                    <h4 className='text-sm font-medium text-gray-900'>{resume.filename}</h4>
+                    {index === 0 && (
+                      <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'>
+                        Current
+                      </span>
+                    )}
+                  </div>
                   <p className='text-sm text-gray-500'>
                     Uploaded on {new Date(resume.uploadedAt).toLocaleDateString()}
                   </p>
