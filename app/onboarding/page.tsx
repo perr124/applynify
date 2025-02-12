@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 

@@ -72,23 +72,60 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
-      return new NextResponse('Unauthorized', { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-
-    await connectMongo();
 
     const user = await User.findOne(
       { email: session.user.email },
-      'jobPreferences experience availability onboardingComplete email name image'
+      'jobPreferences experience availability'
     );
 
     if (!user) {
-      return new NextResponse('User not found', { status: 404 });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user.toJSON());
+    return NextResponse.json({
+      jobPreferences: user.jobPreferences || {},
+      experience: user.experience || {},
+      availability: user.availability || {},
+    });
   } catch (error) {
     console.error('Error fetching preferences:', error);
-    return new NextResponse('Internal Error', { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function PUT(request: Request) {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const data = await request.json();
+
+    const user = await User.findOneAndUpdate(
+      { email: session.user.email },
+      {
+        $set: {
+          jobPreferences: data.jobPreferences,
+          experience: data.experience,
+          availability: data.availability,
+        },
+      },
+      { new: true }
+    );
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      message: 'Preferences updated successfully',
+    });
+  } catch (error) {
+    console.error('Error updating preferences:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
