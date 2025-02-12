@@ -29,7 +29,16 @@ export default function Settings() {
     try {
       const response = await fetch('/api/user/settings');
       const data = await response.json();
-      setSettings(data);
+      setSettings({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        email: data.email || '',
+        notifications: {
+          email: data.notifications?.email ?? true,
+          jobAlerts: data.notifications?.jobAlerts ?? true,
+          marketing: data.notifications?.marketing ?? false,
+        },
+      });
     } catch (error) {
       console.error('Error fetching settings:', error);
     } finally {
@@ -74,6 +83,21 @@ export default function Settings() {
           <h1 className='text-2xl font-bold text-gray-900'>Settings</h1>
           <p className='mt-1 text-sm text-gray-500'>Manage your account settings and preferences</p>
         </div>
+        <button
+          type='button'
+          onClick={handleSubmit}
+          disabled={isSaving}
+          className='inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150'
+        >
+          {isSaving ? (
+            <>
+              <Loader2 className='animate-spin -ml-1 mr-2 h-5 w-5' />
+              Saving...
+            </>
+          ) : (
+            'Save Changes'
+          )}
+        </button>
       </div>
 
       {showSuccess && (
@@ -173,25 +197,6 @@ export default function Settings() {
           </div>
           <button className='inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'>
             Change Password
-          </button>
-        </div>
-
-        {/* Save Button */}
-        <div className='flex justify-end'>
-          <button
-            type='button'
-            onClick={handleSubmit}
-            disabled={isSaving}
-            className='inline-flex justify-center items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed'
-          >
-            {isSaving ? (
-              <>
-                <Loader2 className='animate-spin -ml-1 mr-2 h-5 w-5' />
-                Saving...
-              </>
-            ) : (
-              'Save Changes'
-            )}
           </button>
         </div>
       </div>

@@ -18,6 +18,7 @@ export default function ResumeBank() {
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   useEffect(() => {
     fetchResumes();
@@ -51,6 +52,80 @@ export default function ResumeBank() {
       return;
     }
 
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await fetch('/api/upload-resume', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) throw new Error('Failed to upload resume');
+
+      const data = await response.json();
+
+      // Add new resume to the list
+      setResumes((prev) => [
+        {
+          id: Date.now().toString(),
+          filename: file.name,
+          url: data.url,
+          uploadedAt: new Date().toISOString(),
+          status: 'active',
+        },
+        ...prev,
+      ]);
+
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Failed to upload resume');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    // Validate file type
+    if (file.type !== 'application/pdf') {
+      setError('Please upload a PDF file');
+      return;
+    }
+
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('File size must be less than 5MB');
+      return;
+    }
+
+    handleFileUpload(file);
+  };
+
+  const handleFileUpload = async (file: File) => {
     setIsUploading(true);
     setError(null);
 
@@ -148,7 +223,16 @@ export default function ResumeBank() {
         </div>
 
         <div className='flex items-center justify-center w-full'>
-          <label className='flex flex-col items-center justify-center w-full h-48 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors duration-150'>
+          <label
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
+              isDragging
+                ? 'border-indigo-500 bg-indigo-50'
+                : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+            }`}
+          >
             <div className='flex flex-col items-center justify-center pt-5 pb-6'>
               {isUploading ? (
                 <>
@@ -169,7 +253,10 @@ export default function ResumeBank() {
               type='file'
               className='hidden'
               accept='.pdf'
-              onChange={handleFileChange}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) handleFileUpload(file);
+              }}
               disabled={isUploading}
             />
           </label>

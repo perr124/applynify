@@ -109,6 +109,20 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    notifications: {
+      email: {
+        type: Boolean,
+        default: true,
+      },
+      jobAlerts: {
+        type: Boolean,
+        default: true,
+      },
+      marketing: {
+        type: Boolean,
+        default: false,
+      },
+    },
   },
   {
     timestamps: true,

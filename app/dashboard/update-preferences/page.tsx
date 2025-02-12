@@ -31,7 +31,6 @@ type FormData = {
   };
   availability: {
     startDate: string;
-    noticeRequired: string;
   };
 };
 
@@ -52,7 +51,6 @@ const initialFormData: FormData = {
   },
   availability: {
     startDate: '',
-    noticeRequired: '',
   },
 };
 
@@ -73,7 +71,6 @@ export default function UpdatePreferences() {
           ...data,
           availability: {
             startDate: data.availability?.startDate || '',
-            noticeRequired: data.availability?.noticeRequired || '',
           },
         });
       } catch (error) {
@@ -338,7 +335,7 @@ export default function UpdatePreferences() {
               </div>
               <div className='ml-4'>
                 <h2 className='text-lg font-semibold text-gray-900'>Availability</h2>
-                <p className='text-sm text-gray-500'>Your start date and notice period</p>
+                <p className='text-sm text-gray-500'>Your start date</p>
               </div>
             </div>
 
@@ -356,22 +353,6 @@ export default function UpdatePreferences() {
                   <option value='1-month'>In 1 month</option>
                   <option value='2-months'>In 2 months</option>
                   <option value='3-months+'>3+ months</option>
-                </select>
-              </div>
-
-              <div>
-                <label className='block text-sm font-medium text-gray-700'>Notice Period</label>
-                <select
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                  value={formData.availability.noticeRequired}
-                  onChange={(e) => updateFormData('availability', 'noticeRequired', e.target.value)}
-                >
-                  <option value=''>Select notice period</option>
-                  <option value='none'>No notice required</option>
-                  <option value='2-weeks'>2 weeks</option>
-                  <option value='1-month'>1 month</option>
-                  <option value='2-months'>2 months</option>
-                  <option value='other'>Other</option>
                 </select>
               </div>
             </div>

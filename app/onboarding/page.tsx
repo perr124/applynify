@@ -63,6 +63,7 @@ export default function OnboardingQuestionnaire() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const router = useRouter();
 
   const totalSteps = 3;
@@ -121,6 +122,51 @@ export default function OnboardingQuestionnaire() {
     });
   };
 
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragging(false);
+
+    const file = e.dataTransfer.files[0];
+    if (!file) return;
+
+    if (file.type !== 'application/pdf') {
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'Please upload a PDF file',
+      });
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'File size must be less than 5MB',
+      });
+      return;
+    }
+
+    updateFormData('availability', 'resume', {
+      file,
+      uploading: false,
+      error: null,
+    });
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
@@ -129,33 +175,60 @@ export default function OnboardingQuestionnaire() {
       // Upload resume if exists
       let resumeUrl = null;
       if (formData.availability.resume?.file) {
+        // First upload the file
         const uploadFormData = new FormData();
         uploadFormData.append('file', formData.availability.resume.file);
 
-        const uploadResponse = await fetch('/api/upload-resume', {
-          method: 'POST',
-          body: uploadFormData,
-        });
+        try {
+          const uploadResponse = await fetch('/api/upload-resume', {
+            method: 'POST',
+            body: uploadFormData,
+          });
 
-        if (!uploadResponse.ok) {
-          throw new Error('Failed to upload resume');
+          if (!uploadResponse.ok) {
+            throw new Error('Failed to upload resume');
+          }
+
+          const uploadData = await uploadResponse.json();
+          resumeUrl = uploadData.url;
+
+          // After successful upload, add to resumes collection
+          const resumeResponse = await fetch('/api/resumes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              filename: formData.availability.resume.file.name,
+              url: resumeUrl,
+              uploadedAt: new Date().toISOString(),
+              status: 'active',
+            }),
+          });
+
+          if (!resumeResponse.ok) {
+            console.error('Failed to save resume to collection');
+          }
+        } catch (uploadError) {
+          console.error('Resume upload error:', uploadError);
+          setError('Failed to upload resume. Please try again.');
+          setIsSubmitting(false);
+          return;
         }
-
-        const uploadData = await uploadResponse.json();
-        resumeUrl = uploadData.url;
       }
 
-      // Save preferences with resume URL
+      // Save preferences
       const preferencesResponse = await fetch('/api/user/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          ...formData,
+          jobPreferences: formData.jobPreferences,
+          experience: formData.experience,
           availability: {
-            ...formData.availability,
-            resumeUrl,
+            startDate: formData.availability.startDate,
+            resumeUrl: resumeUrl,
           },
         }),
       });
@@ -178,7 +251,7 @@ export default function OnboardingQuestionnaire() {
       if (!onboardingResponse.ok) {
         throw new Error('Failed to complete onboarding');
       }
-      console.log('hrrrr', formData);
+
       router.push('/dashboard');
     } catch (error) {
       console.error('Error:', error);
@@ -369,33 +442,20 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Notice period required?
-                  </label>
-                  <div className='mt-1'>
-                    <select
-                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
-                      value={formData.availability.noticeRequired}
-                      onChange={(e) =>
-                        updateFormData('availability', 'noticeRequired', e.target.value)
-                      }
-                    >
-                      <option value=''>Select notice period</option>
-                      <option value='none'>No notice required</option>
-                      <option value='2-weeks'>2 weeks</option>
-                      <option value='1-month'>1 month</option>
-                      <option value='2-months'>2 months</option>
-                      <option value='other'>Other</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label className='block text-sm font-medium text-gray-700'>
                     Upload your resume (PDF)
                   </label>
                   <div className='mt-1'>
                     <div className='flex items-center justify-center w-full'>
-                      <label className='flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100'>
+                      <label
+                        onDragOver={handleDragOver}
+                        onDragLeave={handleDragLeave}
+                        onDrop={handleDrop}
+                        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
+                          isDragging
+                            ? 'border-indigo-500 bg-indigo-50'
+                            : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                        }`}
+                      >
                         <div className='flex flex-col items-center justify-center pt-5 pb-6'>
                           <Upload className='w-8 h-8 mb-2 text-gray-500' />
                           <p className='mb-2 text-sm text-gray-500'>
@@ -408,6 +468,7 @@ export default function OnboardingQuestionnaire() {
                           className='hidden'
                           accept='.pdf'
                           onChange={handleFileChange}
+                          disabled={formData.availability.resume?.uploading}
                         />
                       </label>
                     </div>

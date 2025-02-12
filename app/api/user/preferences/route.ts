@@ -113,7 +113,6 @@ export async function PUT(request: Request) {
           experience: data.experience,
           availability: {
             startDate: data.availability.startDate,
-            noticeRequired: data.availability.noticeRequired,
           },
         },
       },

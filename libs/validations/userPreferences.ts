@@ -60,9 +60,6 @@ export function validatePreferences(data: PreferencesData): { valid: boolean; er
     if (!data.availability.startDate) {
       errors.push('Start date is required');
     }
-    if (!data.availability.noticeRequired) {
-      errors.push('Notice period is required');
-    }
   } else {
     errors.push('Availability details are required');
   }

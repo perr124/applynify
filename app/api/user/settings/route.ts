@@ -11,21 +11,32 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const user = await User.findOne({ email: session.user.email });
+    const user = await User.findOne(
+      { email: session.user.email },
+      'firstName lastName email notifications'
+    );
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Return array of resumes, newest first
-    return NextResponse.json(user.resumes || []);
+    return NextResponse.json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      notifications: user.notifications || {
+        email: true,
+        jobAlerts: true,
+        marketing: false,
+      },
+    });
   } catch (error) {
-    console.error('Error fetching resumes:', error);
+    console.error('Error fetching user settings:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
 
-export async function POST(request: Request) {
+export async function PUT(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -35,27 +46,13 @@ export async function POST(request: Request) {
 
     const data = await request.json();
 
-    // Validate required fields
-    if (!data.filename || !data.url) {
-      return NextResponse.json({ error: 'Filename and URL are required' }, { status: 400 });
-    }
-
-    const newResume = {
-      id: Date.now().toString(),
-      filename: data.filename,
-      url: data.url,
-      uploadedAt: data.uploadedAt || new Date().toISOString(),
-      status: data.status || 'active',
-    };
-
     const user = await User.findOneAndUpdate(
       { email: session.user.email },
       {
-        $push: {
-          resumes: {
-            $each: [newResume],
-            $position: 0, // Add new resume at the beginning of the array
-          },
+        $set: {
+          firstName: data.firstName,
+          lastName: data.lastName,
+          notifications: data.notifications,
         },
       },
       { new: true }
@@ -66,11 +63,10 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({
-      message: 'Resume added successfully',
-      resume: user.resumes[0], // Return the newly added resume
+      message: 'Settings updated successfully',
     });
   } catch (error) {
-    console.error('Error adding resume:', error);
-    return NextResponse.json({ error: 'Failed to add resume' }, { status: 500 });
+    console.error('Error updating user settings:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
