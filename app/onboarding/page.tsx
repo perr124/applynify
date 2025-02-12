@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
+import config from '@/config';
 import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
+import apiClient from '@/libs/api';
 
 type FormData = {
   jobPreferences: {
@@ -261,7 +263,28 @@ export default function OnboardingQuestionnaire() {
         throw new Error('Failed to complete onboarding');
       }
 
-      router.push('/dashboard');
+      // Start payment flow
+      try {
+        const response = await apiClient.post('/stripe/create-checkout', {
+          priceId: config.stripe.plans[0].priceId,
+          successUrl: `${window.location.origin}/dashboard`,
+          cancelUrl: window.location.href,
+          mode: 'payment',
+        });
+
+        // @ts-ignore
+        if (!response.url) {
+          console.error('No URL in response:', response);
+          throw new Error('No checkout URL received');
+        }
+
+        // @ts-ignore
+        window.location.href = response.url;
+      } catch (e) {
+        console.error('Payment error:', e);
+        setError('Payment initialization failed. Please try again.');
+        setIsSubmitting(false);
+      }
     } catch (error) {
       console.error('Error:', error);
       setError('Something went wrong. Please try again.');
