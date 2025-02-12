@@ -274,7 +274,7 @@ export default function OnboardingQuestionnaire() {
       <div className='absolute top-4 right-4'>
         {/* <button
           // onClick={handleLogout}
-          className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+          className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
         >
           <div className='h-4 w-4 mr-2' />
           Logout
@@ -303,7 +303,7 @@ export default function OnboardingQuestionnaire() {
                   <div className='mt-1'>
                     <input
                       type='text'
-                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='e.g., Software Engineer, Product Manager'
                       value={currentRoleInput}
                       onChange={(e) => {
@@ -320,7 +320,7 @@ export default function OnboardingQuestionnaire() {
                     {formData.jobPreferences.roles.map((role, index) => (
                       <span
                         key={index}
-                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800'
+                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
                       >
                         {role}
                         <button
@@ -331,7 +331,7 @@ export default function OnboardingQuestionnaire() {
                             );
                             updateFormData('jobPreferences', 'roles', updatedRoles);
                           }}
-                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
                         >
                           <span className='sr-only'>Remove {role}</span>×
                         </button>
@@ -347,7 +347,7 @@ export default function OnboardingQuestionnaire() {
                   <div className='mt-1'>
                     <input
                       type='text'
-                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='e.g., New York, Remote'
                       value={currentLocationInput}
                       onChange={(e) => {
@@ -364,7 +364,7 @@ export default function OnboardingQuestionnaire() {
                     {formData.jobPreferences.locations.map((location, index) => (
                       <span
                         key={index}
-                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800'
+                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
                       >
                         {location}
                         <button
@@ -375,7 +375,7 @@ export default function OnboardingQuestionnaire() {
                             );
                             updateFormData('jobPreferences', 'locations', updatedLocations);
                           }}
-                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
                         >
                           <span className='sr-only'>Remove {location}</span>×
                         </button>
@@ -391,7 +391,7 @@ export default function OnboardingQuestionnaire() {
                   <div className='mt-1'>
                     <input
                       type='text'
-                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='e.g., $80,000'
                       value={formData.jobPreferences.salary.minimum}
                       onChange={(e) =>
@@ -415,7 +415,7 @@ export default function OnboardingQuestionnaire() {
                   </label>
                   <div className='mt-1'>
                     <select
-                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       value={formData.experience.yearsOfExperience}
                       onChange={(e) =>
                         updateFormData('experience', 'yearsOfExperience', e.target.value)
@@ -436,7 +436,7 @@ export default function OnboardingQuestionnaire() {
                   <div className='mt-1'>
                     <input
                       type='text'
-                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='e.g., JavaScript, React, Project Management'
                       value={formData.experience.skills.join(', ')}
                       onChange={(e) =>
@@ -456,7 +456,7 @@ export default function OnboardingQuestionnaire() {
                   </label>
                   <div className='mt-1'>
                     <select
-                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       value={formData.experience.education}
                       onChange={(e) => updateFormData('experience', 'education', e.target.value)}
                     >
@@ -481,7 +481,7 @@ export default function OnboardingQuestionnaire() {
                   </label>
                   <div className='mt-1'>
                     <select
-                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       value={formData.availability.startDate}
                       onChange={(e) => updateFormData('availability', 'startDate', e.target.value)}
                     >
@@ -507,7 +507,7 @@ export default function OnboardingQuestionnaire() {
                         onDrop={handleDrop}
                         className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
                           isDragging
-                            ? 'border-indigo-500 bg-indigo-50'
+                            ? 'border-primary-500 bg-primary-50'
                             : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
                         }`}
                       >
@@ -562,7 +562,7 @@ export default function OnboardingQuestionnaire() {
                 type='button'
                 onClick={handleNext}
                 disabled={isSubmitting}
-                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-indigo-400 disabled:cursor-not-allowed'
+                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed'
               >
                 {isSubmitting ? (
                   <>

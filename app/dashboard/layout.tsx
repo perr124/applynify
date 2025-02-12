@@ -119,7 +119,7 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
                     className={classNames(
                       currentPath === item.href
                         ? 'bg-primary-700 text-white'
-                        : 'text-indigo-200 hover:bg-primary-700 hover:text-white',
+                        : 'text-primary-200 hover:bg-primary-700 hover:text-white',
                       'group flex gap-x-3 rounded-md p-2 text-sm font-semibold'
                     )}
                   >
@@ -136,7 +136,7 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
               className={classNames(
                 currentPath === '/dashboard/settings'
                   ? 'bg-primary-700 text-white'
-                  : 'text-indigo-200 hover:bg-primary-700 hover:text-white',
+                  : 'text-primary-200 hover:bg-primary-700 hover:text-white',
                 'group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold'
               )}
             >

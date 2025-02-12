@@ -140,7 +140,7 @@ export default function DashboardHome() {
                 </p>
                 <a
                   href='/dashboard/update-preferences'
-                  className='mt-2 inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500'
+                  className='mt-2 inline-flex items-center text-sm text-primary-600 hover:text-primary-500'
                 >
                   Update Preferences →
                 </a>
@@ -162,7 +162,7 @@ export default function DashboardHome() {
                 </p>
                 <a
                   href='/dashboard/resumes'
-                  className='mt-2 inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500'
+                  className='mt-2 inline-flex items-center text-sm text-primary-600 hover:text-primary-500'
                 >
                   Manage Resumes →
                 </a>
@@ -206,7 +206,7 @@ function SidebarContent() {
           <li className='mt-auto'>
             <a
               href='/dashboard/settings'
-              className='group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold text-indigo-200 hover:bg-primary-700 hover:text-white'
+              className='group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold text-primary-200 hover:bg-primary-700 hover:text-white'
             >
               <Settings className='h-6 w-6 shrink-0' />
               Settings

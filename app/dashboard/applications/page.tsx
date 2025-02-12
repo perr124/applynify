@@ -102,7 +102,7 @@ export default function Applications() {
                 onClick={() => setFilter('all')}
                 className={`px-3 py-1 rounded-md text-sm ${
                   filter === 'all'
-                    ? 'bg-indigo-100 text-indigo-700'
+                    ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-500 hover:bg-gray-100'
                 }`}
               >

@@ -235,7 +235,7 @@ export default function ResumeBank() {
             onDrop={handleDrop}
             className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
               isDragging
-                ? 'border-indigo-500 bg-indigo-50'
+                ? 'border-primary-500 bg-primary-50'
                 : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
             }`}
           >
@@ -298,7 +298,7 @@ export default function ResumeBank() {
                   href={resume.url}
                   target='_blank'
                   rel='noopener noreferrer'
-                  className='text-sm text-indigo-600 hover:text-indigo-500'
+                  className='text-sm text-primary-600 hover:text-primary-500'
                 >
                   View
                 </a>
