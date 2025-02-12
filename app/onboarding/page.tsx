@@ -64,6 +64,8 @@ export default function OnboardingQuestionnaire() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [currentRoleInput, setCurrentRoleInput] = useState('');
+  const [currentLocationInput, setCurrentLocationInput] = useState('');
   const router = useRouter();
 
   const totalSteps = 3;
@@ -278,17 +280,49 @@ export default function OnboardingQuestionnaire() {
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                       placeholder='e.g., Software Engineer, Product Manager'
-                      value={formData.jobPreferences.roles.join(', ')}
-                      onChange={(e) =>
-                        updateFormData(
-                          'jobPreferences',
-                          'roles',
-                          e.target.value.split(',').map((s) => s.trim())
-                        )
-                      }
+                      value={currentRoleInput}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setCurrentRoleInput(input);
+
+                        if (input.endsWith(',')) {
+                          const newRole = input.slice(0, -1).trim();
+                          if (newRole) {
+                            const updatedRoles = [...formData.jobPreferences.roles, newRole];
+                            updateFormData('jobPreferences', 'roles', updatedRoles);
+                            setCurrentRoleInput('');
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>
+
+                {/* Display selected roles */}
+                {formData.jobPreferences.roles.length > 0 && (
+                  <div className='mt-2 flex flex-wrap gap-2'>
+                    {formData.jobPreferences.roles.map((role, index) => (
+                      <span
+                        key={index}
+                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800'
+                      >
+                        {role}
+                        <button
+                          type='button'
+                          onClick={() => {
+                            const updatedRoles = formData.jobPreferences.roles.filter(
+                              (_, i) => i !== index
+                            );
+                            updateFormData('jobPreferences', 'roles', updatedRoles);
+                          }}
+                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                        >
+                          <span className='sr-only'>Remove {role}</span>×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
@@ -299,17 +333,52 @@ export default function OnboardingQuestionnaire() {
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm'
                       placeholder='e.g., New York, Remote'
-                      value={formData.jobPreferences.locations.join(', ')}
-                      onChange={(e) =>
-                        updateFormData(
-                          'jobPreferences',
-                          'locations',
-                          e.target.value.split(',').map((s) => s.trim())
-                        )
-                      }
+                      value={currentLocationInput}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setCurrentLocationInput(input);
+
+                        if (input.endsWith(',')) {
+                          const newLocation = input.slice(0, -1).trim();
+                          if (newLocation) {
+                            const updatedLocations = [
+                              ...formData.jobPreferences.locations,
+                              newLocation,
+                            ];
+                            updateFormData('jobPreferences', 'locations', updatedLocations);
+                            setCurrentLocationInput('');
+                          }
+                        }
+                      }}
                     />
                   </div>
                 </div>
+
+                {/* Display selected locations */}
+                {formData.jobPreferences.locations.length > 0 && (
+                  <div className='mt-2 flex flex-wrap gap-2'>
+                    {formData.jobPreferences.locations.map((location, index) => (
+                      <span
+                        key={index}
+                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800'
+                      >
+                        {location}
+                        <button
+                          type='button'
+                          onClick={() => {
+                            const updatedLocations = formData.jobPreferences.locations.filter(
+                              (_, i) => i !== index
+                            );
+                            updateFormData('jobPreferences', 'locations', updatedLocations);
+                          }}
+                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                        >
+                          <span className='sr-only'>Remove {location}</span>×
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
