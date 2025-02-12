@@ -11,7 +11,6 @@ import {
   Users,
   Settings,
   Bell,
-  Search,
   Menu as MenuIcon,
   X,
 } from 'lucide-react';
@@ -67,34 +66,30 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       <div className='lg:pl-72'>
         {/* Top nav */}
-        <div className='sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8'>
-          <button
-            type='button'
-            onClick={() => setSidebarOpen(true)}
-            className='-m-2.5 p-2.5 text-gray-700 lg:hidden'
-          >
-            <MenuIcon className='h-6 w-6' />
-          </button>
+        <div className='sticky top-0 z-40 flex h-16 shrink-0 items-center border-b border-gray-200 bg-white px-4 shadow-sm sm:px-6 lg:px-8'>
+          {/* Mobile menu button - left side */}
+          <div className='flex-none lg:hidden'>
+            <button
+              type='button'
+              onClick={() => setSidebarOpen(true)}
+              className='-m-2.5 p-2.5 text-gray-700'
+            >
+              <MenuIcon className='h-6 w-6' />
+            </button>
+          </div>
 
-          <div className='flex flex-1 gap-x-4 self-stretch lg:gap-x-6'>
-            <form className='relative flex flex-1'>
-              <Search className='pointer-events-none absolute left-0 top-0 h-full w-5 text-gray-400' />
-              <input
-                type='search'
-                placeholder='Search applications...'
-                className='block w-full border-0 py-0 pl-8 pr-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm'
-              />
-            </form>
+          {/* Empty space in the middle */}
+          <div className='flex-1'></div>
 
-            <div className='flex items-center gap-x-4 lg:gap-x-6'>
-              <button className='-m-2.5 p-2.5 text-gray-400 hover:text-gray-500'>
-                <Bell className='h-6 w-6' />
-              </button>
+          {/* Right side elements */}
+          <div className='flex items-center gap-x-4 lg:gap-x-6'>
+            {/* <button className='-m-2.5 p-2.5 text-gray-400 hover:text-gray-500'>
+              <Bell className='h-6 w-6' />
+            </button> */}
 
-              <div className='hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10' />
+            <div className='hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10' />
 
-              <ButtonAccount />
-            </div>
+            <ButtonAccount />
           </div>
         </div>
 
