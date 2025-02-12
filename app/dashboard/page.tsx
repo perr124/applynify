@@ -20,9 +20,14 @@ import ButtonCheckout from '@/components/ButtonCheckout';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home, current: true },
+  {
+    name: 'Update Preferences',
+    href: '/dashboard/update-preferences',
+    icon: Settings,
+    current: false,
+  },
   { name: 'Applications', href: '/dashboard/applications', icon: Briefcase, current: false },
   { name: 'Resume Bank', href: '/dashboard/resumes', icon: FileText, current: false },
-  { name: 'Job Preferences', href: '/dashboard/preferences', icon: ClipboardList, current: false },
   { name: 'Your Assistant', href: '/dashboard/assistant', icon: Users, current: false },
 ];
 

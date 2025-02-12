@@ -82,6 +82,20 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: false,
     },
+    resume: {
+      url: {
+        type: String,
+        select: true,
+      },
+      filename: {
+        type: String,
+        select: true,
+      },
+      uploadedAt: {
+        type: Date,
+        select: true,
+      },
+    },
   },
   {
     timestamps: true,

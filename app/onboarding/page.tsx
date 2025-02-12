@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 
 type FormData = {
@@ -23,6 +23,11 @@ type FormData = {
   availability: {
     startDate: string;
     noticeRequired: string;
+    resume?: {
+      file: File | null;
+      uploading: boolean;
+      error: string | null;
+    };
   };
 };
 
@@ -44,6 +49,11 @@ const initialFormData: FormData = {
   availability: {
     startDate: '',
     noticeRequired: '',
+    resume: {
+      file: null,
+      uploading: false,
+      error: null,
+    },
   },
 };
 
@@ -79,18 +89,74 @@ export default function OnboardingQuestionnaire() {
     setStep((prev) => prev - 1);
   };
 
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Only accept PDF files
+    if (file.type !== 'application/pdf') {
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'Please upload a PDF file',
+      });
+      return;
+    }
+
+    // Max file size of 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'File size must be less than 5MB',
+      });
+      return;
+    }
+
+    updateFormData('availability', 'resume', {
+      file,
+      uploading: false,
+      error: null,
+    });
+  };
+
   const handleSubmit = async () => {
     setIsSubmitting(true);
     setError(null);
 
     try {
-      // Save preferences
+      // Upload resume if exists
+      let resumeUrl = null;
+      if (formData.availability.resume?.file) {
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', formData.availability.resume.file);
+
+        const uploadResponse = await fetch('/api/upload-resume', {
+          method: 'POST',
+          body: uploadFormData,
+        });
+
+        if (!uploadResponse.ok) {
+          throw new Error('Failed to upload resume');
+        }
+
+        const uploadData = await uploadResponse.json();
+        resumeUrl = uploadData.url;
+      }
+
+      // Save preferences with resume URL
       const preferencesResponse = await fetch('/api/user/preferences', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          availability: {
+            ...formData.availability,
+            resumeUrl,
+          },
+        }),
       });
 
       if (!preferencesResponse.ok) {
@@ -116,6 +182,7 @@ export default function OnboardingQuestionnaire() {
     } catch (error) {
       console.error('Error:', error);
       setError('Something went wrong. Please try again.');
+      setIsSubmitting(false);
     }
   };
 
@@ -318,6 +385,41 @@ export default function OnboardingQuestionnaire() {
                       <option value='2-months'>2 months</option>
                       <option value='other'>Other</option>
                     </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Upload your resume (PDF)
+                  </label>
+                  <div className='mt-1'>
+                    <div className='flex items-center justify-center w-full'>
+                      <label className='flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100'>
+                        <div className='flex flex-col items-center justify-center pt-5 pb-6'>
+                          <Upload className='w-8 h-8 mb-2 text-gray-500' />
+                          <p className='mb-2 text-sm text-gray-500'>
+                            <span className='font-semibold'>Click to upload</span> or drag and drop
+                          </p>
+                          <p className='text-xs text-gray-500'>PDF (max. 5MB)</p>
+                        </div>
+                        <input
+                          type='file'
+                          className='hidden'
+                          accept='.pdf'
+                          onChange={handleFileChange}
+                        />
+                      </label>
+                    </div>
+                    {formData.availability.resume?.file && (
+                      <p className='mt-2 text-sm text-gray-600'>
+                        Selected file: {formData.availability.resume.file.name}
+                      </p>
+                    )}
+                    {formData.availability.resume?.error && (
+                      <p className='mt-2 text-sm text-red-600'>
+                        {formData.availability.resume.error}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
