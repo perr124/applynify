@@ -1,100 +1,108 @@
-import config from "@/config";
-import ButtonCheckout from "./ButtonCheckout";
+import ButtonCheckout from './ButtonCheckout';
 
 // <Pricing/> displays the pricing plans for your app
 // It's your Stripe config in config.js.stripe.plans[] that will be used to display the plans
 // <ButtonCheckout /> renders a button that will redirect the user to Stripe checkout called the /api/stripe/create-checkout API endpoint with the correct priceId
 
 const Pricing = () => {
+  const tiers = [
+    {
+      name: 'Lite',
+      price: 49,
+      priceId: 'price_lite',
+      description: 'Perfect for job seekers getting started',
+      features: [
+        '25 professionally applied roles',
+        'Quick service within 24 hours',
+        'Email categorization of job responses',
+        'Basic application tracking',
+        'Resume optimization tips',
+        'Standard support',
+      ],
+      buttonText: 'Get Started',
+      mostPopular: false,
+    },
+    {
+      name: 'Pro',
+      price: 99,
+      priceId: 'price_pro',
+      description: 'Best for serious job seekers',
+      features: [
+        'Unlimited professionally applied roles',
+        'Priority service within 12 hours',
+        'Advanced email categorization & analytics',
+        'Comprehensive application tracking',
+        'AI-powered resume optimization',
+        '24/7 priority support',
+        'Custom job search strategies',
+        'Interview preparation resources',
+      ],
+      buttonText: 'Go Pro',
+      mostPopular: true,
+    },
+  ];
+
   return (
-    <section className="bg-base-200 overflow-hidden" id="pricing">
-      <div className="py-24 px-8 max-w-5xl mx-auto">
-        <div className="flex flex-col text-center w-full mb-20">
-          <p className="font-medium text-primary mb-8">Pricing</p>
-          <h2 className="font-bold text-3xl lg:text-5xl tracking-tight">
-            Save hours of repetitive code and ship faster!
-          </h2>
+    <section className='py-16 bg-gray-50' id='pricing'>
+      <div className='container px-4 mx-auto'>
+        <div className='text-center mb-16'>
+          <h2 className='text-4xl font-bold mb-4'>Simple, Transparent Pricing</h2>
+          <p className='text-gray-600 text-lg'>Choose the plan that's right for your job search</p>
         </div>
 
-        <div className="relative flex justify-center flex-col lg:flex-row items-center lg:items-stretch gap-8">
-          {config.stripe.plans.map((plan) => (
-            <div key={plan.priceId} className="relative w-full max-w-lg">
-              {plan.isFeatured && (
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
-                  <span
-                    className={`badge text-xs text-primary-content font-semibold border-0 bg-primary`}
-                  >
-                    POPULAR
-                  </span>
-                </div>
+        <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
+          {tiers.map((tier) => (
+            <div
+              key={tier.name}
+              className={`relative rounded-2xl p-8 ${
+                tier.mostPopular ? 'border-2 border-primary shadow-xl' : 'border border-gray-200'
+              }`}
+            >
+              {tier.mostPopular && (
+                <span className='absolute top-0 -translate-y-1/2 bg-primary text-white px-4 py-1 rounded-full text-sm font-medium'>
+                  Most Popular
+                </span>
               )}
 
-              {plan.isFeatured && (
-                <div
-                  className={`absolute -inset-[1px] rounded-[9px] bg-primary z-10`}
-                ></div>
-              )}
-
-              <div className="relative flex flex-col h-full gap-5 lg:gap-8 z-10 bg-base-100 p-8 rounded-lg">
-                <div className="flex justify-between items-center gap-4">
-                  <div>
-                    <p className="text-lg lg:text-xl font-bold">{plan.name}</p>
-                    {plan.description && (
-                      <p className="text-base-content/80 mt-2">
-                        {plan.description}
-                      </p>
-                    )}
-                  </div>
+              <div className='text-center'>
+                <h3 className='text-2xl font-bold'>{tier.name}</h3>
+                <div className='mt-4 flex items-baseline justify-center'>
+                  <span className='text-5xl font-bold'>${tier.price}</span>
+                  <span className='ml-1 text-gray-500'>/month</span>
                 </div>
-                <div className="flex gap-2">
-                  {plan.priceAnchor && (
-                    <div className="flex flex-col justify-end mb-[4px] text-lg ">
-                      <p className="relative">
-                        <span className="absolute bg-base-content h-[1.5px] inset-x-0 top-[53%]"></span>
-                        <span className="text-base-content/80">
-                          ${plan.priceAnchor}
-                        </span>
-                      </p>
-                    </div>
-                  )}
-                  <p className={`text-5xl tracking-tight font-extrabold`}>
-                    ${plan.price}
-                  </p>
-                  <div className="flex flex-col justify-end mb-[4px]">
-                    <p className="text-xs text-base-content/60 uppercase font-semibold">
-                      USD
-                    </p>
-                  </div>
-                </div>
-                {plan.features && (
-                  <ul className="space-y-2.5 leading-relaxed text-base flex-1">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-center gap-2">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="w-[18px] h-[18px] opacity-80 shrink-0"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
+                <p className='mt-4 text-gray-600'>{tier.description}</p>
+              </div>
 
-                        <span>{feature.name} </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                <div className="space-y-2">
-                  <ButtonCheckout priceId={plan.priceId} />
+              <ul className='mt-8 space-y-4'>
+                {tier.features.map((feature) => (
+                  <li key={feature} className='flex items-start'>
+                    <svg
+                      className='h-6 w-6 text-primary flex-shrink-0'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className='ml-3 text-gray-600'>{feature}</span>
+                  </li>
+                ))}
+              </ul>
 
-                  <p className="flex items-center justify-center gap-2 text-sm text-center text-base-content/80 font-medium relative">
-                    Pay once. Access forever.
-                  </p>
-                </div>
+              <div className='mt-8'>
+                <ButtonCheckout
+                  priceId={tier.priceId}
+                  className={`w-full py-6 ${
+                    tier.mostPopular ? 'btn-primary' : 'bg-gray-100 hover:bg-gray-200 text-gray-800'
+                  }`}
+                >
+                  {tier.buttonText}
+                </ButtonCheckout>
               </div>
             </div>
           ))}
