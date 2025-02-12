@@ -81,6 +81,31 @@ export default function OnboardingQuestionnaire() {
   };
 
   const handleNext = () => {
+    // Check for any pending input before proceeding
+    if (step === 1) {
+      // Only check on step 1 where roles and locations are
+      const pendingFormData = { ...formData };
+
+      if (currentRoleInput.trim()) {
+        pendingFormData.jobPreferences.roles = [
+          ...formData.jobPreferences.roles,
+          currentRoleInput.trim(),
+        ];
+        setCurrentRoleInput('');
+      }
+
+      if (currentLocationInput.trim()) {
+        pendingFormData.jobPreferences.locations = [
+          ...formData.jobPreferences.locations,
+          currentLocationInput.trim(),
+        ];
+        setCurrentLocationInput('');
+      }
+
+      // Update the form data with any pending inputs
+      setFormData(pendingFormData);
+    }
+
     if (step === totalSteps) {
       // Submit data and redirect to dashboard
       handleSubmit();
@@ -284,15 +309,6 @@ export default function OnboardingQuestionnaire() {
                       onChange={(e) => {
                         const input = e.target.value;
                         setCurrentRoleInput(input);
-
-                        if (input.endsWith(',')) {
-                          const newRole = input.slice(0, -1).trim();
-                          if (newRole) {
-                            const updatedRoles = [...formData.jobPreferences.roles, newRole];
-                            updateFormData('jobPreferences', 'roles', updatedRoles);
-                            setCurrentRoleInput('');
-                          }
-                        }
                       }}
                     />
                   </div>
@@ -337,18 +353,6 @@ export default function OnboardingQuestionnaire() {
                       onChange={(e) => {
                         const input = e.target.value;
                         setCurrentLocationInput(input);
-
-                        if (input.endsWith(',')) {
-                          const newLocation = input.slice(0, -1).trim();
-                          if (newLocation) {
-                            const updatedLocations = [
-                              ...formData.jobPreferences.locations,
-                              newLocation,
-                            ];
-                            updateFormData('jobPreferences', 'locations', updatedLocations);
-                            setCurrentLocationInput('');
-                          }
-                        }
                       }}
                     />
                   </div>
