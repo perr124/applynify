@@ -206,7 +206,7 @@ function SidebarContent() {
           <li className='mt-auto'>
             <a
               href='/dashboard/settings'
-              className='group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold text-indigo-200 hover:bg-indigo-700 hover:text-white'
+              className='group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold text-indigo-200 hover:bg-primary-700 hover:text-white'
             >
               <Settings className='h-6 w-6 shrink-0' />
               Settings

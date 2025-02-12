@@ -562,7 +562,7 @@ export default function OnboardingQuestionnaire() {
                 type='button'
                 onClick={handleNext}
                 disabled={isSubmitting}
-                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 disabled:cursor-not-allowed'
+                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-indigo-400 disabled:cursor-not-allowed'
               >
                 {isSubmitting ? (
                   <>

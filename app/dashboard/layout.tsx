@@ -50,7 +50,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
                 <X className='h-6 w-6' />
               </button>
             </div>
-            <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4'>
+            <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
               <SidebarContent currentPath={pathname || ''} />
             </div>
           </Dialog.Panel>
@@ -59,7 +59,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
       {/* Static sidebar for desktop */}
       <div className='hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col'>
-        <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-indigo-600 px-6 pb-4'>
+        <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
           <SidebarContent currentPath={pathname || ''} />
         </div>
       </div>
@@ -118,8 +118,8 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
                     href={item.href}
                     className={classNames(
                       currentPath === item.href
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
+                        ? 'bg-primary-700 text-white'
+                        : 'text-indigo-200 hover:bg-primary-700 hover:text-white',
                       'group flex gap-x-3 rounded-md p-2 text-sm font-semibold'
                     )}
                   >
@@ -135,8 +135,8 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
               href='/dashboard/settings'
               className={classNames(
                 currentPath === '/dashboard/settings'
-                  ? 'bg-indigo-700 text-white'
-                  : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
+                  ? 'bg-primary-700 text-white'
+                  : 'text-indigo-200 hover:bg-primary-700 hover:text-white',
                 'group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold'
               )}
             >
