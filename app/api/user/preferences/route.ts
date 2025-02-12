@@ -111,7 +111,10 @@ export async function PUT(request: Request) {
         $set: {
           jobPreferences: data.jobPreferences,
           experience: data.experience,
-          availability: data.availability,
+          availability: {
+            startDate: data.availability.startDate,
+            noticeRequired: data.availability.noticeRequired,
+          },
         },
       },
       { new: true }

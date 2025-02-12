@@ -20,9 +20,9 @@ import { Dialog } from '@headlessui/react';
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
   { name: 'Update Preferences', href: '/dashboard/update-preferences', icon: Settings },
-  { name: 'Applications', href: '/dashboard/applications', icon: Briefcase },
+  // { name: 'Applications', href: '/dashboard/applications', icon: Briefcase },
   { name: 'Resume Bank', href: '/dashboard/resumes', icon: FileText },
-  { name: 'Your Assistant', href: '/dashboard/assistant', icon: Users },
+  // { name: 'Your Assistant', href: '/dashboard/assistant', icon: Users },
 ];
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {

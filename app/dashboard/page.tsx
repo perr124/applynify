@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, Menu } from '@headlessui/react';
 import {
   Home,
@@ -13,125 +13,182 @@ import {
   ChevronDown,
   Menu as MenuIcon,
   X,
+  CheckCircle,
+  AlertCircle,
 } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import config from '@/config';
 import ButtonCheckout from '@/components/ButtonCheckout';
 
-const navigation = [
-  { name: 'Overview', href: '/dashboard', icon: Home, current: true },
-  {
-    name: 'Update Preferences',
-    href: '/dashboard/update-preferences',
-    icon: Settings,
-    current: false,
-  },
-  { name: 'Applications', href: '/dashboard/applications', icon: Briefcase, current: false },
-  { name: 'Resume Bank', href: '/dashboard/resumes', icon: FileText, current: false },
-  { name: 'Your Assistant', href: '/dashboard/assistant', icon: Users, current: false },
-];
-
-const userNavigation = [
-  { name: 'Your Profile', href: '/dashboard/profile' },
-  { name: 'Settings', href: '/dashboard/settings' },
-  // { name: 'Sign out', href: '/auth/signout' },
-];
-
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
 }
 
+type ProfileStatus = {
+  preferences: boolean;
+  resume: boolean;
+};
+
 export default function DashboardHome() {
+  const [profileStatus, setProfileStatus] = useState<ProfileStatus>({
+    preferences: false,
+    resume: false,
+  });
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkProfileStatus = async () => {
+      try {
+        // Fetch preferences
+        const prefsResponse = await fetch('/api/user/preferences');
+        const prefsData = await prefsResponse.json();
+
+        // Fetch resumes
+        const resumesResponse = await fetch('/api/resumes');
+        const resumesData = await resumesResponse.json();
+
+        setProfileStatus({
+          preferences: hasCompletedPreferences(prefsData),
+          resume: resumesData.length > 0,
+        });
+      } catch (error) {
+        console.error('Error fetching profile status:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkProfileStatus();
+  }, []);
+
+  const hasCompletedPreferences = (prefs: any) => {
+    return (
+      prefs.jobPreferences?.roles?.length > 0 &&
+      prefs.experience?.yearsOfExperience &&
+      prefs.availability?.startDate
+    );
+  };
+
+  if (isLoading) {
+    return (
+      <div className='animate-pulse space-y-6'>
+        <div className='h-48 bg-gray-200 rounded-lg'></div>
+        <div className='h-64 bg-gray-200 rounded-lg'></div>
+      </div>
+    );
+  }
+
   return (
-    <>
-      {/* Stats cards */}
-      <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-        <div className='rounded-lg bg-white shadow'>
-          <div className='p-6'>
-            <h3 className='font-semibold text-lg mb-2'>Active Applications</h3>
-            <p className='text-3xl font-bold text-indigo-600'>24</p>
-            <p className='text-sm text-gray-500'>Applications in progress</p>
-          </div>
-        </div>
-
-        <div className='rounded-lg bg-white shadow'>
-          <div className='p-6'>
-            <h3 className='font-semibold text-lg mb-2'>Interviews Scheduled</h3>
-            <p className='text-3xl font-bold text-green-600'>3</p>
-            <p className='text-sm text-gray-500'>Upcoming this week</p>
-          </div>
-        </div>
-
-        <div className='rounded-lg bg-white shadow'>
-          <div className='p-6'>
-            <h3 className='font-semibold text-lg mb-2'>Response Rate</h3>
-            <p className='text-3xl font-bold text-blue-600'>38%</p>
-            <p className='text-sm text-gray-500'>Average response rate</p>
-          </div>
-        </div>
-
-        <div className='rounded-lg bg-white shadow'>
-          <div className='p-6'>
-            <h3 className='font-semibold text-lg mb-2'>Subscription Status</h3>
-            <ButtonCheckout mode='payment' priceId={config.stripe.plans[0].priceId} />
-            <div className='mt-2 text-xs text-gray-500'>
-              Price ID: {config.stripe.plans[0].priceId}
+    <div className='space-y-6'>
+      {/* Profile Completion Section */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Profile Completion</h2>
+        <div className='space-y-4'>
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center'>
+              <Briefcase className='h-5 w-5 text-gray-400 mr-2' />
+              <span className='text-sm text-gray-700'>Job Preferences</span>
             </div>
+            {profileStatus.preferences ? (
+              <div className='flex items-center text-green-600'>
+                <CheckCircle className='h-5 w-5 mr-1' />
+                <span className='text-sm'>Complete</span>
+              </div>
+            ) : (
+              <div className='flex items-center text-amber-600'>
+                <AlertCircle className='h-5 w-5 mr-1' />
+                <span className='text-sm'>Incomplete</span>
+              </div>
+            )}
+          </div>
+
+          <div className='flex items-center justify-between'>
+            <div className='flex items-center'>
+              <FileText className='h-5 w-5 text-gray-400 mr-2' />
+              <span className='text-sm text-gray-700'>Resume</span>
+            </div>
+            {profileStatus.resume ? (
+              <div className='flex items-center text-green-600'>
+                <CheckCircle className='h-5 w-5 mr-1' />
+                <span className='text-sm'>Uploaded</span>
+              </div>
+            ) : (
+              <div className='flex items-center text-amber-600'>
+                <AlertCircle className='h-5 w-5 mr-1' />
+                <span className='text-sm'>Not uploaded</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Recent applications table */}
-      <div className='mt-8'>
-        <div className='rounded-lg bg-white shadow'>
-          <div className='p-6'>
-            <h3 className='font-semibold text-lg mb-4'>Recent Applications</h3>
-            <div className='overflow-x-auto'>
-              <table className='min-w-full divide-y divide-gray-200'>
-                <thead>
-                  <tr>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase'>
-                      Company
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase'>
-                      Position
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase'>
-                      Status
-                    </th>
-                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase'>
-                      Applied Date
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className='divide-y divide-gray-200'>
-                  <tr>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Google</td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Senior Developer</td>
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      <span className='px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800'>
-                        In Review
-                      </span>
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Nov 20, 2024</td>
-                  </tr>
-                  <tr>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Microsoft</td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Product Manager</td>
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      <span className='px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800'>
-                        Interview
-                      </span>
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap text-sm'>Nov 18, 2024</td>
-                  </tr>
-                </tbody>
-              </table>
+      {/* Next Steps Section */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Next Steps</h2>
+        <div className='space-y-4'>
+          {!profileStatus.preferences && (
+            <div className='flex items-start space-x-3'>
+              <div className='flex-shrink-0'>
+                <div className='h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center'>
+                  <span className='text-amber-600 font-medium'>1</span>
+                </div>
+              </div>
+              <div>
+                <h3 className='text-sm font-medium text-gray-900'>Complete Your Preferences</h3>
+                <p className='mt-1 text-sm text-gray-500'>
+                  Tell us about your ideal job, experience, and availability.
+                </p>
+                <a
+                  href='/dashboard/update-preferences'
+                  className='mt-2 inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500'
+                >
+                  Update Preferences →
+                </a>
+              </div>
             </div>
-          </div>
+          )}
+
+          {!profileStatus.resume && (
+            <div className='flex items-start space-x-3'>
+              <div className='flex-shrink-0'>
+                <div className='h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center'>
+                  <span className='text-amber-600 font-medium'>2</span>
+                </div>
+              </div>
+              <div>
+                <h3 className='text-sm font-medium text-gray-900'>Upload Your Resume</h3>
+                <p className='mt-1 text-sm text-gray-500'>
+                  Add your resume to start applying for jobs.
+                </p>
+                <a
+                  href='/dashboard/resumes'
+                  className='mt-2 inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500'
+                >
+                  Manage Resumes →
+                </a>
+              </div>
+            </div>
+          )}
+
+          {profileStatus.preferences && profileStatus.resume && (
+            <div className='text-center py-4'>
+              <CheckCircle className='h-12 w-12 text-green-500 mx-auto mb-4' />
+              <h3 className='text-lg font-medium text-gray-900'>You're All Set!</h3>
+              <p className='mt-1 text-sm text-gray-500'>
+                Your profile is complete. We'll start looking for jobs that match your preferences.
+              </p>
+            </div>
+          )}
         </div>
       </div>
-    </>
+
+      {/* Subscription Status */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Subscription Status</h2>
+        <ButtonCheckout mode='payment' priceId={config.stripe.plans[0].priceId} />
+        <div className='mt-2 text-xs text-gray-500'>Price ID: {config.stripe.plans[0].priceId}</div>
+      </div>
+    </div>
   );
 }
 
@@ -144,24 +201,7 @@ function SidebarContent() {
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>
           <li>
-            <ul role='list' className='-mx-2 space-y-1'>
-              {navigation.map((item) => (
-                <li key={item.name}>
-                  <a
-                    href={item.href}
-                    className={classNames(
-                      item.current
-                        ? 'bg-indigo-700 text-white'
-                        : 'text-indigo-200 hover:bg-indigo-700 hover:text-white',
-                      'group flex gap-x-3 rounded-md p-2 text-sm font-semibold'
-                    )}
-                  >
-                    <item.icon className='h-6 w-6 shrink-0' />
-                    {item.name}
-                  </a>
-                </li>
-              ))}
-            </ul>
+            <ul role='list' className='-mx-2 space-y-1'></ul>
           </li>
           <li className='mt-auto'>
             <a

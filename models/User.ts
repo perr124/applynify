@@ -96,6 +96,19 @@ const userSchema = new mongoose.Schema(
         select: true,
       },
     },
+    resumes: [
+      {
+        id: String,
+        filename: String,
+        url: String,
+        uploadedAt: Date,
+        status: {
+          type: String,
+          enum: ['active', 'archived'],
+          default: 'active',
+        },
+      },
+    ],
   },
   {
     timestamps: true,
