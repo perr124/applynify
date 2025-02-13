@@ -14,6 +14,7 @@ const Pricing = () => {
       description: 'Perfect for job seekers getting started',
       features: [
         '25 professionally applied roles',
+        'Write cover letters on your behalf',
         'Quick service within 5 days',
         'Email categorization of job responses',
         'Basic application tracking',
@@ -30,10 +31,11 @@ const Pricing = () => {
       description: 'Best for serious job seekers',
       features: [
         '50 professionally applied roles',
+        'Write cover letters on your behalf',
         'Priority service within 3 days',
         'Advanced email categorization',
         '24/7 priority support',
-        'Resume update suggestions',
+        'Resume tips',
         'AI-powered resume optimization',
         'Custom job search strategies',
         'Interview preparation resources',
@@ -69,7 +71,7 @@ const Pricing = () => {
                 <h3 className='text-2xl font-bold'>{tier.name}</h3>
                 <div className='mt-4 flex items-baseline justify-center'>
                   <span className='text-5xl font-bold'>${tier.price}</span>
-                  <span className='ml-1 text-gray-500'>/month</span>
+                  <span className='text-gray-400'>one-time</span>
                 </div>
                 <p className='mt-4 text-gray-600'>{tier.description}</p>
               </div>
@@ -124,6 +126,10 @@ const Pricing = () => {
             </div>
           ))}
         </div>
+
+        <p className='text-sm text-gray-400 mt-4'>
+          One-time payment, no recurring fees or hidden charges
+        </p>
       </div>
     </section>
   );

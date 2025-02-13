@@ -14,13 +14,14 @@ const CTA = () => {
       <div className='relative hero-content text-center text-neutral-content p-8'>
         <div className='flex flex-col items-center max-w-xl p-8 md:p-0'>
           <h2 className='font-bold text-3xl md:text-5xl tracking-tight mb-8 md:mb-12'>
-            Start now, to get a job ASAP
+            Focus on Your Interviews, We'll Handle the Rest
           </h2>
           <p className='text-lg opacity-80 mb-12 md:mb-16'>
-            Don&apos;t waste time applying when we can do it for you...
+            Let our professionals manage your job applications while you prepare for what matters
+            most - landing your dream role.
           </p>
 
-          <button className='btn btn-primary btn-wide'>Get {config.appName}</button>
+          <button className='btn btn-primary btn-wide'>Start Now</button>
         </div>
       </div>
     </section>
