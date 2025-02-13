@@ -186,7 +186,7 @@ export default function UpdatePreferences() {
               Saving...
             </>
           ) : (
-            'Save Changes'
+            'Update'
           )}
         </button>
       </div>

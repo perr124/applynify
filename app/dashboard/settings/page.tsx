@@ -155,7 +155,7 @@ export default function Settings() {
               Saving...
             </>
           ) : (
-            'Save Changes'
+            'Update'
           )}
         </button>
       </div>
