@@ -3,20 +3,25 @@ import User from '@/models/User';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 });
     }
-    const user = await User.findOne({ email: session.user.email }, 'onboardingComplete');
-    console.log(user, 'onbbbb1');
-    console.log(user?.get('onboardingComplete'), 'onbbbb'); // Use get() method
 
-    return NextResponse.json({ onboardingComplete: user?.get('onboardingComplete') || false });
+    const user = await User.findOne({ email: session.user.email }).select(
+      'onboardingComplete priceId'
+    );
+
+    return new Response(
+      JSON.stringify({
+        onboardingComplete: user?.onboardingComplete || false,
+        priceId: user?.priceId || '',
+      })
+    );
   } catch (error) {
-    console.error('Error fetching onboarding status:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    console.error('Error:', error);
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
 }

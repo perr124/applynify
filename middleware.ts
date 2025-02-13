@@ -28,7 +28,7 @@ export default withAuth(
           return NextResponse.redirect(new URL('/auth/verify-email', req.url));
         }
 
-        // Only check onboarding status for dashboard route
+        // Only check onboarding status and payment for dashboard route
         if (path.startsWith('/dashboard')) {
           const onboardingRes = await fetch(`${req.nextUrl.origin}/api/user/onboarding-status`, {
             headers: {
@@ -38,6 +38,11 @@ export default withAuth(
 
           const onboardingData = await onboardingRes.json();
           if (!onboardingData.onboardingComplete) {
+            return NextResponse.redirect(new URL('/onboarding', req.url));
+          }
+
+          // Check if user has paid (has priceId)
+          if (!onboardingData.priceId) {
             return NextResponse.redirect(new URL('/onboarding', req.url));
           }
         }
