@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import User from '@/models/User';
 import { authOptions } from '@/libs/next-auth';
 
-export async function POST() {
+export async function POST(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
@@ -11,11 +11,21 @@ export async function POST() {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    await User.updateOne({ email: session.user.email }, { $set: { onboardingComplete: true } });
+    const body = await req.json();
+    const { markComplete = false } = body;
+
+    const updateData: any = {};
+
+    // If markComplete is true, set onboardingComplete to true
+    if (markComplete) {
+      updateData.onboardingComplete = true;
+    }
+
+    await User.updateOne({ email: session.user.email }, { $set: updateData });
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error completing onboarding:', error);
+    console.error('Error in complete-onboarding:', error);
     return new NextResponse('Internal Error', { status: 500 });
   }
 }

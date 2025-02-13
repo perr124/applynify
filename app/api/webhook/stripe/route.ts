@@ -112,6 +112,7 @@ export async function POST(req: NextRequest) {
         user.priceId = priceId;
         user.customerId = customerId;
         user.hasAccess = true;
+        user.onboardingComplete = true;
         await user.save();
 
         // Add success logging

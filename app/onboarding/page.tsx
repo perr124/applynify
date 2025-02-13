@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import config from '@/config';
@@ -24,7 +24,7 @@ type FormData = {
   };
   availability: {
     startDate: string;
-    noticeRequired: string;
+    noticeRequired?: string;
     resume?: {
       file: File | null;
       uploading: boolean;
@@ -70,6 +70,54 @@ export default function OnboardingQuestionnaire() {
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const router = useRouter();
 
+  // Add loading state
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Add useEffect to fetch existing preferences
+  useEffect(() => {
+    const fetchPreferences = async () => {
+      try {
+        const response = await fetch('/api/user/preferences');
+        if (!response.ok) throw new Error('Failed to fetch preferences');
+        const data = await response.json();
+
+        // Only populate form if there's existing data
+        if (data && Object.keys(data).length > 0) {
+          setFormData({
+            jobPreferences: {
+              roles: data.jobPreferences?.roles || [],
+              locations: data.jobPreferences?.locations || [],
+              salary: {
+                minimum: data.jobPreferences?.salary?.minimum || '',
+                preferred: data.jobPreferences?.salary?.preferred || '',
+              },
+            },
+            experience: {
+              yearsOfExperience: data.experience?.yearsOfExperience || '',
+              education: data.experience?.education || '',
+              skills: data.experience?.skills || [],
+            },
+            availability: {
+              startDate: data.availability?.startDate || '',
+              resume: {
+                file: null,
+                uploading: false,
+                error: null,
+              },
+            },
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching preferences:', error);
+        // Don't show error to user, just use initial form data
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchPreferences();
+  }, []);
+
   const totalSteps = 5;
 
   const updateFormData = (section: keyof FormData, field: string, value: any) => {
@@ -82,7 +130,7 @@ export default function OnboardingQuestionnaire() {
     }));
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
     // Check for any pending input before proceeding
     if (step === 1) {
       // Only check on step 1 where roles and locations are
@@ -113,11 +161,67 @@ export default function OnboardingQuestionnaire() {
         setError('Please select a plan to continue');
         return;
       }
-      // Submit data and redirect to dashboard
+      // Submit data and redirect to payment
       handleSubmit();
     } else if (step === totalSteps - 1) {
-      // Move to pricing step
-      setStep((prev) => prev + 1);
+      // Save preferences before moving to pricing step
+      try {
+        // Upload resume if exists
+        let resumeUrl = null;
+        if (formData.availability.resume?.file) {
+          const uploadFormData = new FormData();
+          uploadFormData.append('file', formData.availability.resume.file);
+
+          try {
+            const uploadResponse = await fetch('/api/upload-resume', {
+              method: 'POST',
+              body: uploadFormData,
+            });
+
+            if (!uploadResponse.ok) {
+              throw new Error('Failed to upload resume');
+            }
+
+            const uploadData = await uploadResponse.json();
+            resumeUrl = uploadData.url;
+          } catch (uploadError) {
+            console.error('Resume upload error:', uploadError);
+            setError('Failed to upload resume. Please try again.');
+            return;
+          }
+        }
+
+        // Save preferences
+        const preferencesResponse = await fetch('/api/user/preferences', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            jobPreferences: formData.jobPreferences,
+            experience: formData.experience,
+            availability: {
+              startDate: formData.availability.startDate,
+              resumeUrl: resumeUrl,
+            },
+          }),
+        });
+
+        if (!preferencesResponse.ok) {
+          const data = await preferencesResponse.json();
+          if (data.errors) {
+            setError(data.errors.join(', '));
+            return;
+          }
+          throw new Error('Failed to save preferences');
+        }
+
+        // Move to pricing step
+        setStep((prev) => prev + 1);
+      } catch (error) {
+        console.error('Error saving preferences:', error);
+        setError('Failed to save preferences. Please try again.');
+      }
     } else {
       setStep((prev) => prev + 1);
     }
@@ -208,93 +312,25 @@ export default function OnboardingQuestionnaire() {
     setError(null);
 
     try {
-      // Upload resume if exists
-      let resumeUrl = null;
-      if (formData.availability.resume?.file) {
-        // First upload the file
-        const uploadFormData = new FormData();
-        uploadFormData.append('file', formData.availability.resume.file);
-
-        try {
-          const uploadResponse = await fetch('/api/upload-resume', {
-            method: 'POST',
-            body: uploadFormData,
-          });
-
-          if (!uploadResponse.ok) {
-            throw new Error('Failed to upload resume');
-          }
-
-          const uploadData = await uploadResponse.json();
-          resumeUrl = uploadData.url;
-        } catch (uploadError) {
-          console.error('Resume upload error:', uploadError);
-          setError('Failed to upload resume. Please try again.');
-          setIsSubmitting(false);
-          return;
-        }
-      }
-
-      // Save preferences
-      const preferencesResponse = await fetch('/api/user/preferences', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          jobPreferences: formData.jobPreferences,
-          experience: formData.experience,
-          availability: {
-            startDate: formData.availability.startDate,
-            resumeUrl: resumeUrl,
-          },
-        }),
-      });
-
-      if (!preferencesResponse.ok) {
-        const data = await preferencesResponse.json();
-        if (data.errors) {
-          setError(data.errors.join(', '));
-          setIsSubmitting(false);
-          return;
-        }
-        throw new Error('Failed to save preferences');
-      }
-
-      // Mark onboarding as complete
-      const onboardingResponse = await fetch('/api/user/complete-onboarding', {
-        method: 'POST',
-      });
-
-      if (!onboardingResponse.ok) {
-        throw new Error('Failed to complete onboarding');
-      }
-
       // Start payment flow with selected price
-      try {
-        const response = await apiClient.post('/stripe/create-checkout', {
-          priceId: selectedPriceId,
-          successUrl: `${window.location.origin}/dashboard`,
-          cancelUrl: window.location.href,
-          mode: 'payment',
-        });
+      const response = await apiClient.post('/stripe/create-checkout', {
+        priceId: selectedPriceId,
+        successUrl: `${window.location.origin}/dashboard`,
+        cancelUrl: window.location.href,
+        mode: 'payment',
+      });
 
-        // @ts-ignore
-        if (!response.url) {
-          console.error('No URL in response:', response);
-          throw new Error('No checkout URL received');
-        }
-
-        // @ts-ignore
-        window.location.href = response.url;
-      } catch (e) {
-        console.error('Payment error:', e);
-        setError('Payment initialization failed. Please try again.');
-        setIsSubmitting(false);
+      // @ts-ignore
+      if (!response.url) {
+        console.error('No URL in response:', response);
+        throw new Error('No checkout URL received');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      setError('Something went wrong. Please try again.');
+
+      // @ts-ignore
+      window.location.href = response.url;
+    } catch (e) {
+      console.error('Payment error:', e);
+      setError('Payment initialization failed. Please try again.');
       setIsSubmitting(false);
     }
   };
@@ -413,7 +449,7 @@ export default function OnboardingQuestionnaire() {
         name: 'Lite',
         price: 29.99,
         priceId: config.stripe.plans[0].priceId,
-        description: 'Perfect for job seekers getting started',
+        description: 'For job seekers starting out',
         features: [
           '25 jobs applied to directly on company sites',
           'Resume revamp and optimization',
@@ -489,6 +525,26 @@ export default function OnboardingQuestionnaire() {
       </div>
     );
   };
+
+  // Add loading state UI
+  if (isLoading) {
+    return (
+      <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+        <div className='sm:mx-auto sm:w-full sm:max-w-md'>
+          <div className='bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10'>
+            <div className='animate-pulse space-y-6'>
+              <div className='h-4 bg-gray-200 rounded w-3/4 mx-auto'></div>
+              <div className='space-y-4'>
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className='h-10 bg-gray-200 rounded'></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='min-h-screen bg-gray-50 flex flex-col'>
@@ -839,7 +895,7 @@ export default function OnboardingQuestionnaire() {
               <button
                 type='button'
                 onClick={handleNext}
-                disabled={isSubmitting}
+                disabled={isSubmitting || (step === totalSteps && !selectedPriceId)}
                 className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed'
               >
                 {isSubmitting ? (
