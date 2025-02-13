@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Bell, CreditCard, Shield, Loader2, CheckCircle } from 'lucide-react';
+import { User, Mail, Bell, CreditCard, Shield, Loader2, CheckCircle, X } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 
 type UserSettings = {
@@ -13,6 +13,7 @@ type UserSettings = {
     jobAlerts: boolean;
     marketing: boolean;
   };
+  hasPasswordAuth: boolean;
 };
 
 export default function Settings() {
@@ -20,6 +21,14 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: '',
+  });
+  const [hasPasswordAuth, setHasPasswordAuth] = useState(false);
 
   useEffect(() => {
     fetchSettings();
@@ -38,7 +47,9 @@ export default function Settings() {
           jobAlerts: data.notifications?.jobAlerts ?? true,
           marketing: data.notifications?.marketing ?? false,
         },
+        hasPasswordAuth: data.hasPasswordAuth,
       });
+      setHasPasswordAuth(data.hasPasswordAuth);
     } catch (error) {
       console.error('Error fetching settings:', error);
     } finally {
@@ -62,6 +73,54 @@ export default function Settings() {
       setTimeout(() => setShowSuccess(false), 3000);
     } catch (error) {
       console.error('Error:', error);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordError("New passwords don't match");
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 8) {
+      setPasswordError('New password must be at least 8 characters long');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/user/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to change password');
+      }
+
+      // Reset form and close modal
+      setPasswordForm({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: '',
+      });
+      setIsPasswordModalOpen(false);
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } catch (error) {
+      console.error('Password change error:', error);
+      setPasswordError(error instanceof Error ? error.message : 'Failed to change password');
     } finally {
       setIsSaving(false);
     }
@@ -190,15 +249,115 @@ export default function Settings() {
         </div>
 
         {/* Account Security */}
-        <div className='bg-white shadow rounded-lg p-6'>
-          <div className='flex items-center mb-6'>
-            <Shield className='h-5 w-5 text-gray-400 mr-2' />
-            <h2 className='text-lg font-semibold text-gray-900'>Security</h2>
+        {hasPasswordAuth && (
+          <div className='bg-white shadow rounded-lg p-6'>
+            <div className='flex items-center mb-6'>
+              <Shield className='h-5 w-5 text-gray-400 mr-2' />
+              <h2 className='text-lg font-semibold text-gray-900'>Security</h2>
+            </div>
+
+            <button
+              onClick={() => setIsPasswordModalOpen(true)}
+              className='inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'
+            >
+              Change Password
+            </button>
+
+            {/* Password Change Modal - only rendered if hasPasswordAuth is true */}
+            {isPasswordModalOpen && hasPasswordAuth && (
+              <div className='fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50'>
+                <div className='relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white'>
+                  <div className='flex justify-between items-center mb-4'>
+                    <h3 className='text-lg font-medium'>Change Password</h3>
+                    <button
+                      onClick={() => setIsPasswordModalOpen(false)}
+                      className='text-gray-400 hover:text-gray-500'
+                    >
+                      <X className='h-5 w-5' />
+                    </button>
+                  </div>
+
+                  {passwordError && (
+                    <div className='mb-4 p-2 bg-red-50 text-red-500 text-sm rounded'>
+                      {passwordError}
+                    </div>
+                  )}
+
+                  <form onSubmit={handlePasswordChange} className='space-y-4'>
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700'>
+                        Current Password
+                      </label>
+                      <input
+                        type='password'
+                        value={passwordForm.currentPassword}
+                        onChange={(e) =>
+                          setPasswordForm({ ...passwordForm, currentPassword: e.target.value })
+                        }
+                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700'>
+                        New Password
+                      </label>
+                      <input
+                        type='password'
+                        value={passwordForm.newPassword}
+                        onChange={(e) =>
+                          setPasswordForm({ ...passwordForm, newPassword: e.target.value })
+                        }
+                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className='block text-sm font-medium text-gray-700'>
+                        Confirm New Password
+                      </label>
+                      <input
+                        type='password'
+                        value={passwordForm.confirmPassword}
+                        onChange={(e) =>
+                          setPasswordForm({ ...passwordForm, confirmPassword: e.target.value })
+                        }
+                        className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 sm:text-sm'
+                        required
+                      />
+                    </div>
+
+                    <div className='flex justify-end space-x-3 mt-4'>
+                      <button
+                        type='button'
+                        onClick={() => setIsPasswordModalOpen(false)}
+                        className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type='submit'
+                        disabled={isSaving}
+                        className='inline-flex justify-center items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50'
+                      >
+                        {isSaving ? (
+                          <>
+                            <Loader2 className='animate-spin -ml-1 mr-2 h-5 w-5' />
+                            Saving...
+                          </>
+                        ) : (
+                          'Change Password'
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )}
           </div>
-          <button className='inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'>
-            Change Password
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -70,7 +70,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       private: true,
-      select: false, // Don't include password in query results by default
+      select: false, // This ensures password isn't returned by default
     },
     resetPasswordToken: {
       type: String,
@@ -159,4 +159,5 @@ userSchema.virtual('name').get(function () {
   return `${this.firstName} ${this.lastName}`;
 });
 
-export default mongoose.models.User || mongoose.model('User', userSchema);
+const User = mongoose.models.User || mongoose.model('User', userSchema);
+export default User;
