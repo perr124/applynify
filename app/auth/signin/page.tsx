@@ -30,7 +30,7 @@ export default function SignIn() {
       if (result?.error) {
         setError(result.error);
       } else {
-        router.push('/dashboard'); // Or wherever you want to redirect after login
+        router.push('/onboarding'); // Or wherever you want to redirect after login
         router.refresh();
       }
     } catch (error) {
@@ -42,7 +42,7 @@ export default function SignIn() {
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
-    signIn('google', { callbackUrl: '/dashboard' });
+    signIn('google', { callbackUrl: '/onboarding' });
   };
 
   return (

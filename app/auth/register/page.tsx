@@ -66,7 +66,7 @@ export default function Register() {
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
-    signIn('google', { callbackUrl: '/dashboard' });
+    signIn('google', { callbackUrl: '/onboarding' });
   };
 
   return (
