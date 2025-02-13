@@ -45,13 +45,39 @@ export async function POST(req: NextRequest) {
         const stripeObject: Stripe.Checkout.Session = event.data.object as Stripe.Checkout.Session;
 
         const session = await findCheckoutSession(stripeObject.id);
+        console.log('Retrieved checkout session:', {
+          sessionId: stripeObject.id,
+          hasCustomer: !!session?.customer,
+          hasLineItems: !!session?.line_items?.data?.length,
+          priceId: session?.line_items?.data[0]?.price?.id,
+        });
 
+        // ISSUE: These could be undefined if session retrieval fails
         const customerId = session?.customer;
         const priceId = session?.line_items?.data[0]?.price.id;
         const userId = stripeObject.client_reference_id;
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
 
-        if (!plan) break;
+        // Add error handling and logging
+        if (!session) {
+          console.error('Failed to retrieve checkout session:', stripeObject.id);
+          throw new Error('Failed to retrieve checkout session');
+        }
+
+        if (!customerId) {
+          console.error('No customer ID found in session:', stripeObject.id);
+          throw new Error('No customer ID found in session');
+        }
+
+        if (!priceId) {
+          console.error('No price ID found in session:', stripeObject.id);
+          throw new Error('No price ID found in session');
+        }
+
+        if (!plan) {
+          console.error('No matching plan found for price ID:', priceId);
+          throw new Error('No matching plan found');
+        }
 
         const customer = (await stripe.customers.retrieve(customerId as string)) as Stripe.Customer;
 
@@ -76,11 +102,24 @@ export async function POST(req: NextRequest) {
           throw new Error('No user found');
         }
 
-        // Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
+        // Add extra validation before saving
+        if (!priceId || !customerId) {
+          console.error('Missing required fields before user save:', { priceId, customerId });
+          throw new Error('Missing required fields for user update');
+        }
+
+        // Update user data
         user.priceId = priceId;
         user.customerId = customerId;
         user.hasAccess = true;
         await user.save();
+
+        // Add success logging
+        console.log('Successfully updated user after payment:', {
+          userId: user._id,
+          priceId,
+          customerId,
+        });
 
         // Extra: send email with user link, product page, etc...
         // try {
