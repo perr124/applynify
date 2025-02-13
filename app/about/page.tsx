@@ -1,13 +1,14 @@
 import { Metadata } from 'next';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Suspense } from 'react';
 
 export const metadata: Metadata = {
   title: 'About Us',
   description: 'Learn more about our mission and what drives us forward.',
 };
 
-export default function About() {
+function AboutPage() {
   return (
     <>
       <Header />
@@ -97,5 +98,13 @@ export default function About() {
 
       <Footer />
     </>
+  );
+}
+
+export default function About() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AboutPage />
+    </Suspense>
   );
 }
