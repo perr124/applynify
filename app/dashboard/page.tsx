@@ -267,11 +267,11 @@ export default function DashboardHome() {
       </div>
 
       {/* Subscription Status */}
-      <div className='bg-white shadow rounded-lg p-6'>
+      {/* <div className='bg-white shadow rounded-lg p-6'>
         <h2 className='text-lg font-semibold text-gray-900 mb-4'>Subscription Status</h2>
         <ButtonCheckout mode='payment' priceId={config.stripe.plans[0].priceId} />
         <div className='mt-2 text-xs text-gray-500'>Price ID: {config.stripe.plans[0].priceId}</div>
-      </div>
+      </div> */}
     </div>
   );
 }
