@@ -1,5 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
+import React from 'react';
 import { Dialog, Menu } from '@headlessui/react';
 import {
   Home,
@@ -15,6 +16,8 @@ import {
   X,
   CheckCircle,
   AlertCircle,
+  Clock,
+  XCircle,
 } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import config from '@/config';
@@ -27,6 +30,7 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 type ProfileStatus = {
   preferences: boolean;
   resume: boolean;
+  applicationsStatus?: 'started' | 'pending' | 'completed';
 };
 
 export default function DashboardHome() {
@@ -50,6 +54,7 @@ export default function DashboardHome() {
         setProfileStatus({
           preferences: hasCompletedPreferences(prefsData),
           resume: resumesData.length > 0,
+          applicationsStatus: prefsData.applicationsStatus || 'started',
         });
       } catch (error) {
         console.error('Error fetching profile status:', error);
@@ -69,6 +74,47 @@ export default function DashboardHome() {
     );
   };
 
+  const getApplicationStatusInfo = (status: string) => {
+    switch (status) {
+      case 'started':
+        return {
+          icon: Clock,
+          color: 'text-blue-600',
+          bgColor: 'bg-blue-50',
+          borderColor: 'border-blue-200',
+          label: 'Applications Started',
+          description: 'Your application process has begun',
+        };
+      case 'pending':
+        return {
+          icon: AlertCircle,
+          color: 'text-amber-600',
+          bgColor: 'bg-amber-50',
+          borderColor: 'border-amber-200',
+          label: 'Applications Pending',
+          description: 'Your applications are being reviewed',
+        };
+      case 'completed':
+        return {
+          icon: CheckCircle,
+          color: 'text-green-600',
+          bgColor: 'bg-green-50',
+          borderColor: 'border-green-200',
+          label: 'Applications Completed',
+          description: 'All applications have been processed',
+        };
+      default:
+        return {
+          icon: XCircle,
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-50',
+          borderColor: 'border-gray-200',
+          label: 'Status Unknown',
+          description: 'Unable to determine status',
+        };
+    }
+  };
+
   if (isLoading) {
     return (
       <div className='animate-pulse space-y-6'>
@@ -80,6 +126,44 @@ export default function DashboardHome() {
 
   return (
     <div className='space-y-6'>
+      {/* Application Status Widget */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Application Status</h2>
+        {profileStatus.applicationsStatus && (
+          <div
+            className={classNames(
+              'rounded-lg border p-4',
+              getApplicationStatusInfo(profileStatus.applicationsStatus).borderColor,
+              getApplicationStatusInfo(profileStatus.applicationsStatus).bgColor
+            )}
+          >
+            <div className='flex items-center'>
+              <div
+                className={classNames(
+                  'flex-shrink-0 mr-3',
+                  getApplicationStatusInfo(profileStatus.applicationsStatus).color
+                )}
+              >
+                {React.createElement(
+                  getApplicationStatusInfo(profileStatus.applicationsStatus).icon,
+                  {
+                    className: 'h-6 w-6',
+                  }
+                )}
+              </div>
+              <div>
+                <h3 className='text-sm font-medium text-gray-900'>
+                  {getApplicationStatusInfo(profileStatus.applicationsStatus).label}
+                </h3>
+                <p className='mt-1 text-sm text-gray-500'>
+                  {getApplicationStatusInfo(profileStatus.applicationsStatus).description}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Profile Completion Section */}
       <div className='bg-white shadow rounded-lg p-6'>
         <h2 className='text-lg font-semibold text-gray-900 mb-4'>Profile Completion</h2>
