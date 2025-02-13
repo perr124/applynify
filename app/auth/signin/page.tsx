@@ -49,9 +49,7 @@ export default function SignIn() {
     <div className='flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-white to-gray-100 px-4 py-12 sm:px-6 lg:px-8'>
       <div className='w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg'>
         <div>
-          <h2 className='text-center text-3xl font-bold tracking-tight text-gray-900'>
-            Welcome back
-          </h2>
+          <h2 className='text-center text-3xl font-bold tracking-tight text-gray-900'>Welcome</h2>
           <p className='mt-2 text-center text-sm text-gray-600'>
             Sign in to continue to your account
           </p>
