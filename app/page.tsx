@@ -16,7 +16,7 @@ export default function Home() {
       </Suspense>
       <main>
         <Hero />
-        <Problem />
+        {/* <Problem /> */}
         {/* Worry about below later */}
         {/* <FeaturesAccordion /> */}
         <Pricing />
