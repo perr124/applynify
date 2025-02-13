@@ -34,9 +34,10 @@ function AboutPage() {
                 only about 2% of applications resulting in an interview.
               </p>
               <p className='mt-4 text-lg text-slate-600'>
-                We're here to change these statistics. Our team of in-house professionals takes the
-                burden of application preparation off your shoulders, crafting compelling cover
-                letters and optimizing resumes that actually get noticed by hiring managers.
+                We're here to change these statistics. Our team of in-house professionals vets and
+                enhances your resume, takes the burden of application preparation off your
+                shoulders, and crafts compelling cover letters that actually get noticed by hiring
+                managers.
               </p>
             </div>
             <div>

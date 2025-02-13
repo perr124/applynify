@@ -27,9 +27,9 @@ const Hero = () => {
           </h1>
 
           <p className='text-lg opacity-80 leading-relaxed max-w-2xl mx-auto'>
-            Our team of dedicated human assistants take care of your job applications from start to
-            finish—finding the best opportunities and submitting tailored applications to help you
-            skip the frustrating process.
+            Our team of dedicated assistants take care of your job applications from start to
+            finish—vetting and enhancing your resume, finding the best opportunities, and submitting
+            tailored applications to help you skip the frustrating process.
           </p>
         </div>
 
