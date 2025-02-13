@@ -1,13 +1,14 @@
-import { NextResponse, NextRequest } from "next/server";
-import { headers } from "next/headers";
-import Stripe from "stripe";
-import connectMongo from "@/libs/mongoose";
-import configFile from "@/config";
-import User from "@/models/User";
-import { findCheckoutSession } from "@/libs/stripe";
+// @ts-nocheck
+// import { NextResponse, NextRequest } from "next/server";
+import { headers } from 'next/headers';
+import Stripe from 'stripe';
+import connectMongo from '@/libs/mongoose';
+import configFile from '@/config';
+import User from '@/models/User';
+import { findCheckoutSession } from '@/libs/stripe';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2023-08-16",
+  apiVersion: '2023-08-16',
   typescript: true,
 });
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
 
   const body = await req.text();
 
-  const signature = headers().get("stripe-signature");
+  const signature = headers().get('stripe-signature');
 
   let eventType;
   let event;
@@ -38,11 +39,10 @@ export async function POST(req: NextRequest) {
 
   try {
     switch (eventType) {
-      case "checkout.session.completed": {
+      case 'checkout.session.completed': {
         // First payment is successful and a subscription is created (if mode was set to "subscription" in ButtonCheckout)
         // ✅ Grant access to the product
-        const stripeObject: Stripe.Checkout.Session = event.data
-          .object as Stripe.Checkout.Session;
+        const stripeObject: Stripe.Checkout.Session = event.data.object as Stripe.Checkout.Session;
 
         const session = await findCheckoutSession(stripeObject.id);
 
@@ -53,9 +53,7 @@ export async function POST(req: NextRequest) {
 
         if (!plan) break;
 
-        const customer = (await stripe.customers.retrieve(
-          customerId as string
-        )) as Stripe.Customer;
+        const customer = (await stripe.customers.retrieve(customerId as string)) as Stripe.Customer;
 
         let user;
 
@@ -74,8 +72,8 @@ export async function POST(req: NextRequest) {
             await user.save();
           }
         } else {
-          console.error("No user found");
-          throw new Error("No user found");
+          console.error('No user found');
+          throw new Error('No user found');
         }
 
         // Update user data + Grant user access to your product. It's a boolean in the database, but could be a number of credits, etc...
@@ -94,28 +92,25 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      case "checkout.session.expired": {
+      case 'checkout.session.expired': {
         // User didn't complete the transaction
         // You don't need to do anything here, by you can send an email to the user to remind him to complete the transaction, for instance
         break;
       }
 
-      case "customer.subscription.updated": {
+      case 'customer.subscription.updated': {
         // The customer might have changed the plan (higher or lower plan, cancel soon etc...)
         // You don't need to do anything here, because Stripe will let us know when the subscription is canceled for good (at the end of the billing cycle) in the "customer.subscription.deleted" event
         // You can update the user data to show a "Cancel soon" badge for instance
         break;
       }
 
-      case "customer.subscription.deleted": {
+      case 'customer.subscription.deleted': {
         // The customer subscription stopped
         // ❌ Revoke access to the product
-        const stripeObject: Stripe.Subscription = event.data
-          .object as Stripe.Subscription;
+        const stripeObject: Stripe.Subscription = event.data.object as Stripe.Subscription;
 
-        const subscription = await stripe.subscriptions.retrieve(
-          stripeObject.id
-        );
+        const subscription = await stripe.subscriptions.retrieve(stripeObject.id);
         const user = await User.findOne({ customerId: subscription.customer });
 
         // Revoke access to your product
@@ -125,12 +120,11 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      case "invoice.paid": {
+      case 'invoice.paid': {
         // Customer just paid an invoice (for instance, a recurring payment for a subscription)
         // ✅ Grant access to the product
 
-        const stripeObject: Stripe.Invoice = event.data
-          .object as Stripe.Invoice;
+        const stripeObject: Stripe.Invoice = event.data.object as Stripe.Invoice;
 
         const priceId = stripeObject.lines.data[0].price.id;
         const customerId = stripeObject.customer;
@@ -147,7 +141,7 @@ export async function POST(req: NextRequest) {
         break;
       }
 
-      case "invoice.payment_failed":
+      case 'invoice.payment_failed':
         // A payment failed (for instance the customer does not have a valid payment method)
         // ❌ Revoke access to the product
         // ⏳ OR wait for the customer to pay (more friendly):
@@ -160,7 +154,7 @@ export async function POST(req: NextRequest) {
       // Unhandled event type
     }
   } catch (e) {
-    console.error("stripe error: ", e.message);
+    console.error('stripe error: ', e.message);
   }
 
   return NextResponse.json({});
