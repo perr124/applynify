@@ -68,6 +68,7 @@ export default function OnboardingQuestionnaire() {
   const [isDragging, setIsDragging] = useState(false);
   const [currentRoleInput, setCurrentRoleInput] = useState('');
   const [currentLocationInput, setCurrentLocationInput] = useState('');
+  const [currentSkillInput, setCurrentSkillInput] = useState('');
   const router = useRouter();
 
   const totalSteps = 3;
@@ -332,6 +333,15 @@ export default function OnboardingQuestionnaire() {
                       onChange={(e) => {
                         const input = e.target.value;
                         setCurrentRoleInput(input);
+
+                        if (input.endsWith(',')) {
+                          const newRole = input.slice(0, -1).trim();
+                          if (newRole) {
+                            const updatedRoles = [...formData.jobPreferences.roles, newRole];
+                            updateFormData('jobPreferences', 'roles', updatedRoles);
+                            setCurrentRoleInput('');
+                          }
+                        }
                       }}
                     />
                   </div>
@@ -376,6 +386,18 @@ export default function OnboardingQuestionnaire() {
                       onChange={(e) => {
                         const input = e.target.value;
                         setCurrentLocationInput(input);
+
+                        if (input.endsWith(',')) {
+                          const newLocation = input.slice(0, -1).trim();
+                          if (newLocation) {
+                            const updatedLocations = [
+                              ...formData.jobPreferences.locations,
+                              newLocation,
+                            ];
+                            updateFormData('jobPreferences', 'locations', updatedLocations);
+                            setCurrentLocationInput('');
+                          }
+                        }
                       }}
                     />
                   </div>
@@ -461,16 +483,46 @@ export default function OnboardingQuestionnaire() {
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='e.g., JavaScript, React, Project Management'
-                      value={formData.experience.skills.join(', ')}
-                      onChange={(e) =>
-                        updateFormData(
-                          'experience',
-                          'skills',
-                          e.target.value.split(',').map((s) => s.trim())
-                        )
-                      }
+                      value={currentSkillInput}
+                      onChange={(e) => {
+                        const input = e.target.value;
+                        setCurrentSkillInput(input);
+
+                        if (input.endsWith(',')) {
+                          const newSkill = input.slice(0, -1).trim();
+                          if (newSkill) {
+                            const updatedSkills = [...formData.experience.skills, newSkill];
+                            updateFormData('experience', 'skills', updatedSkills);
+                            setCurrentSkillInput('');
+                          }
+                        }
+                      }}
                     />
                   </div>
+                  {formData.experience.skills.length > 0 && (
+                    <div className='mt-2 flex flex-wrap gap-2'>
+                      {formData.experience.skills.map((skill, index) => (
+                        <span
+                          key={index}
+                          className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
+                        >
+                          {skill}
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const updatedSkills = formData.experience.skills.filter(
+                                (_, i) => i !== index
+                              );
+                              updateFormData('experience', 'skills', updatedSkills);
+                            }}
+                            className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                          >
+                            <span className='sr-only'>Remove {skill}</span>×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <div>
