@@ -17,11 +17,20 @@ export interface Availability {
   startDate: string;
 }
 
+export interface Resume {
+  id: string;
+  filename: string;
+  url: string;
+  uploadedAt: Date;
+  status: 'active' | 'archived';
+}
+
 export interface PreferencesData {
   jobPreferences: JobPreferences;
   experience: Experience;
   availability: Availability;
   applicationsStatus?: 'started' | 'pending' | 'completed';
+  resumes?: Resume[];
 }
 
 export function validatePreferences(data: PreferencesData): { valid: boolean; errors: string[] } {
@@ -61,6 +70,14 @@ export function validatePreferences(data: PreferencesData): { valid: boolean; er
     }
   } else {
     errors.push('Availability details are required');
+  }
+
+  // Validate resumes if they exist
+  if (data.resumes && Array.isArray(data.resumes)) {
+    const activeResumes = data.resumes.filter((resume) => resume.status === 'active');
+    if (activeResumes.length > 1) {
+      errors.push('Only one resume can be active at a time');
+    }
   }
 
   return {

@@ -83,6 +83,10 @@ export default function OnboardingQuestionnaire() {
 
         // Only populate form if there's existing data
         if (data && Object.keys(data).length > 0) {
+          console.log('data4334', data);
+          // Get the most recent active resume if it exists
+          const activeResume = data.resumes && data.resumes[0];
+
           setFormData({
             jobPreferences: {
               roles: data.jobPreferences?.roles || [],
@@ -100,7 +104,7 @@ export default function OnboardingQuestionnaire() {
             availability: {
               startDate: data.availability?.startDate || '',
               resume: {
-                file: null,
+                file: activeResume ? new File([], activeResume.filename) : null,
                 uploading: false,
                 error: null,
               },

@@ -79,7 +79,7 @@ export async function GET() {
 
     const user = await User.findOne(
       { email: session.user.email },
-      'jobPreferences experience availability applicationsStatus'
+      'jobPreferences experience availability applicationsStatus resumes'
     );
 
     if (!user) {
@@ -91,6 +91,7 @@ export async function GET() {
       experience: user.experience || {},
       availability: user.availability || {},
       applicationsStatus: user.applicationsStatus || 'started',
+      resumes: user.resumes || [],
     });
   } catch (error) {
     console.error('Error fetching preferences:', error);
@@ -117,7 +118,6 @@ export async function PUT(request: Request) {
           availability: {
             startDate: data.availability.startDate,
           },
-          applicationsStatus: 'pending',
         },
       },
       { new: true }
