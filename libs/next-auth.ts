@@ -28,8 +28,8 @@ export const authOptions: NextAuthOptionsExtended = {
       clientSecret: process.env.GOOGLE_SECRET!,
       async profile(profile) {
         // Parse first and last name from Google profile
-        let firstName = profile.given_name || '';
-        let lastName = profile.family_name || '';
+        let firstName = profile.given_name || ' ';
+        let lastName = profile.family_name || ' ';
 
         // If given_name/family_name not available, try to parse from name
         if (!firstName && !lastName && profile.name) {
