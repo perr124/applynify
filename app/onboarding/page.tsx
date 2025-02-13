@@ -67,9 +67,10 @@ export default function OnboardingQuestionnaire() {
   const [currentRoleInput, setCurrentRoleInput] = useState('');
   const [currentLocationInput, setCurrentLocationInput] = useState('');
   const [currentSkillInput, setCurrentSkillInput] = useState('');
+  const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
   const router = useRouter();
 
-  const totalSteps = 4;
+  const totalSteps = 5;
 
   const updateFormData = (section: keyof FormData, field: string, value: any) => {
     setFormData((prev) => ({
@@ -108,10 +109,14 @@ export default function OnboardingQuestionnaire() {
     }
 
     if (step === totalSteps) {
+      if (!selectedPriceId) {
+        setError('Please select a plan to continue');
+        return;
+      }
       // Submit data and redirect to dashboard
       handleSubmit();
     } else if (step === totalSteps - 1) {
-      // Move to review step
+      // Move to pricing step
       setStep((prev) => prev + 1);
     } else {
       setStep((prev) => prev + 1);
@@ -265,10 +270,10 @@ export default function OnboardingQuestionnaire() {
         throw new Error('Failed to complete onboarding');
       }
 
-      // Start payment flow
+      // Start payment flow with selected price
       try {
         const response = await apiClient.post('/stripe/create-checkout', {
-          priceId: config.stripe.plans[0].priceId,
+          priceId: selectedPriceId,
           successUrl: `${window.location.origin}/dashboard`,
           cancelUrl: window.location.href,
           mode: 'payment',
@@ -397,6 +402,89 @@ export default function OnboardingQuestionnaire() {
               </div>
             </dl>
           </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPricingSection = () => {
+    const pricingTiers = [
+      {
+        name: 'Lite',
+        price: 49,
+        priceId: 'price_lite',
+        description: 'Perfect for job seekers getting started',
+        features: [
+          '25 jobs applied to directly on company sites',
+          'Resume revamp and optimization',
+          'Write cover letters on your behalf',
+          'Quick service within 5 days',
+          'Email categorization of job responses',
+          'Basic application tracking',
+          'Standard support',
+        ],
+      },
+      {
+        name: 'Pro',
+        price: 99,
+        priceId: 'price_pro',
+        description: 'Best for serious job seekers',
+        features: [
+          '50 jobs applied to directly on company sites',
+          'Resume revamp and optimization',
+          'Write cover letters on your behalf',
+          'Priority service within 3 days',
+          'Advanced email categorization',
+          '24/7 priority support',
+          'Custom job search strategies',
+          'Interview preparation resources',
+        ],
+      },
+    ];
+
+    return (
+      <div className='space-y-6'>
+        <h3 className='text-lg font-medium text-gray-900 mb-4'>Select Your Plan</h3>
+        <div className='grid gap-6'>
+          {pricingTiers.map((tier) => (
+            <div
+              key={tier.priceId}
+              className={`relative rounded-lg border-2 p-6 cursor-pointer transition-all ${
+                selectedPriceId === tier.priceId
+                  ? 'border-primary-500 bg-primary-50'
+                  : 'border-gray-200 hover:border-primary-200'
+              }`}
+              onClick={() => setSelectedPriceId(tier.priceId)}
+            >
+              <div className='flex items-center justify-between mb-4'>
+                <div>
+                  <h4 className='text-xl font-semibold'>{tier.name}</h4>
+                  <p className='text-gray-600'>{tier.description}</p>
+                </div>
+                <div className='text-2xl font-bold'>${tier.price}</div>
+              </div>
+              <ul className='space-y-3'>
+                {tier.features.map((feature) => (
+                  <li key={feature} className='flex items-start'>
+                    <svg
+                      className='h-5 w-5 text-primary-500 flex-shrink-0'
+                      fill='none'
+                      viewBox='0 0 24 24'
+                      stroke='currentColor'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth={2}
+                        d='M5 13l4 4L19 7'
+                      />
+                    </svg>
+                    <span className='ml-3 text-gray-600'>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -729,6 +817,9 @@ export default function OnboardingQuestionnaire() {
             {/* Step 4: Review */}
             {step === 4 && renderReviewSection()}
 
+            {/* Step 5: Pricing */}
+            {step === 5 && renderPricingSection()}
+
             {/* Navigation Buttons */}
             <div className='mt-6 flex items-center justify-between'>
               <button
@@ -776,7 +867,11 @@ export default function OnboardingQuestionnaire() {
                   </>
                 ) : (
                   <>
-                    {step === totalSteps ? 'Submit' : step === totalSteps - 1 ? 'Review' : 'Next'}
+                    {step === totalSteps
+                      ? 'Proceed to Payment'
+                      : step === totalSteps - 1
+                      ? 'Select Plan'
+                      : 'Next'}
                     {step !== totalSteps && <ChevronRight className='h-4 w-4 ml-1' />}
                   </>
                 )}
