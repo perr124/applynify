@@ -47,7 +47,10 @@ const ButtonCheckout = ({
   };
 
   return (
-    <button className='btn btn-primary btn-block group' onClick={() => handlePayment()}>
+    <button
+      className='btn bg-primary-500 hover:bg-primary-800 btn-block group '
+      onClick={() => handlePayment()}
+    >
       {isLoading ? (
         <span className='loading loading-spinner loading-xs'></span>
       ) : (

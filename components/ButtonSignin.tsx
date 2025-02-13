@@ -9,29 +9,6 @@ const ButtonSignin = ({ text = 'Login', extraStyle }: { text?: string; extraStyl
   const router = useRouter();
   const { data: session, status } = useSession();
 
-  const handleClick = async () => {
-    if (status === 'authenticated') {
-      router.push(config.auth.callbackUrl);
-    } else {
-      try {
-        // Use Google provider explicitly
-        const result = await signIn('google', {
-          callbackUrl: config.auth.callbackUrl,
-          redirect: true,
-        });
-
-        console.log('Sign in result:', result);
-
-        // Handle failed sign in
-        if (result?.error) {
-          console.error('Sign in error:', result.error);
-        }
-      } catch (error) {
-        console.error('Sign in error:', error);
-      }
-    }
-  };
-
   if (status === 'authenticated') {
     return (
       <Link href={config.auth.callbackUrl} className={`btn ${extraStyle || ''}`}>
