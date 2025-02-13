@@ -411,8 +411,8 @@ export default function OnboardingQuestionnaire() {
     const pricingTiers = [
       {
         name: 'Lite',
-        price: 49,
-        priceId: 'price_lite',
+        price: 29.99,
+        priceId: config.stripe.plans[0].priceId,
         description: 'Perfect for job seekers getting started',
         features: [
           '25 jobs applied to directly on company sites',
@@ -426,8 +426,8 @@ export default function OnboardingQuestionnaire() {
       },
       {
         name: 'Pro',
-        price: 99,
-        priceId: 'price_pro',
+        price: 59.99,
+        priceId: config.stripe.plans[1].priceId,
         description: 'Best for serious job seekers',
         features: [
           '50 jobs applied to directly on company sites',

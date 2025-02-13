@@ -9,7 +9,7 @@ const Pricing = () => {
   const tiers = [
     {
       name: 'Lite',
-      price: 49,
+      price: 29.99,
       priceId: 'price_lite',
       description: 'Perfect for job seekers getting started',
       features: [
@@ -26,7 +26,7 @@ const Pricing = () => {
     },
     {
       name: 'Pro',
-      price: 99,
+      price: 59.99,
       priceId: 'price_pro',
       description: 'Best for serious job seekers',
       features: [
