@@ -59,7 +59,7 @@ function AboutPage() {
                       'We believe in giving you back your time and confidence in the job search process.',
                   },
                 ].map((value) => (
-                  <div key={value.title} className='border-l-4 border-blue-500 pl-4'>
+                  <div key={value.title} className='border-l-4 border-primary-500 pl-4'>
                     <h3 className='text-xl font-semibold text-slate-900'>{value.title}</h3>
                     <p className='mt-2 text-slate-600'>{value.description}</p>
                   </div>
@@ -74,17 +74,17 @@ function AboutPage() {
             </h2>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-8'>
               <div className='p-6 bg-white rounded-lg shadow-sm'>
-                <div className='text-4xl font-bold text-blue-500 mb-2'>180+</div>
+                <div className='text-4xl font-bold text-primary-500 mb-2'>180+</div>
                 <p className='text-slate-600'>Average Applications Sent Per Job Search</p>
               </div>
               <div className='p-6 bg-white rounded-lg shadow-sm'>
-                <div className='text-4xl font-bold text-blue-500 mb-2'>2%</div>
+                <div className='text-4xl font-bold text-primary-500 mb-2'>2%</div>
                 <p className='text-slate-600'>
                   Average Interview Rate for Traditional Applications
                 </p>
               </div>
               <div className='p-6 bg-white rounded-lg shadow-sm'>
-                <div className='text-4xl font-bold text-blue-500 mb-2'>40hrs+</div>
+                <div className='text-4xl font-bold text-primary-500 mb-2'>40hrs+</div>
                 <p className='text-slate-600'>Time Spent on Applications Per Month</p>
               </div>
             </div>
