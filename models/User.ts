@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.Mixed,
       select: true,
     },
+    applicationsStatus: {
+      type: String,
+      enum: ['started', 'pending', 'completed'],
+      default: 'started',
+      select: true,
+    },
     experience: {
       type: mongoose.Schema.Types.Mixed,
       select: true,

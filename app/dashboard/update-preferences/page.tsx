@@ -18,7 +18,6 @@ type FormData = {
   jobPreferences: {
     roles: string[];
     locations: string[];
-    remotePreference: string;
     salary: {
       minimum: string;
       preferred: string;
@@ -38,7 +37,6 @@ const initialFormData: FormData = {
   jobPreferences: {
     roles: [],
     locations: [],
-    remotePreference: '',
     salary: {
       minimum: '',
       preferred: '',

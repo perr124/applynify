@@ -36,13 +36,15 @@ export async function POST(req: Request) {
           jobPreferences,
           experience,
           availability,
+          applicationsStatus: 'started',
           onboardingComplete: true,
         },
       },
       {
         new: true,
         strict: false,
-        select: 'jobPreferences experience availability onboardingComplete email name image',
+        select:
+          'jobPreferences experience availability onboardingComplete email name image applicationsStatus',
       }
     );
     console.log('preee sesh here2', {
@@ -77,7 +79,7 @@ export async function GET() {
 
     const user = await User.findOne(
       { email: session.user.email },
-      'jobPreferences experience availability'
+      'jobPreferences experience availability applicationsStatus'
     );
 
     if (!user) {
@@ -88,6 +90,7 @@ export async function GET() {
       jobPreferences: user.jobPreferences || {},
       experience: user.experience || {},
       availability: user.availability || {},
+      applicationsStatus: user.applicationsStatus || 'started',
     });
   } catch (error) {
     console.error('Error fetching preferences:', error);
@@ -114,6 +117,7 @@ export async function PUT(request: Request) {
           availability: {
             startDate: data.availability.startDate,
           },
+          applicationsStatus: 'pending',
         },
       },
       { new: true }

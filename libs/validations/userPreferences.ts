@@ -1,7 +1,6 @@
 export interface JobPreferences {
   roles: string[];
   locations: string[];
-  remotePreference: string;
   salary: {
     minimum: string;
     preferred: string;
@@ -16,13 +15,13 @@ export interface Experience {
 
 export interface Availability {
   startDate: string;
-  noticeRequired: string;
 }
 
 export interface PreferencesData {
-  jobPreferences?: JobPreferences;
-  experience?: Experience;
-  availability?: Availability;
+  jobPreferences: JobPreferences;
+  experience: Experience;
+  availability: Availability;
+  applicationsStatus?: 'started' | 'pending' | 'completed';
 }
 
 export function validatePreferences(data: PreferencesData): { valid: boolean; errors: string[] } {
