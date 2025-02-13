@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
+import Image from 'next/image';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -106,7 +107,13 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <img src='/api/placeholder/32/32' alt='Applynify' className='h-8 w-auto' />
+        <Image
+          src='/api/placeholder/32/32'
+          alt='Applynify'
+          width={32}
+          height={32}
+          className='h-8 w-auto'
+        />
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>

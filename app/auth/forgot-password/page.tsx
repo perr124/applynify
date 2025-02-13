@@ -46,14 +46,14 @@ export default function ForgotPassword() {
             Reset your password
           </h2>
           <p className='mt-2 text-center text-sm text-gray-600'>
-            Enter your email and we'll send you instructions
+            Enter your email and we&apos;ll send you instructions
           </p>
         </div>
 
         {success ? (
           <div className='rounded-lg bg-[#0d824a]/10 p-4'>
             <div className='text-sm text-[#0d824a]'>
-              If an account exists with that email, we've sent password reset instructions.
+              If an account exists with that email, we&apos;ve sent password reset instructions.
             </div>
           </div>
         ) : (

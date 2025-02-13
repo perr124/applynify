@@ -1,4 +1,5 @@
 'use client';
+import React from 'react';
 
 import { useState, useEffect } from 'react';
 import { User, Mail, Bell, CreditCard, Shield, Loader2, CheckCircle, X } from 'lucide-react';
