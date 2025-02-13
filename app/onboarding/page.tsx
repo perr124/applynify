@@ -581,7 +581,7 @@ export default function OnboardingQuestionnaire() {
                   <label className='block text-sm font-medium text-gray-700'>
                     What roles are you interested in?
                   </label>
-                  <div className='mt-1'>
+                  <div className='mt-1 flex gap-2'>
                     <input
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
@@ -601,6 +601,22 @@ export default function OnboardingQuestionnaire() {
                         }
                       }}
                     />
+                    <button
+                      type='button'
+                      onClick={() => {
+                        if (currentRoleInput.trim()) {
+                          const updatedRoles = [
+                            ...formData.jobPreferences.roles,
+                            currentRoleInput.trim(),
+                          ];
+                          updateFormData('jobPreferences', 'roles', updatedRoles);
+                          setCurrentRoleInput('');
+                        }
+                      }}
+                      className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
 
@@ -634,7 +650,7 @@ export default function OnboardingQuestionnaire() {
                   <label className='block text-sm font-medium text-gray-700'>
                     Preferred locations
                   </label>
-                  <div className='mt-1'>
+                  <div className='mt-1 flex gap-2'>
                     <input
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
@@ -657,6 +673,22 @@ export default function OnboardingQuestionnaire() {
                         }
                       }}
                     />
+                    <button
+                      type='button'
+                      onClick={() => {
+                        if (currentLocationInput.trim()) {
+                          const updatedLocations = [
+                            ...formData.jobPreferences.locations,
+                            currentLocationInput.trim(),
+                          ];
+                          updateFormData('jobPreferences', 'locations', updatedLocations);
+                          setCurrentLocationInput('');
+                        }
+                      }}
+                      className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                    >
+                      +
+                    </button>
                   </div>
                 </div>
 
@@ -735,7 +767,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>Key skills</label>
-                  <div className='mt-1'>
+                  <div className='mt-1 flex gap-2'>
                     <input
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
@@ -755,6 +787,22 @@ export default function OnboardingQuestionnaire() {
                         }
                       }}
                     />
+                    <button
+                      type='button'
+                      onClick={() => {
+                        if (currentSkillInput.trim()) {
+                          const updatedSkills = [
+                            ...formData.experience.skills,
+                            currentSkillInput.trim(),
+                          ];
+                          updateFormData('experience', 'skills', updatedSkills);
+                          setCurrentSkillInput('');
+                        }
+                      }}
+                      className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                    >
+                      +
+                    </button>
                   </div>
                   {formData.experience.skills.length > 0 && (
                     <div className='mt-2 flex flex-wrap gap-2'>

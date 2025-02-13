@@ -229,26 +229,46 @@ export default function UpdatePreferences() {
 
             <div className='space-y-4'>
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Roles</label>
-                <input
-                  type='text'
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                  value={currentRoleInput}
-                  onChange={(e) => {
-                    const input = e.target.value;
-                    setCurrentRoleInput(input);
+                <label className='block text-sm font-medium text-gray-700'>
+                  What roles are you interested in?
+                </label>
+                <div className='mt-1 flex gap-2'>
+                  <input
+                    type='text'
+                    className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    placeholder='e.g., Software Engineer, Product Manager'
+                    value={currentRoleInput}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      setCurrentRoleInput(input);
 
-                    if (input.endsWith(',')) {
-                      const newRole = input.slice(0, -1).trim();
-                      if (newRole) {
-                        const updatedRoles = [...formData.jobPreferences.roles, newRole];
+                      if (input.endsWith(',')) {
+                        const newRole = input.slice(0, -1).trim();
+                        if (newRole) {
+                          const updatedRoles = [...formData.jobPreferences.roles, newRole];
+                          updateFormData('jobPreferences', 'roles', updatedRoles);
+                          setCurrentRoleInput('');
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => {
+                      if (currentRoleInput.trim()) {
+                        const updatedRoles = [
+                          ...formData.jobPreferences.roles,
+                          currentRoleInput.trim(),
+                        ];
                         updateFormData('jobPreferences', 'roles', updatedRoles);
                         setCurrentRoleInput('');
                       }
-                    }
-                  }}
-                  placeholder='e.g., Software Engineer, Product Manager'
-                />
+                    }}
+                    className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                  >
+                    +
+                  </button>
+                </div>
 
                 {/* Display selected roles */}
                 {formData.jobPreferences.roles.length > 0 && (
@@ -278,29 +298,49 @@ export default function UpdatePreferences() {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Locations</label>
-                <input
-                  type='text'
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                  value={currentLocationInput}
-                  onChange={(e) => {
-                    const input = e.target.value;
-                    setCurrentLocationInput(input);
+                <label className='block text-sm font-medium text-gray-700'>
+                  Preferred locations
+                </label>
+                <div className='mt-1 flex gap-2'>
+                  <input
+                    type='text'
+                    className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    placeholder='e.g., New York, Remote'
+                    value={currentLocationInput}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      setCurrentLocationInput(input);
 
-                    if (input.endsWith(',')) {
-                      const newLocation = input.slice(0, -1).trim();
-                      if (newLocation) {
+                      if (input.endsWith(',')) {
+                        const newLocation = input.slice(0, -1).trim();
+                        if (newLocation) {
+                          const updatedLocations = [
+                            ...formData.jobPreferences.locations,
+                            newLocation,
+                          ];
+                          updateFormData('jobPreferences', 'locations', updatedLocations);
+                          setCurrentLocationInput('');
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => {
+                      if (currentLocationInput.trim()) {
                         const updatedLocations = [
                           ...formData.jobPreferences.locations,
-                          newLocation,
+                          currentLocationInput.trim(),
                         ];
                         updateFormData('jobPreferences', 'locations', updatedLocations);
                         setCurrentLocationInput('');
                       }
-                    }
-                  }}
-                  placeholder='e.g., New York, London'
-                />
+                    }}
+                    className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                  >
+                    +
+                  </button>
+                </div>
 
                 {/* Display selected locations */}
                 {formData.jobPreferences.locations.length > 0 && (
@@ -399,26 +439,44 @@ export default function UpdatePreferences() {
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Skills</label>
-                <input
-                  type='text'
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                  value={currentSkillInput}
-                  onChange={(e) => {
-                    const input = e.target.value;
-                    setCurrentSkillInput(input);
+                <label className='block text-sm font-medium text-gray-700'>Key skills</label>
+                <div className='mt-1 flex gap-2'>
+                  <input
+                    type='text'
+                    className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    placeholder='e.g., JavaScript, React, Project Management'
+                    value={currentSkillInput}
+                    onChange={(e) => {
+                      const input = e.target.value;
+                      setCurrentSkillInput(input);
 
-                    if (input.endsWith(',')) {
-                      const newSkill = input.slice(0, -1).trim();
-                      if (newSkill) {
-                        const updatedSkills = [...formData.experience.skills, newSkill];
+                      if (input.endsWith(',')) {
+                        const newSkill = input.slice(0, -1).trim();
+                        if (newSkill) {
+                          const updatedSkills = [...formData.experience.skills, newSkill];
+                          updateFormData('experience', 'skills', updatedSkills);
+                          setCurrentSkillInput('');
+                        }
+                      }
+                    }}
+                  />
+                  <button
+                    type='button'
+                    onClick={() => {
+                      if (currentSkillInput.trim()) {
+                        const updatedSkills = [
+                          ...formData.experience.skills,
+                          currentSkillInput.trim(),
+                        ];
                         updateFormData('experience', 'skills', updatedSkills);
                         setCurrentSkillInput('');
                       }
-                    }
-                  }}
-                  placeholder='e.g., JavaScript, Project Management'
-                />
+                    }}
+                    className='inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                  >
+                    +
+                  </button>
+                </div>
                 {formData.experience.skills.length > 0 && (
                   <div className='mt-2 flex flex-wrap gap-2'>
                     {formData.experience.skills.map((skill, index) => (
