@@ -8,6 +8,7 @@ export default function VerifyEmail() {
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [isVerifying, setIsVerifying] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
 
   useEffect(() => {
     const verifyEmail = async () => {
@@ -29,8 +30,11 @@ export default function VerifyEmail() {
           throw new Error('Invalid verification token');
         }
 
-        // Redirect to sign in after successful verification
-        router.push('/onboarding?verified=true');
+        setIsSuccess(true);
+        // Add a small delay before redirect to show success state
+        setTimeout(() => {
+          router.push('/onboarding?verified=true');
+        }, 1500);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Verification failed');
       } finally {
@@ -46,15 +50,23 @@ export default function VerifyEmail() {
       <div className='w-full max-w-md space-y-8 rounded-2xl bg-white p-8 shadow-lg'>
         <div className='text-center'>
           {isVerifying ? (
-            <h2 className='text-2xl font-bold'>Verifying your email...</h2>
+            <>
+              <h2 className='text-2xl font-bold'>Verifying your email...</h2>
+              <div className='mt-4'>
+                <div className='animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto'></div>
+              </div>
+            </>
+          ) : isSuccess ? (
+            <>
+              <h2 className='text-2xl font-bold text-green-600'>Email verified successfully!</h2>
+              <p className='mt-2 text-sm text-gray-600'>Redirecting you to onboarding...</p>
+            </>
           ) : error ? (
             <>
               <h2 className='text-2xl font-bold text-red-600'>Verification failed</h2>
               <p className='mt-2 text-sm text-gray-600'>{error}</p>
             </>
-          ) : (
-            <h2 className='text-2xl font-bold text-green-600'>Email verified successfully!</h2>
-          )}
+          ) : null}
         </div>
       </div>
     </div>
