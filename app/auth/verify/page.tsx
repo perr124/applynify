@@ -1,9 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function VerifyEmail() {
+function VerifyEmailComponent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
@@ -31,7 +31,7 @@ export default function VerifyEmail() {
         }
 
         setIsSuccess(true);
-        // Add a small delay before redirect to show success state
+        // Add a small delay before redirecting
         setTimeout(() => {
           router.push('/onboarding?verified=true');
         }, 1500);
@@ -70,5 +70,13 @@ export default function VerifyEmail() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmail() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <VerifyEmailComponent />
+    </Suspense>
   );
 }

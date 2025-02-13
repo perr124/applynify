@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import React from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 
-export default function ResetPassword() {
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams?.get('token');
@@ -100,5 +100,13 @@ export default function ResetPassword() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function ResetPassword() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
   );
 }
