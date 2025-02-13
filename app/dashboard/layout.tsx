@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useState } from 'react';
+import { ReactNode, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -34,6 +34,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
 
+  // Add effect to close sidebar when pathname changes
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [pathname]);
+
   return (
     <div>
       {/* Mobile sidebar */}
@@ -52,7 +57,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </button>
             </div>
             <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
-              <SidebarContent currentPath={pathname || ''} />
+              <SidebarContent currentPath={pathname || ''} setSidebarOpen={setSidebarOpen} />
             </div>
           </Dialog.Panel>
         </div>
@@ -61,7 +66,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Static sidebar for desktop */}
       <div className='hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col'>
         <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
-          <SidebarContent currentPath={pathname || ''} />
+          <SidebarContent currentPath={pathname || ''} setSidebarOpen={setSidebarOpen} />
         </div>
       </div>
 
@@ -103,7 +108,13 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   );
 }
 
-function SidebarContent({ currentPath }: { currentPath: string }) {
+function SidebarContent({
+  currentPath,
+  setSidebarOpen,
+}: {
+  currentPath: string;
+  setSidebarOpen: (open: boolean) => void;
+}) {
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
@@ -123,6 +134,7 @@ function SidebarContent({ currentPath }: { currentPath: string }) {
                 <li key={item.name}>
                   <Link
                     href={item.href}
+                    onClick={() => setSidebarOpen(false)}
                     className={classNames(
                       currentPath === item.href
                         ? 'bg-primary-700 text-white'
