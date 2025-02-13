@@ -69,7 +69,7 @@ export default function OnboardingQuestionnaire() {
   const [currentSkillInput, setCurrentSkillInput] = useState('');
   const router = useRouter();
 
-  const totalSteps = 3;
+  const totalSteps = 4;
 
   const updateFormData = (section: keyof FormData, field: string, value: any) => {
     setFormData((prev) => ({
@@ -110,6 +110,9 @@ export default function OnboardingQuestionnaire() {
     if (step === totalSteps) {
       // Submit data and redirect to dashboard
       handleSubmit();
+    } else if (step === totalSteps - 1) {
+      // Move to review step
+      setStep((prev) => prev + 1);
     } else {
       setStep((prev) => prev + 1);
     }
@@ -289,6 +292,114 @@ export default function OnboardingQuestionnaire() {
       setError('Something went wrong. Please try again.');
       setIsSubmitting(false);
     }
+  };
+
+  const renderReviewSection = () => {
+    return (
+      <div className='space-y-6'>
+        <div>
+          <h3 className='text-lg font-medium text-gray-900 mb-4'>Review Your Information</h3>
+
+          {/* Job Preferences */}
+          <div className='bg-gray-50 p-4 rounded-lg mb-4'>
+            <div className='flex justify-between items-center mb-4'>
+              <h4 className='font-medium text-gray-700'>Job Preferences</h4>
+              <button
+                onClick={() => setStep(1)}
+                className='text-sm text-primary-600 hover:text-primary-700 flex items-center'
+              >
+                Edit
+                <ChevronRight className='h-4 w-4 ml-1' />
+              </button>
+            </div>
+            <dl className='space-y-2'>
+              <div>
+                <dt className='text-sm text-gray-500'>Desired Roles</dt>
+                <dd className='mt-1'>
+                  {formData.jobPreferences.roles.length > 0
+                    ? formData.jobPreferences.roles.join(', ')
+                    : 'None specified'}
+                </dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Preferred Locations</dt>
+                <dd className='mt-1'>
+                  {formData.jobPreferences.locations.length > 0
+                    ? formData.jobPreferences.locations.join(', ')
+                    : 'None specified'}
+                </dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Minimum Salary</dt>
+                <dd className='mt-1'>
+                  {formData.jobPreferences.salary.minimum || 'Not specified'}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {/* Experience */}
+          <div className='bg-gray-50 p-4 rounded-lg mb-4'>
+            <div className='flex justify-between items-center mb-4'>
+              <h4 className='font-medium text-gray-700'>Experience</h4>
+              <button
+                onClick={() => setStep(2)}
+                className='text-sm text-primary-600 hover:text-primary-700 flex items-center'
+              >
+                Edit
+                <ChevronRight className='h-4 w-4 ml-1' />
+              </button>
+            </div>
+            <dl className='space-y-2'>
+              <div>
+                <dt className='text-sm text-gray-500'>Years of Experience</dt>
+                <dd className='mt-1'>{formData.experience.yearsOfExperience || 'Not specified'}</dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Education</dt>
+                <dd className='mt-1'>{formData.experience.education || 'Not specified'}</dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Skills</dt>
+                <dd className='mt-1'>
+                  {formData.experience.skills.length > 0
+                    ? formData.experience.skills.join(', ')
+                    : 'None specified'}
+                </dd>
+              </div>
+            </dl>
+          </div>
+
+          {/* Availability */}
+          <div className='bg-gray-50 p-4 rounded-lg'>
+            <div className='flex justify-between items-center mb-4'>
+              <h4 className='font-medium text-gray-700'>Availability</h4>
+              <button
+                onClick={() => setStep(3)}
+                className='text-sm text-primary-600 hover:text-primary-700 flex items-center'
+              >
+                Edit
+                <ChevronRight className='h-4 w-4 ml-1' />
+              </button>
+            </div>
+            <dl className='space-y-2'>
+              <div>
+                <dt className='text-sm text-gray-500'>Start Date</dt>
+                <dd className='mt-1'>{formData.availability.startDate || 'Not specified'}</dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Resume</dt>
+                <dd className='mt-1'>
+                  {formData.availability.resume?.file
+                    ? formData.availability.resume.file.name
+                    : 'No resume uploaded'}
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -615,6 +726,9 @@ export default function OnboardingQuestionnaire() {
               </div>
             )}
 
+            {/* Step 4: Review */}
+            {step === 4 && renderReviewSection()}
+
             {/* Navigation Buttons */}
             <div className='mt-6 flex items-center justify-between'>
               <button
@@ -662,7 +776,7 @@ export default function OnboardingQuestionnaire() {
                   </>
                 ) : (
                   <>
-                    {step === totalSteps ? 'Finish' : 'Next'}
+                    {step === totalSteps ? 'Submit' : step === totalSteps - 1 ? 'Review' : 'Next'}
                     {step !== totalSteps && <ChevronRight className='h-4 w-4 ml-1' />}
                   </>
                 )}
