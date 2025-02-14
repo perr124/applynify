@@ -54,6 +54,13 @@ const initialFormData: FormData = {
   },
 };
 
+const formatSalary = (value: string) => {
+  // Remove any non-digit characters
+  const numbers = value.replace(/\D/g, '');
+  // Format with commas
+  return numbers ? Number(numbers).toLocaleString() : '';
+};
+
 export default function UpdatePreferences() {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(true);
@@ -374,18 +381,33 @@ export default function UpdatePreferences() {
 
               <div>
                 <label className='block text-sm font-medium text-gray-700'>Minimum Salary</label>
-                <input
-                  type='text'
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                  value={formData.jobPreferences.salary.minimum}
-                  onChange={(e) =>
-                    updateFormData('jobPreferences', 'salary', {
-                      ...formData.jobPreferences.salary,
-                      minimum: e.target.value,
-                    })
-                  }
-                  placeholder='e.g., $50,000'
-                />
+                <div className='mt-1 relative'>
+                  <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
+                    <span className='text-gray-500 sm:text-sm'>$</span>
+                  </div>
+                  <input
+                    type='text'
+                    className='appearance-none block w-full pl-7 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    value={formData.jobPreferences.salary.minimum}
+                    onChange={(e) => {
+                      const formatted = formatSalary(e.target.value);
+                      updateFormData('jobPreferences', 'salary', {
+                        ...formData.jobPreferences.salary,
+                        minimum: formatted,
+                      });
+                    }}
+                    onKeyPress={(e) => {
+                      // Allow only numbers and common keyboard controls
+                      if (!/[\d\b\t]/.test(e.key) && e.key !== 'Enter' && e.key !== 'Backspace') {
+                        e.preventDefault();
+                      }
+                    }}
+                    placeholder='e.g., 45,000'
+                  />
+                </div>
+                <p className='mt-1 text-sm text-gray-500'>
+                  Enter numbers only, commas will be added automatically
+                </p>
               </div>
             </div>
           </div>
