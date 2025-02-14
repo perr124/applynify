@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
+import { s3Client } from '@/libs/s3';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 
 export async function POST(request: Request) {
   try {
@@ -20,15 +22,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // For now, we'll use a mock URL since we don't have actual file storage
-    // In production, you would upload to S3, Google Cloud Storage, etc.
-    const mockUrl = `https://storage.example.com/${Date.now()}-${file.name}`;
+    // Convert file to buffer
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // Generate unique file name
+    const fileName = `${session.user.email}/${Date.now()}-${file.name}`;
+
+    // Upload to S3
+    const uploadCommand = new PutObjectCommand({
+      Bucket: process.env.AWS_S3_BUCKET_NAME!,
+      Key: fileName,
+      Body: buffer,
+      ContentType: file.type,
+    });
+
+    await s3Client.send(uploadCommand);
+
+    // Generate the direct S3 URL
+    const fileUrl = `https://${process.env.AWS_S3_BUCKET_NAME}.s3.${process.env.AWS_REGION}.amazonaws.com/${fileName}`;
 
     // Create a new resume object
     const newResume = {
       id: Date.now().toString(),
       filename: file.name,
-      url: mockUrl,
+      url: fileUrl,
       uploadedAt: new Date(),
       status: 'active',
     };
@@ -40,7 +57,7 @@ export async function POST(request: Request) {
         $push: {
           resumes: {
             $each: [newResume],
-            $position: 0, // Add new resume at the beginning of the array
+            $position: 0,
           },
         },
       },
@@ -54,7 +71,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({
       message: 'Resume uploaded successfully',
-      url: mockUrl,
+      url: fileUrl,
       resume: newResume,
     });
   } catch (error) {
