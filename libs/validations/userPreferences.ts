@@ -15,6 +15,7 @@ export interface Experience {
 
 export interface Availability {
   startDate: string;
+  phoneNumber?: string;
 }
 
 export interface Resume {

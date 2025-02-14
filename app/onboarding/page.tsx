@@ -24,6 +24,7 @@ type FormData = {
   };
   availability: {
     startDate: string;
+    phoneNumber?: string;
     noticeRequired?: string;
     resume?: {
       file: File | null;
@@ -49,6 +50,7 @@ const initialFormData: FormData = {
   },
   availability: {
     startDate: '',
+    phoneNumber: '',
     noticeRequired: '',
     resume: {
       file: null,
@@ -103,6 +105,7 @@ export default function OnboardingQuestionnaire() {
             },
             availability: {
               startDate: data.availability?.startDate || '',
+              phoneNumber: data.availability?.phoneNumber || '',
               resume: {
                 file: activeResume ? new File([], activeResume.filename) : null,
                 uploading: false,
@@ -168,6 +171,7 @@ export default function OnboardingQuestionnaire() {
       // Submit data and redirect to payment
       handleSubmit();
     } else if (step === totalSteps - 1) {
+      setIsSubmitting(true);
       // Save preferences before moving to pricing step
       try {
         // Upload resume if exists
@@ -183,6 +187,7 @@ export default function OnboardingQuestionnaire() {
             });
 
             if (!uploadResponse.ok) {
+              setIsSubmitting(false);
               throw new Error('Failed to upload resume');
             }
 
@@ -190,6 +195,7 @@ export default function OnboardingQuestionnaire() {
             resumeUrl = uploadData.url;
           } catch (uploadError) {
             console.error('Resume upload error:', uploadError);
+            setIsSubmitting(false);
             setError('Failed to upload resume. Please try again.');
             return;
           }
@@ -206,6 +212,7 @@ export default function OnboardingQuestionnaire() {
             experience: formData.experience,
             availability: {
               startDate: formData.availability.startDate,
+              phoneNumber: formData.availability.phoneNumber,
               resumeUrl: resumeUrl,
             },
           }),
@@ -217,8 +224,10 @@ export default function OnboardingQuestionnaire() {
             setError(data.errors.join(', '));
             return;
           }
+          setIsSubmitting(false);
           throw new Error('Failed to save preferences');
         }
+        setIsSubmitting(false);
 
         // Move to pricing step
         setStep((prev) => prev + 1);
@@ -433,6 +442,10 @@ export default function OnboardingQuestionnaire() {
                 <dd className='mt-1'>{formData.availability.startDate || 'Not specified'}</dd>
               </div>
               <div>
+                <dt className='text-sm text-gray-500'>Phone Number</dt>
+                <dd className='mt-1'>{formData.availability.phoneNumber || 'Not specified'}</dd>
+              </div>
+              <div>
                 <dt className='text-sm text-gray-500'>Resume</dt>
                 <dd className='mt-1'>
                   {formData.availability.resume?.file
@@ -492,9 +505,11 @@ export default function OnboardingQuestionnaire() {
               className={`relative rounded-lg border-2 p-6 cursor-pointer transition-all ${
                 selectedPriceId === tier.priceId
                   ? 'border-primary-500 bg-primary-50'
+                  : isSubmitting
+                  ? 'border-gray-200 opacity-50 cursor-not-allowed'
                   : 'border-gray-200 hover:border-primary-200'
               }`}
-              onClick={() => setSelectedPriceId(tier.priceId)}
+              onClick={() => !isSubmitting && setSelectedPriceId(tier.priceId)}
             >
               <div className='flex items-center justify-between mb-4'>
                 <div>
@@ -876,6 +891,21 @@ export default function OnboardingQuestionnaire() {
                 </div>
 
                 <div>
+                  <label className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                  <div className='mt-1'>
+                    <input
+                      type='tel'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='+1 (555) 123-4567'
+                      value={formData.availability.phoneNumber}
+                      onChange={(e) =>
+                        updateFormData('availability', 'phoneNumber', e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div>
                   <label className='block text-sm font-medium text-gray-700'>
                     Upload your resume (PDF)
                   </label>
@@ -933,9 +963,9 @@ export default function OnboardingQuestionnaire() {
               <button
                 type='button'
                 onClick={handleBack}
-                disabled={step === 1}
+                disabled={step === 1 || isSubmitting}
                 className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ${
-                  step === 1
+                  step === 1 || isSubmitting
                     ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
@@ -948,7 +978,9 @@ export default function OnboardingQuestionnaire() {
                 type='button'
                 onClick={handleNext}
                 disabled={isSubmitting || (step === totalSteps && !selectedPriceId)}
-                className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed'
+                className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed ${
+                  isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                }`}
               >
                 {isSubmitting ? (
                   <>
@@ -971,7 +1003,7 @@ export default function OnboardingQuestionnaire() {
                         d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
                       />
                     </svg>
-                    Processing...
+                    {step === totalSteps ? 'Processing Payment...' : 'Processing...'}
                   </>
                 ) : (
                   <>

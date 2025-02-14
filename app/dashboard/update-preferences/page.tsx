@@ -30,6 +30,7 @@ type FormData = {
   };
   availability: {
     startDate: string;
+    phoneNumber?: string;
   };
 };
 
@@ -49,6 +50,7 @@ const initialFormData: FormData = {
   },
   availability: {
     startDate: '',
+    phoneNumber: '',
   },
 };
 
@@ -72,6 +74,7 @@ export default function UpdatePreferences() {
           ...data,
           availability: {
             startDate: data.availability?.startDate || '',
+            phoneNumber: data.availability?.phoneNumber || '',
           },
         });
       } catch (error) {
@@ -534,6 +537,17 @@ export default function UpdatePreferences() {
                   <option value='2-months'>In 2 months</option>
                   <option value='3-months+'>3+ months</option>
                 </select>
+              </div>
+
+              <div>
+                <label className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                <input
+                  type='tel'
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                  placeholder='e.g., +1 (555) 123-4567'
+                  value={formData.availability.phoneNumber || ''}
+                  onChange={(e) => updateFormData('availability', 'phoneNumber', e.target.value)}
+                />
               </div>
             </div>
           </div>

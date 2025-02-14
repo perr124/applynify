@@ -66,6 +66,10 @@ const userSchema = new mongoose.Schema(
     availability: {
       type: mongoose.Schema.Types.Mixed,
       select: true,
+      default: {
+        startDate: '',
+        phoneNumber: '',
+      },
     },
     password: {
       type: String,
