@@ -20,6 +20,7 @@ export default function AdminPanel() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const {
     register,
@@ -36,11 +37,14 @@ export default function AdminPanel() {
 
   const fetchUsers = async () => {
     try {
+      setIsLoading(true);
       const response = await fetch(`/api/admin/users?search=${searchQuery}`);
+      if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
+      setError('Failed to load users');
     } finally {
       setIsLoading(false);
     }
@@ -100,42 +104,78 @@ export default function AdminPanel() {
             </div>
           </div>
 
+          {/* Loading State */}
+          {isLoading && (
+            <div className='animate-pulse'>
+              {[...Array(5)].map((_, index) => (
+                <div key={index} className='flex items-center space-x-4 py-3'>
+                  <div className='h-4 bg-gray-200 rounded w-1/4'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/4'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/4'></div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !isLoading && (
+            <div className='text-red-500 p-4 text-center bg-red-50 rounded-lg'>
+              {error}
+              <button
+                onClick={fetchUsers}
+                className='ml-2 text-red-700 underline hover:no-underline'
+              >
+                Try again
+              </button>
+            </div>
+          )}
+
           {/* Users Table */}
-          <div className='overflow-x-auto'>
-            <table className='min-w-full divide-y divide-gray-200'>
-              <thead className='bg-gray-50'>
-                <tr>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                    Name
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                    Email
-                  </th>
-                  <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody className='bg-white divide-y divide-gray-200'>
-                {users.map((user) => (
-                  <tr key={user._id}>
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      {user.firstName} {user.lastName}
-                    </td>
-                    <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
-                    <td className='px-6 py-4 whitespace-nowrap'>
-                      <Link
-                        href={`/admin/users/${user._id}`}
-                        className='text-primary-600 hover:text-primary-900'
-                      >
-                        Edit Application
-                      </Link>
-                    </td>
+          {!isLoading && !error && (
+            <div className='overflow-x-auto'>
+              <table className='min-w-full divide-y divide-gray-200'>
+                <thead className='bg-gray-50'>
+                  <tr>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                      Name
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                      Email
+                    </th>
+                    <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
+                      Action
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className='bg-white divide-y divide-gray-200'>
+                  {users.length === 0 ? (
+                    <tr>
+                      <td colSpan={3} className='px-6 py-4 text-center text-gray-500'>
+                        No users found
+                      </td>
+                    </tr>
+                  ) : (
+                    users.map((user) => (
+                      <tr key={user._id}>
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          {user.firstName} {user.lastName}
+                        </td>
+                        <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
+                        <td className='px-6 py-4 whitespace-nowrap'>
+                          <Link
+                            href={`/admin/users/${user._id}`}
+                            className='text-primary-600 hover:text-primary-900'
+                          >
+                            Edit Application
+                          </Link>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
 
         {/* Selected User Info */}

@@ -91,9 +91,15 @@ export default function UserJobApplication({ params }: { params: { userId: strin
             applicationsStatus: 'completed',
           }),
         });
-      }
 
-      router.push('/admin');
+        // Only redirect if completing applications
+        router.push('/admin');
+      } else {
+        // For draft save, just show a success message
+        alert('Applications saved successfully');
+        // Optionally clear the form if needed
+        // reset();
+      }
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to submit applications');

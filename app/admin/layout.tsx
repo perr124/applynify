@@ -10,9 +10,9 @@ import Image from 'next/image';
 
 const navigation = [
   { name: 'Overview', href: '/admin', icon: Home },
-  { name: 'Users', href: '/admin/users', icon: Users },
-  { name: 'Applications', href: '/admin/applications', icon: Briefcase },
-  { name: 'Settings', href: '/admin/settings', icon: Settings },
+  // { name: 'Users', href: '/admin/users', icon: Users },
+  // { name: 'Applications', href: '/admin/applications', icon: Briefcase },
+  // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
