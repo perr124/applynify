@@ -170,6 +170,22 @@ export default function OnboardingQuestionnaire() {
       setFormData(pendingFormData);
     }
 
+    // Add check for pending skill input in step 2
+    if (step === 2) {
+      const pendingFormData = { ...formData };
+
+      if (currentSkillInput.trim()) {
+        pendingFormData.experience.skills = [
+          ...formData.experience.skills,
+          currentSkillInput.trim(),
+        ];
+        setCurrentSkillInput('');
+      }
+
+      // Update the form data with any pending inputs
+      setFormData(pendingFormData);
+    }
+
     if (step === totalSteps) {
       if (!selectedPriceId) {
         setError('Please select a plan to continue');
