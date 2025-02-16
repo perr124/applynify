@@ -189,9 +189,9 @@ export default function ResumeBank() {
     <div className='space-y-6'>
       <div className='flex justify-between items-center'>
         <div>
-          <h1 className='text-2xl font-bold text-gray-900'>Resume Bank</h1>
+          <h1 className='text-2xl font-bold text-gray-900'>Document Bank</h1>
           <p className='mt-1 text-sm text-gray-500'>
-            Upload and manage your resumes for different job applications
+            Upload and manage your resumes and cover letters for job applications
           </p>
         </div>
       </div>
@@ -200,7 +200,7 @@ export default function ResumeBank() {
         <div className='rounded-lg bg-green-50 p-4'>
           <div className='flex'>
             <CheckCircle className='h-5 w-5 text-green-400 mr-2' />
-            <div className='text-sm text-green-700'>Resume uploaded successfully</div>
+            <div className='text-sm text-green-700'>Document uploaded successfully</div>
           </div>
         </div>
       )}
@@ -223,8 +223,8 @@ export default function ResumeBank() {
             </div>
           </div>
           <div className='ml-4'>
-            <h2 className='text-lg font-semibold text-gray-900'>Upload New Resume</h2>
-            <p className='text-sm text-gray-500'>Add a new version of your resume</p>
+            <h2 className='text-lg font-semibold text-gray-900'>Upload New Document</h2>
+            <p className='text-sm text-gray-500'>Add a new version of your Document</p>
           </div>
         </div>
 
