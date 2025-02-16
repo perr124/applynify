@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { JobApplicationFormData, jobApplicationSchema } from '@/libs/validations/jobApplication';
-import { Search, UserPlus } from 'lucide-react';
+import { Search, UserPlus, Eye, FileEdit } from 'lucide-react';
 import Link from 'next/link';
 
 type User = {
@@ -143,14 +143,14 @@ export default function AdminPanel() {
                       Email
                     </th>
                     <th className='px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                      Action
+                      Actions
                     </th>
                   </tr>
                 </thead>
                 <tbody className='bg-white divide-y divide-gray-200'>
                   {users.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className='px-6 py-4 text-center text-gray-500'>
+                      <td colSpan={3} className='px-6 py-4 text-center text-gray-500'>
                         No users found
                       </td>
                     </tr>
@@ -161,12 +161,20 @@ export default function AdminPanel() {
                           {user.firstName} {user.lastName}
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
-                        <td className='px-6 py-4 whitespace-nowrap'>
+                        <td className='px-6 py-4 whitespace-nowrap space-x-4'>
+                          <Link
+                            href={`/admin/users/${user._id}/view`}
+                            className='text-blue-600 hover:text-blue-900 inline-flex items-center'
+                            title='View User Details'
+                          >
+                            <Eye className='h-5 w-5' />
+                          </Link>
                           <Link
                             href={`/admin/users/${user._id}`}
-                            className='text-primary-600 hover:text-primary-900'
+                            className='text-primary-600 hover:text-primary-900 inline-flex items-center'
+                            title='Edit Applications'
                           >
-                            Edit Application
+                            <FileEdit className='h-5 w-5' />
                           </Link>
                         </td>
                       </tr>
