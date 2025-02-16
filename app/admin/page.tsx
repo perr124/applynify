@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { JobApplicationFormData, jobApplicationSchema } from '@/libs/validations/jobApplication';
 import { Search, UserPlus } from 'lucide-react';
+import Link from 'next/link';
 
 type User = {
   _id: string;
@@ -123,12 +124,12 @@ export default function AdminPanel() {
                     </td>
                     <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
                     <td className='px-6 py-4 whitespace-nowrap'>
-                      <button
-                        onClick={() => setSelectedUser(user)}
+                      <Link
+                        href={`/admin/users/${user._id}`}
                         className='text-primary-600 hover:text-primary-900'
                       >
-                        Select
-                      </button>
+                        Edit Application
+                      </Link>
                     </td>
                   </tr>
                 ))}
