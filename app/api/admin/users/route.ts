@@ -37,6 +37,10 @@ export async function GET(req: Request) {
         firstName: 1,
         lastName: 1,
         createdAt: 1,
+        resumeUrl: 1,
+        preferences: 1,
+        jobPreferences: 1,
+        skills: 1,
       })
       .sort({ createdAt: -1 })
       .limit(50)
