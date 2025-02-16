@@ -34,7 +34,7 @@ function VerifyEmailComponent() {
         // Add a small delay before redirecting
         setTimeout(() => {
           router.push('/onboarding?verified=true');
-        }, 1500);
+        }, 300);
       } catch (error) {
         setError(error instanceof Error ? error.message : 'Verification failed');
       } finally {
