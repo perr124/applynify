@@ -7,6 +7,7 @@ import { Home, Users, Briefcase, Settings, Menu as MenuIcon, X } from 'lucide-re
 import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
 import Image from 'next/image';
+import { useSession } from 'next-auth/react';
 
 const navigation = [
   { name: 'Overview', href: '/admin', icon: Home },
@@ -22,11 +23,17 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   // Add effect to close sidebar when pathname changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
+
+  // If we're on the login page or user is not admin, just render children without the layout
+  if (pathname === '/admin/login' || !session?.user?.isAdmin) {
+    return <>{children}</>;
+  }
 
   return (
     <div>

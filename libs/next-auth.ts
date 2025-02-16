@@ -8,6 +8,7 @@ import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import config from '@/config';
 import connectMongo from './mongo';
 import { randomBytes } from 'crypto';
+import { AuthOptions } from 'next-auth';
 
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter?: any;
@@ -19,7 +20,7 @@ const getUsersCollection = async () => {
   return client.db().collection('users');
 };
 
-export const authOptions: NextAuthOptionsExtended = {
+export const authOptions: AuthOptions = {
   // Set any random key in .env.local
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
@@ -103,25 +104,16 @@ export const authOptions: NextAuthOptionsExtended = {
   ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
 
   callbacks: {
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user }) {
       if (user) {
-        // Get full user data from database
-        const client = await connectMongo;
-        const usersCollection = client!.db().collection('users');
-        const dbUser = await usersCollection.findOne({ email: user.email });
-
-        if (dbUser) {
-          token.id = dbUser._id.toString();
-          token.isAdmin = dbUser.isAdmin || false;
-        }
+        token.isAdmin = user.isAdmin;
       }
       return token;
     },
     async session({ session, token }) {
       if (session.user) {
-        session.user.id = token.id as string;
-        // @ts-ignore - add isAdmin to the session type if needed
-        session.user.isAdmin = token.isAdmin as boolean;
+        // @ts-ignore - add isAdmin to session user type if needed
+        session.user.isAdmin = token.isAdmin;
       }
       return session;
     },

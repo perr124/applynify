@@ -9,7 +9,6 @@ export default withAuth(
     // Special handling for admin login page
     if (path === '/admin/login') {
       // If user is already logged in and is admin, redirect to admin dashboard
-      // @ts-ignore - add isAdmin to token type if needed
       if (token?.isAdmin) {
         return NextResponse.redirect(new URL('/admin', req.url));
       }
@@ -18,7 +17,6 @@ export default withAuth(
 
     // Check for admin routes
     if (path.startsWith('/admin')) {
-      // @ts-ignore - add isAdmin to token type if needed
       if (!token?.isAdmin) {
         return NextResponse.redirect(new URL('/admin/login', req.url));
       }

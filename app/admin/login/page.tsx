@@ -30,15 +30,9 @@ export default function AdminLogin() {
         return;
       }
 
-      // After successful login, check if user is admin
-      const userResponse = await fetch('/api/user/me');
-      const userData = await userResponse.json();
-
-      if (userData.isAdmin) {
-        window.location.href = '/admin'; // Force a full page reload
-      } else {
-        setError('You do not have admin access');
-      }
+      // After successful login, redirect directly to admin
+      // The middleware will handle the admin check
+      window.location.href = '/admin';
     } catch (error) {
       console.error('Login error:', error);
       setError('An error occurred during sign in');
