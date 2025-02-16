@@ -33,6 +33,7 @@ export default function UserJobApplication({ params }: { params: { userId: strin
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<MultipleApplicationsData>({
     defaultValues: {
       applications: [{}], // Start with one empty row
@@ -43,6 +44,16 @@ export default function UserJobApplication({ params }: { params: { userId: strin
     control,
     name: 'applications',
   });
+
+  const defaultApplication = {
+    jobTitle: '',
+    companyName: '',
+    location: '',
+    jobType: 'remote' as const,
+    employmentType: 'full-time' as const,
+    jobLink: '',
+    salary: '',
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,42 +74,24 @@ export default function UserJobApplication({ params }: { params: { userId: strin
     try {
       setIsSubmitting(true);
 
-      // Submit all applications
-      for (const application of data.applications) {
-        const response = await fetch('/api/job-applications', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            ...application,
-            userId: params.userId,
-            applicationComplete: complete,
-          }),
-        });
+      const response = await fetch('/api/job-applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          applications: data.applications,
+          userId: params.userId,
+          applicationComplete: complete,
+        }),
+      });
 
-        if (!response.ok) throw new Error('Failed to submit application');
-      }
+      if (!response.ok) throw new Error('Failed to submit applications');
 
       if (complete) {
-        // Update user's application status if complete
-        await fetch(`/api/admin/users/${params.userId}/status`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            applicationsStatus: 'completed',
-          }),
-        });
-
-        // Only redirect if completing applications
         router.push('/admin');
       } else {
-        // For draft save, just show a success message
         alert('Applications saved successfully');
-        // Optionally clear the form if needed
-        // reset();
       }
     } catch (error) {
       console.error('Error:', error);
@@ -107,6 +100,26 @@ export default function UserJobApplication({ params }: { params: { userId: strin
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const loadApplications = async () => {
+      try {
+        const response = await fetch(`/api/job-applications?userId=${params.userId}`);
+        if (response.ok) {
+          const applications = await response.json();
+          if (applications.length > 0) {
+            reset({ applications });
+          }
+        }
+      } catch (error) {
+        console.error('Error loading applications:', error);
+      }
+    };
+
+    if (user) {
+      loadApplications();
+    }
+  }, [user, params.userId, reset]);
 
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
   if (!user) return <div className='p-4'>Loading...</div>;
@@ -231,7 +244,7 @@ export default function UserJobApplication({ params }: { params: { userId: strin
         <div className='p-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center'>
           <button
             type='button'
-            onClick={() => append({})}
+            onClick={() => append(defaultApplication)}
             className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'
           >
             <Plus className='h-4 w-4 mr-2' />

@@ -137,6 +137,52 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    appliedRoles: [
+      {
+        jobTitle: {
+          type: String,
+          required: true,
+        },
+        companyName: {
+          type: String,
+          required: true,
+        },
+        location: {
+          type: String,
+          required: true,
+        },
+        salary: {
+          type: String,
+        },
+        jobType: {
+          type: String,
+          enum: ['remote', 'hybrid', 'on-site'],
+          required: true,
+        },
+        employmentType: {
+          type: String,
+          enum: ['full-time', 'contract', 'part-time'],
+          required: true,
+        },
+        jobLink: {
+          type: String,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: ['draft', 'completed'],
+          default: 'draft',
+        },
+        appliedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    appliedRolesComplete: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
