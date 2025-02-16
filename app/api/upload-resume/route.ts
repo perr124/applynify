@@ -4,11 +4,11 @@ import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
 import { s3Client } from '@/libs/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import dbConnect from '@/libs/dbConnect';
+import { connectMongo } from '@/libs/connectMongo';
 
 export async function POST(request: Request) {
   try {
-    await dbConnect();
+    await connectMongo();
 
     const session = await getServerSession(authOptions);
 
