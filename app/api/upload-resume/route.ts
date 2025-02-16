@@ -19,6 +19,7 @@ export async function POST(request: Request) {
 
     const formData = await request.formData();
     const file = formData.get('file') as File;
+    const isOnboarding = formData.get('isOnboarding') === 'true';
 
     if (!file) {
       console.error('No file provided');
@@ -53,22 +54,31 @@ export async function POST(request: Request) {
       status: 'active',
     };
 
-    // Update user's resumes array
-    const user = await User.findOneAndUpdate(
-      { email: session.user.email },
-      {
+    let updateOperation;
+    if (isOnboarding) {
+      // During onboarding, replace the entire resumes array with the new resume
+      updateOperation = {
+        $set: {
+          resumes: [newResume],
+        },
+      };
+    } else {
+      // Outside onboarding, add to the beginning of the array
+      updateOperation = {
         $push: {
           resumes: {
             $each: [newResume],
             $position: 0,
           },
         },
-      },
-      {
-        new: true,
-        maxTimeMS: 8000,
-      }
-    ).exec();
+      };
+    }
+
+    // Update user's resumes array
+    const user = await User.findOneAndUpdate({ email: session.user.email }, updateOperation, {
+      new: true,
+      maxTimeMS: 8000,
+    }).exec();
 
     if (!user) {
       console.error('User not found');

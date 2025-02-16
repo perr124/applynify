@@ -186,6 +186,7 @@ export default function OnboardingQuestionnaire() {
         if (formData.availability.resume?.file) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', formData.availability.resume.file);
+          uploadFormData.append('isOnboarding', 'true');
 
           try {
             const uploadResponse = await fetch('/api/upload-resume', {
@@ -275,11 +276,34 @@ export default function OnboardingQuestionnaire() {
       return;
     }
 
-    updateFormData('availability', 'resume', {
-      file,
-      uploading: false,
-      error: null,
-    });
+    // Create form data with isOnboarding flag
+    const uploadFormData = new FormData();
+    uploadFormData.append('file', file);
+    uploadFormData.append('isOnboarding', 'true');
+
+    try {
+      const response = await fetch('/api/upload-resume', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload resume');
+      }
+
+      updateFormData('availability', 'resume', {
+        file,
+        uploading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Resume upload error:', error);
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'Failed to upload resume. Please try again.',
+      });
+    }
   };
 
   const handleDragOver = (e: React.DragEvent) => {
@@ -320,11 +344,34 @@ export default function OnboardingQuestionnaire() {
       return;
     }
 
-    updateFormData('availability', 'resume', {
-      file,
-      uploading: false,
-      error: null,
-    });
+    // Create form data with isOnboarding flag
+    const uploadFormData = new FormData();
+    uploadFormData.append('file', file);
+    uploadFormData.append('isOnboarding', 'true');
+
+    try {
+      const response = await fetch('/api/upload-resume', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to upload resume');
+      }
+
+      updateFormData('availability', 'resume', {
+        file,
+        uploading: false,
+        error: null,
+      });
+    } catch (error) {
+      console.error('Resume upload error:', error);
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: false,
+        error: 'Failed to upload resume. Please try again.',
+      });
+    }
   };
 
   const handleSubmit = async () => {
