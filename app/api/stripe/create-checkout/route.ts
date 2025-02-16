@@ -31,11 +31,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     console.log('User session:', session); // Debug log
 
-    const user = await User.findById(session?.user?.id);
+    const user = session?.user?.email ? await User.findOne({ email: session.user.email }) : null;
     console.log('Found user:', user?._id); // Debug log
 
     const { priceId, mode, successUrl, cancelUrl } = body;
-    console.log(session?.user?.email, 'stripe user');
+    console.log(session?.user?.email, user, 'stripe user');
     const stripeSessionURL = await createCheckout({
       priceId,
       mode,
