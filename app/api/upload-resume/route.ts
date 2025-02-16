@@ -4,9 +4,12 @@ import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
 import { s3Client } from '@/libs/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+import dbConnect from '@/libs/dbConnect';
 
 export async function POST(request: Request) {
   try {
+    await dbConnect();
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -61,8 +64,11 @@ export async function POST(request: Request) {
           },
         },
       },
-      { new: true }
-    );
+      {
+        new: true,
+        maxTimeMS: 8000,
+      }
+    ).exec();
 
     if (!user) {
       console.error('User not found');
@@ -76,6 +82,7 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error('Error uploading resume:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
+    return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
