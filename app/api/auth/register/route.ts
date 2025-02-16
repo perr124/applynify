@@ -1,23 +1,28 @@
 import { NextResponse } from 'next/server';
-import connectMongo from '@/libs/mongo';
 import bcrypt from 'bcrypt';
 import { generateVerificationToken } from '@/libs/next-auth';
 import { sendVerificationEmail } from '@/libs/mail';
+import { connectMongo } from '@/libs/connectMongo';
 
 export async function POST(req: Request) {
   try {
     const { email, password, name, firstName, lastName } = await req.json();
-    const client = await connectMongo;
-    const usersCollection = client!.db().collection('users');
+
+    console.log('Connecting to MongoDB...');
+    const client = await connectMongo();
+    const usersCollection = client.db().collection('users');
 
     // Check if user already exists
+    console.log('Checking if user exists...');
     const existingUser = await usersCollection.findOne({ email });
+
     if (existingUser) {
+      console.log('User already exists');
       return NextResponse.json({ error: 'User already exists' }, { status: 400 });
     }
 
     console.log('Creating new user...');
-    // Create new user
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
     await usersCollection.insertOne({
       email,
@@ -39,7 +44,6 @@ export async function POST(req: Request) {
       console.log('Verification email sent successfully');
     } catch (emailError) {
       console.error('Error sending verification email:', emailError);
-      // Still create the user but log the email error
     }
 
     return NextResponse.json({ success: true });
