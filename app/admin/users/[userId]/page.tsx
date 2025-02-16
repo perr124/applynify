@@ -105,21 +105,22 @@ export default function UserJobApplication({ params }: { params: { userId: strin
     const loadApplications = async () => {
       try {
         const response = await fetch(`/api/job-applications?userId=${params.userId}`);
-        if (response.ok) {
-          const applications = await response.json();
-          if (applications.length > 0) {
-            reset({ applications });
-          }
+        if (!response.ok) {
+          throw new Error('Failed to load applications');
+        }
+        const applications = await response.json();
+        if (applications && applications.length > 0) {
+          // Reset form with existing applications
+          reset({ applications });
         }
       } catch (error) {
         console.error('Error loading applications:', error);
+        setError('Failed to load existing applications');
       }
     };
 
-    if (user) {
-      loadApplications();
-    }
-  }, [user, params.userId, reset]);
+    loadApplications();
+  }, [params.userId, reset]);
 
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
   if (!user) return <div className='p-4'>Loading...</div>;

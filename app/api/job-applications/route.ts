@@ -46,16 +46,24 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.email) {
+    if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Get userId from URL params
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
+
+    if (!userId) {
+      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
-    // Find user and get their applications
+    // Find user by ID and get their applications
     const user = await usersCollection.findOne(
-      { email: session.user.email },
+      { _id: new ObjectId(userId) },
       { projection: { appliedRoles: 1 } }
     );
 
