@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
-    // Replace the entire appliedRoles array and update status
+    // Update both appliedRoles and applicationsStatus
     const result = await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
       {
@@ -25,10 +25,8 @@ export async function POST(req: Request) {
             status: applicationComplete ? 'completed' : 'draft',
             appliedAt: app.appliedAt || new Date(),
           })),
-          // Set status when completing applications
-          ...(applicationComplete && {
-            applicationsStatus: 'completed',
-          }),
+          // Set applicationsStatus to 'completed' when completing applications
+          ...(applicationComplete && { applicationsStatus: 'completed' }),
         },
       }
     );
