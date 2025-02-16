@@ -26,7 +26,8 @@ export async function GET(req: Request, { params }: { params: { userId: string }
           applicationsStatus: 1,
           resumes: 1,
           jobPreferences: 1,
-          skills: 1,
+          experience: 1,
+          availability: 1,
         },
       }
     );
