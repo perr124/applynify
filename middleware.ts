@@ -3,11 +3,26 @@ import { NextResponse } from 'next/server';
 
 export default withAuth(
   async function middleware(req) {
-    // Get the pathname
     const path = req.nextUrl.pathname;
-
-    // Get token
     const token = req.nextauth.token;
+
+    // Special handling for admin login page
+    if (path === '/admin/login') {
+      // If user is already logged in and is admin, redirect to admin dashboard
+      // @ts-ignore - add isAdmin to token type if needed
+      if (token?.isAdmin) {
+        return NextResponse.redirect(new URL('/admin', req.url));
+      }
+      return NextResponse.next();
+    }
+
+    // Check for admin routes
+    if (path.startsWith('/admin')) {
+      // @ts-ignore - add isAdmin to token type if needed
+      if (!token?.isAdmin) {
+        return NextResponse.redirect(new URL('/admin/login', req.url));
+      }
+    }
 
     if (!token) {
       return NextResponse.redirect(new URL('/auth/signin', req.url));
@@ -22,7 +37,6 @@ export default withAuth(
       });
 
       const verificationData = await verificationRes.json();
-      console.log('verificationData', verificationData);
       if (!verificationData.emailVerified) {
         return NextResponse.redirect(new URL('/auth/verify-email', req.url));
       }
@@ -66,5 +80,5 @@ export default withAuth(
 );
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/onboarding/:path*'],
+  matcher: ['/dashboard/:path*', '/onboarding/:path*', '/admin/:path*'],
 };

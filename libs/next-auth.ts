@@ -74,10 +74,9 @@ export const authOptions: NextAuthOptionsExtended = {
 
         const usersCollection = await getUsersCollection();
 
-        // Find user and explicitly include password field
         const user = await usersCollection.findOne(
           { email: credentials.email },
-          { projection: { password: 1, email: 1, name: 1 } }
+          { projection: { password: 1, email: 1, name: 1, isAdmin: 1 } }
         );
 
         if (!user) {
@@ -93,6 +92,7 @@ export const authOptions: NextAuthOptionsExtended = {
           id: user._id.toString(),
           email: user.email,
           name: user.name,
+          isAdmin: user.isAdmin || false,
         };
       },
     }),
@@ -103,9 +103,25 @@ export const authOptions: NextAuthOptionsExtended = {
   ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
 
   callbacks: {
-    session: async ({ session, token }) => {
-      if (session && session.user) {
-        session.user.id = token.sub as string;
+    async jwt({ token, user, account, profile }) {
+      if (user) {
+        // Get full user data from database
+        const client = await connectMongo;
+        const usersCollection = client!.db().collection('users');
+        const dbUser = await usersCollection.findOne({ email: user.email });
+
+        if (dbUser) {
+          token.id = dbUser._id.toString();
+          token.isAdmin = dbUser.isAdmin || false;
+        }
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string;
+        // @ts-ignore - add isAdmin to the session type if needed
+        session.user.isAdmin = token.isAdmin as boolean;
       }
       return session;
     },
@@ -202,4 +218,18 @@ export async function verifyEmail(token: string) {
       $unset: { verificationToken: 1 },
     }
   );
+}
+
+// Add this type to handle the isAdmin property
+declare module 'next-auth' {
+  interface User {
+    isAdmin?: boolean;
+  }
+
+  interface Session {
+    user: {
+      id: string;
+      isAdmin?: boolean;
+    } & DefaultSession['user'];
+  }
 }
