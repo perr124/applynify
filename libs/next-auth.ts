@@ -20,7 +20,7 @@ const getUsersCollection = async () => {
   return client.db().collection('users');
 };
 
-export const authOptions: AuthOptions = {
+export const authOptions: NextAuthOptionsExtended = {
   // Set any random key in .env.local
   secret: process.env.NEXTAUTH_SECRET,
   providers: [
