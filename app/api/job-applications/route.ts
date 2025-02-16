@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import connectMongo from '@/libs/mongo';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 import { ObjectId } from 'mongodb';
+import { connectMongo } from '@/libs/connectMongo';
 
 export async function POST(req: Request) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const { applications, userId, applicationComplete } = await req.json();
-    const client = await connectMongo;
+    const client = await connectMongo();
     const usersCollection = client!.db().collection('users');
 
     // Update both appliedRoles and applicationsStatus
@@ -50,7 +50,7 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const client = await connectMongo;
+    const client = await connectMongo();
     const usersCollection = client!.db().collection('users');
 
     // Get userId from URL params

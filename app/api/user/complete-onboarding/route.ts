@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import User from '@/models/User';
+import { connectMongo } from '@/libs/connectMongo';
 import { authOptions } from '@/libs/next-auth';
 
 export async function POST(req: Request) {
   try {
+    await connectMongo();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

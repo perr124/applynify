@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import connectMongo from '@/libs/mongo';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
+import { connectMongo } from '@/libs/connectMongo';
 
 export async function GET(req: Request) {
   try {
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
 
-    const client = await connectMongo;
+    const client = await connectMongo();
     const usersCollection = client!.db().collection('users');
 
     // Create search query

@@ -6,7 +6,7 @@ import EmailProvider from 'next-auth/providers/email';
 import bcrypt from 'bcrypt';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import config from '@/config';
-import connectMongo from './mongo';
+import { connectMongo } from '@/libs/connectMongo';
 import { randomBytes } from 'crypto';
 import { AuthOptions } from 'next-auth';
 
@@ -15,7 +15,7 @@ interface NextAuthOptionsExtended extends NextAuthOptions {
 }
 
 const getUsersCollection = async () => {
-  const client = await connectMongo;
+  const client = await connectMongo();
   if (!client) throw new Error('Failed to connect to MongoDB');
   return client.db().collection('users');
 };
@@ -53,14 +53,10 @@ export const authOptions: NextAuthOptionsExtended = {
     }),
     // Follow the "Login with Email" tutorial to set up your email server
     // Requires a MongoDB database. Set MONOGODB_URI env variable.
-    ...(connectMongo
-      ? [
-          EmailProvider({
-            server: process.env.EMAIL_SERVER,
-            from: config.mailgun.fromNoReply,
-          }),
-        ]
-      : []),
+    EmailProvider({
+      server: process.env.EMAIL_SERVER,
+      from: config.mailgun.fromNoReply,
+    }),
     // Credentials Provider for email/password login
     CredentialsProvider({
       name: 'Credentials',
@@ -101,7 +97,7 @@ export const authOptions: NextAuthOptionsExtended = {
   // New users will be saved in Database (MongoDB Atlas). Each user (model) has some fields like name, email, image, etc..
   // Requires a MongoDB database. Set MONOGODB_URI env variable.
   // Learn more about the model type: https://next-auth.js.org/v3/adapters/models
-  ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
+  adapter: MongoDBAdapter(connectMongo()),
 
   callbacks: {
     async jwt({ token, user }) {

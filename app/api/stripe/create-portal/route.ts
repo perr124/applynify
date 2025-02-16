@@ -1,9 +1,9 @@
-import { NextResponse, NextRequest } from "next/server";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/libs/next-auth";
-import connectMongo from "@/libs/mongoose";
-import { createCustomerPortal } from "@/libs/stripe";
-import User from "@/models/User";
+import { NextResponse, NextRequest } from 'next/server';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '@/libs/next-auth';
+import { connectMongo } from '@/libs/connectMongo';
+import { createCustomerPortal } from '@/libs/stripe';
+import User from '@/models/User';
 
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -21,16 +21,12 @@ export async function POST(req: NextRequest) {
       if (!user?.customerId) {
         return NextResponse.json(
           {
-            error:
-              "You don't have a billing account yet. Make a purchase first.",
+            error: "You don't have a billing account yet. Make a purchase first.",
           },
           { status: 400 }
         );
       } else if (!body.returnUrl) {
-        return NextResponse.json(
-          { error: "Return URL is required" },
-          { status: 400 }
-        );
+        return NextResponse.json({ error: 'Return URL is required' }, { status: 400 });
       }
 
       const stripePortalUrl = await createCustomerPortal({
@@ -47,6 +43,6 @@ export async function POST(req: NextRequest) {
     }
   } else {
     // Not Signed in
-    return NextResponse.json({ error: "Not signed in" }, { status: 401 });
+    return NextResponse.json({ error: 'Not signed in' }, { status: 401 });
   }
 }

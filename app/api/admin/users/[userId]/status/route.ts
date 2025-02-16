@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import connectMongo from '@/libs/mongo';
+import { connectMongo } from '@/libs/connectMongo';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 
@@ -12,7 +12,7 @@ export async function PUT(req: Request, { params }: { params: { userId: string }
     }
 
     const body = await req.json();
-    const client = await connectMongo;
+    const client = await connectMongo();
     const usersCollection = client!.db().collection('users');
 
     await usersCollection.updateOne(

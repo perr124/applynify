@@ -29,6 +29,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
+    await connectMongo();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

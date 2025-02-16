@@ -2,7 +2,7 @@ import { NextResponse, NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 import { createCheckout } from '@/libs/stripe';
-import connectMongo from '@/libs/mongoose';
+import { connectMongo } from '@/libs/connectMongo';
 import User from '@/models/User';
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
@@ -10,6 +10,7 @@ import User from '@/models/User';
 // By default, it doesn't force users to be authenticated. But if they are, it will prefill the Checkout data with their email and/or credit card
 export async function POST(req: NextRequest) {
   try {
+    await connectMongo();
     const body = await req.json();
     console.log('Received checkout request:', body); // Debug log
 
@@ -30,12 +31,11 @@ export async function POST(req: NextRequest) {
     const session = await getServerSession(authOptions);
     console.log('User session:', session); // Debug log
 
-    await connectMongo();
     const user = await User.findById(session?.user?.id);
     console.log('Found user:', user?._id); // Debug log
 
     const { priceId, mode, successUrl, cancelUrl } = body;
-
+    console.log(session?.user?.email, 'stripe user');
     const stripeSessionURL = await createCheckout({
       priceId,
       mode,
@@ -45,6 +45,8 @@ export async function POST(req: NextRequest) {
       clientReferenceId: user?._id?.toString(),
       // If user is logged in, this will automatically prefill Checkout data like email and/or credit card for faster checkout
       user,
+      //@ts-ignore
+      customer_email: session?.user?.email,
       // If you send coupons from the frontend, you can pass it here
       // couponId: body.couponId,
     });
