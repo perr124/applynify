@@ -46,24 +46,34 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.isAdmin) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    // Get userId from URL params
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
 
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
-    // Find user by ID and get their applications
+    // Get userId from URL params
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get('userId');
+
+    // If userId is provided and user is admin, fetch that specific user's applications
+    if (userId && session.user.isAdmin) {
+      const user = await usersCollection.findOne(
+        { _id: new ObjectId(userId) },
+        { projection: { appliedRoles: 1 } }
+      );
+
+      if (!user) {
+        return NextResponse.json({ error: 'User not found' }, { status: 404 });
+      }
+
+      return NextResponse.json(user.appliedRoles || []);
+    }
+
+    // For regular users, fetch their own applications
     const user = await usersCollection.findOne(
-      { _id: new ObjectId(userId) },
+      { email: session.user.email },
       { projection: { appliedRoles: 1 } }
     );
 
