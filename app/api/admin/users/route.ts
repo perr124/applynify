@@ -36,7 +36,10 @@ export async function GET(req: Request) {
         email: 1,
         firstName: 1,
         lastName: 1,
+        createdAt: 1,
+        appliedRolesComplete: 1,
       })
+      .sort({ createdAt: -1 })
       .limit(50)
       .toArray();
 
