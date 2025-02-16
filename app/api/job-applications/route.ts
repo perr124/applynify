@@ -15,7 +15,7 @@ export async function POST(req: Request) {
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
-    // Replace the entire appliedRoles array and update completion status
+    // Replace the entire appliedRoles array and update status
     const result = await usersCollection.updateOne(
       { _id: new ObjectId(userId) },
       {
@@ -25,10 +25,9 @@ export async function POST(req: Request) {
             status: applicationComplete ? 'completed' : 'draft',
             appliedAt: app.appliedAt || new Date(),
           })),
-          // Set both flags when completing applications
+          // Set status when completing applications
           ...(applicationComplete && {
             applicationsStatus: 'completed',
-            appliedRolesComplete: true,
           }),
         },
       }
@@ -48,22 +47,31 @@ export async function POST(req: Request) {
 // Add this to get user's applications
 export async function GET(req: Request) {
   try {
-    const { searchParams } = new URL(req.url);
-    const userId = searchParams.get('userId');
-
-    if (!userId) {
-      return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const client = await connectMongo;
     const usersCollection = client!.db().collection('users');
 
+    // Find user and get their applications
     const user = await usersCollection.findOne(
-      { _id: new ObjectId(userId) },
+      { email: session.user.email },
       { projection: { appliedRoles: 1 } }
     );
 
-    return NextResponse.json(user?.appliedRoles || []);
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Sort applications by date, newest first
+    const applications = user.appliedRoles || [];
+    applications.sort(
+      (a: any, b: any) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime()
+    );
+
+    return NextResponse.json(applications);
   } catch (error) {
     console.error('Error fetching applications:', error);
     return NextResponse.json({ error: 'Failed to fetch applications' }, { status: 500 });

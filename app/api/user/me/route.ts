@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import connectMongo from '@/libs/mongo';
+import User from '@/models/User';
+import connectMongo from '@/libs/mongoose';
 
 export async function GET() {
   try {
@@ -11,12 +12,11 @@ export async function GET() {
       return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     }
 
-    const client = await connectMongo;
-    const usersCollection = client!.db().collection('users');
+    await connectMongo();
 
-    const user = await usersCollection.findOne(
+    const user = await User.findOne(
       { email: session.user.email },
-      { projection: { password: 0 } }
+      'email firstName lastName applicationsStatus appliedRoles'
     );
 
     if (!user) {
@@ -26,6 +26,6 @@ export async function GET() {
     return NextResponse.json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }

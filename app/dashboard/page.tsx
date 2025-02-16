@@ -30,7 +30,7 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 type ProfileStatus = {
   preferences: boolean;
   resume: boolean;
-  applicationsStatus?: 'started' | 'pending' | 'completed';
+  applicationsStatus?: 'started' | 'completed';
 };
 
 export default function DashboardHome() {
@@ -84,15 +84,6 @@ export default function DashboardHome() {
           borderColor: 'border-blue-200',
           label: 'Applications Started',
           description: 'Your application process has begun',
-        };
-      case 'pending':
-        return {
-          icon: AlertCircle,
-          color: 'text-amber-600',
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-200',
-          label: 'Applications Pending',
-          description: 'Your applications are being reviewed',
         };
       case 'completed':
         return {

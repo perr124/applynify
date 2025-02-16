@@ -37,7 +37,6 @@ export async function GET(req: Request) {
         firstName: 1,
         lastName: 1,
         createdAt: 1,
-        appliedRolesComplete: 1,
       })
       .sort({ createdAt: -1 })
       .limit(50)

@@ -30,7 +30,7 @@ export interface PreferencesData {
   jobPreferences: JobPreferences;
   experience: Experience;
   availability: Availability;
-  applicationsStatus?: 'started' | 'pending' | 'completed';
+  applicationsStatus?: 'started' | 'completed';
   resumes?: Resume[];
 }
 

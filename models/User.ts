@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema(
     },
     applicationsStatus: {
       type: String,
-      enum: ['started', 'pending', 'completed'],
+      enum: ['started', 'completed'],
       default: 'started',
       select: true,
     },
@@ -179,10 +179,6 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
-    appliedRolesComplete: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     timestamps: true,
