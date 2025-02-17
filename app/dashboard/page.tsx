@@ -31,6 +31,7 @@ type ProfileStatus = {
   preferences: boolean;
   resume: boolean;
   applicationsStatus?: 'started' | 'completed';
+  totalApplications?: number;
 };
 
 export default function DashboardHome() {
@@ -51,10 +52,19 @@ export default function DashboardHome() {
         const resumesResponse = await fetch('/api/resumes');
         const resumesData = await resumesResponse.json();
 
+        // Fetch applications if status is completed
+        let totalApplications;
+        if (prefsData.applicationsStatus === 'completed') {
+          const applicationsResponse = await fetch('/api/job-applications');
+          const applicationsData = await applicationsResponse.json();
+          totalApplications = applicationsData.length;
+        }
+
         setProfileStatus({
           preferences: hasCompletedPreferences(prefsData),
           resume: resumesData.length > 0,
           applicationsStatus: prefsData.applicationsStatus || 'started',
+          totalApplications,
         });
       } catch (error) {
         console.error('Error fetching profile status:', error);
@@ -121,37 +131,52 @@ export default function DashboardHome() {
       <div className='bg-white shadow rounded-lg p-6'>
         <h2 className='text-lg font-semibold text-gray-900 mb-4'>Application Status</h2>
         {profileStatus.applicationsStatus && (
-          <div
-            className={classNames(
-              'rounded-lg border p-4',
-              getApplicationStatusInfo(profileStatus.applicationsStatus).borderColor,
-              getApplicationStatusInfo(profileStatus.applicationsStatus).bgColor
-            )}
-          >
-            <div className='flex items-center'>
-              <div
-                className={classNames(
-                  'flex-shrink-0 mr-3',
-                  getApplicationStatusInfo(profileStatus.applicationsStatus).color
-                )}
-              >
-                {React.createElement(
-                  getApplicationStatusInfo(profileStatus.applicationsStatus).icon,
-                  {
-                    className: 'h-6 w-6',
-                  }
-                )}
-              </div>
-              <div>
-                <h3 className='text-sm font-medium text-gray-900'>
-                  {getApplicationStatusInfo(profileStatus.applicationsStatus).label}
-                </h3>
-                <p className='mt-1 text-sm text-gray-500'>
-                  {getApplicationStatusInfo(profileStatus.applicationsStatus).description}
-                </p>
+          <>
+            <div
+              className={classNames(
+                'rounded-lg border p-4',
+                getApplicationStatusInfo(profileStatus.applicationsStatus).borderColor,
+                getApplicationStatusInfo(profileStatus.applicationsStatus).bgColor
+              )}
+            >
+              <div className='flex items-center'>
+                <div
+                  className={classNames(
+                    'flex-shrink-0 mr-3',
+                    getApplicationStatusInfo(profileStatus.applicationsStatus).color
+                  )}
+                >
+                  {React.createElement(
+                    getApplicationStatusInfo(profileStatus.applicationsStatus).icon,
+                    {
+                      className: 'h-6 w-6',
+                    }
+                  )}
+                </div>
+                <div>
+                  <h3 className='text-sm font-medium text-gray-900'>
+                    {getApplicationStatusInfo(profileStatus.applicationsStatus).label}
+                  </h3>
+                  <p className='mt-1 text-sm text-gray-500'>
+                    {getApplicationStatusInfo(profileStatus.applicationsStatus).description}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+
+            {/* Add the new applications count section */}
+            {profileStatus.applicationsStatus === 'completed' &&
+              profileStatus.totalApplications !== undefined && (
+                <div className='mt-4 pt-4 border-t border-gray-200'>
+                  <div className='flex items-center justify-between'>
+                    <span className='text-sm text-gray-500'>Total Applications</span>
+                    <span className='text-lg font-semibold text-gray-900'>
+                      {profileStatus.totalApplications}
+                    </span>
+                  </div>
+                </div>
+              )}
+          </>
         )}
       </div>
 
