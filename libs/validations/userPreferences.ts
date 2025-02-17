@@ -5,6 +5,7 @@ export interface JobPreferences {
     minimum: string;
     preferred: string;
   };
+  citizenshipStatus: string;
 }
 
 export interface Experience {
@@ -16,6 +17,7 @@ export interface Experience {
 export interface Availability {
   startDate: string;
   phoneNumber?: string;
+  additionalInfo?: string;
 }
 
 export interface Resume {

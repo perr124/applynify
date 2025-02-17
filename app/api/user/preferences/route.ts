@@ -117,6 +117,7 @@ export async function PUT(request: Request) {
           availability: {
             startDate: data.availability.startDate,
             phoneNumber: data.availability.phoneNumber,
+            additionalInfo: data.availability.additionalInfo,
           },
         },
       },

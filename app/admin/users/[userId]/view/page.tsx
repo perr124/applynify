@@ -171,6 +171,10 @@ export default function ViewUser() {
                       <p>Preferred: {user.jobPreferences.salary.preferred}</p>
                     </dd>
                   </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Citizenship Status</dt>
+                    <dd className='mt-1'>{user.jobPreferences.citizenshipStatus}</dd>
+                  </div>
                 </dl>
               </div>
             )}
@@ -220,6 +224,12 @@ export default function ViewUser() {
                     <div>
                       <dt className='text-sm font-medium text-gray-500'>Phone Number</dt>
                       <dd className='mt-1'>{user.availability.phoneNumber}</dd>
+                    </div>
+                  )}
+                  {user.availability.additionalInfo && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>Additional Information</dt>
+                      <dd className='mt-1'>{user.availability.additionalInfo}</dd>
                     </div>
                   )}
                 </dl>

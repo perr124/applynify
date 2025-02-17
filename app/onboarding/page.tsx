@@ -16,6 +16,7 @@ type FormData = {
       minimum: string;
       preferred: string;
     };
+    citizenshipStatus: string;
   };
   experience: {
     yearsOfExperience: string;
@@ -25,7 +26,7 @@ type FormData = {
   availability: {
     startDate: string;
     phoneNumber?: string;
-    noticeRequired?: string;
+    additionalInfo?: string;
     resume?: {
       file: File | null;
       uploading: boolean;
@@ -42,6 +43,7 @@ const initialFormData: FormData = {
       minimum: '',
       preferred: '',
     },
+    citizenshipStatus: '',
   },
   experience: {
     yearsOfExperience: '',
@@ -51,7 +53,7 @@ const initialFormData: FormData = {
   availability: {
     startDate: '',
     phoneNumber: '',
-    noticeRequired: '',
+    additionalInfo: '',
     resume: {
       file: null,
       uploading: false,
@@ -104,6 +106,7 @@ export default function OnboardingQuestionnaire() {
                 minimum: data.jobPreferences?.salary?.minimum || '',
                 preferred: data.jobPreferences?.salary?.preferred || '',
               },
+              citizenshipStatus: data.jobPreferences?.citizenshipStatus || '',
             },
             experience: {
               yearsOfExperience: data.experience?.yearsOfExperience || '',
@@ -113,6 +116,7 @@ export default function OnboardingQuestionnaire() {
             availability: {
               startDate: data.availability?.startDate || '',
               phoneNumber: data.availability?.phoneNumber || '',
+              additionalInfo: data.availability?.additionalInfo || '',
               resume: {
                 file: activeResume ? new File([], activeResume.filename) : null,
                 uploading: false,
@@ -237,6 +241,7 @@ export default function OnboardingQuestionnaire() {
             availability: {
               startDate: formData.availability.startDate,
               phoneNumber: formData.availability.phoneNumber,
+              additionalInfo: formData.availability.additionalInfo,
               resumeUrl: resumeUrl,
             },
           }),
@@ -459,6 +464,12 @@ export default function OnboardingQuestionnaire() {
                   {formData.jobPreferences.salary.minimum || 'Not specified'}
                 </dd>
               </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Citizenship Status</dt>
+                <dd className='mt-1'>
+                  {formData.jobPreferences.citizenshipStatus || 'Not specified'}
+                </dd>
+              </div>
             </dl>
           </div>
 
@@ -514,6 +525,10 @@ export default function OnboardingQuestionnaire() {
               <div>
                 <dt className='text-sm text-gray-500'>Phone Number</dt>
                 <dd className='mt-1'>{formData.availability.phoneNumber || 'Not specified'}</dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Additional Information</dt>
+                <dd className='mt-1'>{formData.availability.additionalInfo || 'Not specified'}</dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Resume</dt>
@@ -835,6 +850,28 @@ export default function OnboardingQuestionnaire() {
                     Enter numbers only, commas will be added automatically
                   </p>
                 </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Citizenship Status
+                  </label>
+                  <div className='mt-1'>
+                    <select
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      value={formData.jobPreferences.citizenshipStatus}
+                      onChange={(e) =>
+                        updateFormData('jobPreferences', 'citizenshipStatus', e.target.value)
+                      }
+                    >
+                      <option value=''>Select status</option>
+                      <option value='us-citizen'>U.S. Citizen</option>
+                      <option value='permanent-resident'>Permanent Resident</option>
+                      <option value='h1b'>H1-B Visa</option>
+                      <option value='f1'>F-1 Visa</option>
+                      <option value='other'>Other</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -983,6 +1020,23 @@ export default function OnboardingQuestionnaire() {
                       value={formData.availability.phoneNumber}
                       onChange={(e) =>
                         updateFormData('availability', 'phoneNumber', e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Additional Information
+                  </label>
+                  <div className='mt-1'>
+                    <textarea
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      rows={4}
+                      placeholder='Any other important information we should know about (e.g., special requirements, preferences, etc.)'
+                      value={formData.availability.additionalInfo}
+                      onChange={(e) =>
+                        updateFormData('availability', 'additionalInfo', e.target.value)
                       }
                     />
                   </div>

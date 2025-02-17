@@ -51,6 +51,15 @@ const userSchema = new mongoose.Schema(
     jobPreferences: {
       type: mongoose.Schema.Types.Mixed,
       select: true,
+      default: {
+        roles: [],
+        locations: [],
+        salary: {
+          minimum: '',
+          preferred: '',
+        },
+        citizenshipStatus: '',
+      },
     },
     applicationsStatus: {
       type: String,
@@ -68,6 +77,7 @@ const userSchema = new mongoose.Schema(
       default: {
         startDate: '',
         phoneNumber: '',
+        additionalInfo: '',
       },
     },
     password: {
