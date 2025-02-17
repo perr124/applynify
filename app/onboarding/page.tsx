@@ -17,6 +17,7 @@ type FormData = {
       preferred: string;
     };
     citizenshipStatus: string;
+    jobType: string;
   };
   experience: {
     yearsOfExperience: string;
@@ -44,6 +45,7 @@ const initialFormData: FormData = {
       preferred: '',
     },
     citizenshipStatus: '',
+    jobType: '',
   },
   experience: {
     yearsOfExperience: '',
@@ -107,6 +109,7 @@ export default function OnboardingQuestionnaire() {
                 preferred: data.jobPreferences?.salary?.preferred || '',
               },
               citizenshipStatus: data.jobPreferences?.citizenshipStatus || '',
+              jobType: data.jobPreferences?.jobType || '',
             },
             experience: {
               yearsOfExperience: data.experience?.yearsOfExperience || '',
@@ -469,6 +472,10 @@ export default function OnboardingQuestionnaire() {
                 <dd className='mt-1'>
                   {formData.jobPreferences.citizenshipStatus || 'Not specified'}
                 </dd>
+              </div>
+              <div>
+                <dt className='text-sm text-gray-500'>Job Type</dt>
+                <dd className='mt-1'>{formData.jobPreferences.jobType || 'Not specified'}</dd>
               </div>
             </dl>
           </div>
@@ -871,6 +878,23 @@ export default function OnboardingQuestionnaire() {
                       <option value='other'>Other</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>Job Type</label>
+                  <select
+                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    value={formData.jobPreferences.jobType}
+                    onChange={(e) => updateFormData('jobPreferences', 'jobType', e.target.value)}
+                  >
+                    <option value=''>Select job type</option>
+                    <option value='full-time'>Full Time</option>
+                    <option value='part-time'>Part Time</option>
+                    <option value='contract'>Contract</option>
+                    <option value='internship'>Internship</option>
+                    <option value='temporary'>Temporary</option>
+                    <option value='freelance'>Freelance</option>
+                  </select>
                 </div>
               </div>
             )}

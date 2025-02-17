@@ -175,6 +175,19 @@ export default function ViewUser() {
                     <dt className='text-sm font-medium text-gray-500'>Citizenship Status</dt>
                     <dd className='mt-1'>{user.jobPreferences.citizenshipStatus}</dd>
                   </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Job Type</dt>
+                    <dd className='mt-1'>
+                      {user.jobPreferences.jobType ? (
+                        <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'>
+                          {user.jobPreferences.jobType.charAt(0).toUpperCase() +
+                            user.jobPreferences.jobType.slice(1).replace('-', ' ')}
+                        </span>
+                      ) : (
+                        'Not specified'
+                      )}
+                    </dd>
+                  </div>
                 </dl>
               </div>
             )}
