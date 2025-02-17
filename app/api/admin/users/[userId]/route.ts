@@ -12,15 +12,23 @@ export async function GET(req: Request, { params }: { params: { userId: string }
     }
 
     await connectMongo();
-    const user = await User.findById(params.userId).select(
-      'firstName lastName email applicationsStatus resumes jobPreferences experience availability'
-    );
+    const user = await User.findById(params.userId)
+      .select(
+        'firstName lastName email applicationsStatus resumes jobPreferences experience availability'
+      )
+      .lean();
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json(user);
+    const transformedUser = {
+      ...user,
+      // @ts-ignore
+      id: user._id.toString(),
+    };
+
+    return NextResponse.json(transformedUser);
   } catch (error) {
     console.error('Error fetching user:', error);
     return NextResponse.json({ error: 'Failed to fetch user details' }, { status: 500 });
