@@ -4,7 +4,7 @@ import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
 import { s3Client } from '@/libs/s3';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
-import { connectMongo } from '@/libs/connectMongo';
+import connectMongo from '@/libs/mongoose';
 
 export async function POST(request: Request) {
   try {
@@ -75,12 +75,13 @@ export async function POST(request: Request) {
     }
 
     // Update user's resumes array
-    const user = await User.findOneAndUpdate({ email: session.user.email }, updateOperation, {
-      new: true,
-      maxTimeMS: 8000,
-    }).exec();
+    const updatedUser = await User.findOneAndUpdate(
+      { email: session.user.email },
+      updateOperation,
+      { new: true, maxTimeMS: 8000 }
+    ).exec();
 
-    if (!user) {
+    if (!updatedUser) {
       console.error('User not found');
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
@@ -91,8 +92,8 @@ export async function POST(request: Request) {
       resume: newResume,
     });
   } catch (error) {
-    console.error('Error uploading resume:', error);
+    console.error('Resume upload error:', error);
     const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json({ error: 'Error uploading resume: ' + errorMessage }, { status: 500 });
   }
 }

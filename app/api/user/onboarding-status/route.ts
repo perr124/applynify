@@ -1,7 +1,7 @@
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
-import { connectMongo } from '@/libs/connectMongo';
 import { getServerSession } from 'next-auth/next';
+import connectMongo from '@/libs/mongoose';
 import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';

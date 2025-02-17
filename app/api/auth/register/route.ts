@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import bcrypt from 'bcrypt';
 import { generateVerificationToken } from '@/libs/next-auth';
 import { sendVerificationEmail } from '@/libs/mail';
-import { connectMongo } from '@/libs/connectMongo';
+import connectMongo from '@/libs/mongoose';
+import mongoose from 'mongoose';
 
 export async function POST(req: Request) {
   try {
@@ -10,7 +11,9 @@ export async function POST(req: Request) {
 
     console.log('Connecting to MongoDB...');
     const client = await connectMongo();
-    const usersCollection = client.db().collection('users');
+    const db = mongoose.connection.db; // Use mongoose.connection.db instead
+
+    const usersCollection = db.collection('users');
 
     // Check if user already exists
     console.log('Checking if user exists...');

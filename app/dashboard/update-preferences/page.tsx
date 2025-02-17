@@ -112,7 +112,7 @@ export default function UpdatePreferences() {
     setShowSuccess(false);
 
     try {
-      // Check for any pending input in role or location fields
+      // Check for any pending input in role, location, or skill fields
       const pendingFormData = { ...formData };
 
       if (currentRoleInput.trim()) {
@@ -120,7 +120,6 @@ export default function UpdatePreferences() {
           ...formData.jobPreferences.roles,
           currentRoleInput.trim(),
         ];
-        // Clear the input after adding
         setCurrentRoleInput('');
       }
 
@@ -129,8 +128,16 @@ export default function UpdatePreferences() {
           ...formData.jobPreferences.locations,
           currentLocationInput.trim(),
         ];
-        // Clear the input after adding
         setCurrentLocationInput('');
+      }
+
+      // Add check for pending skill input
+      if (currentSkillInput.trim()) {
+        pendingFormData.experience.skills = [
+          ...formData.experience.skills,
+          currentSkillInput.trim(),
+        ];
+        setCurrentSkillInput('');
       }
 
       const response = await fetch('/api/user/preferences', {

@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import { connectMongo } from '@/libs/connectMongo';
+import connectMongo from '@/libs/mongoose';
+import User from '@/models/User';
 
 export async function GET(req: Request) {
   try {
@@ -15,10 +16,8 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
 
-    const client = await connectMongo();
-    const usersCollection = client!.db().collection('users');
+    await connectMongo();
 
-    // Create search query
     const query = search
       ? {
           $or: [
@@ -29,22 +28,10 @@ export async function GET(req: Request) {
         }
       : {};
 
-    const users = await usersCollection
-      .find(query)
-      .project({
-        _id: 1,
-        email: 1,
-        firstName: 1,
-        lastName: 1,
-        createdAt: 1,
-        resumeUrl: 1,
-        preferences: 1,
-        jobPreferences: 1,
-        skills: 1,
-      })
+    const users = await User.find(query)
+      .select('id email firstName lastName createdAt resumeUrl preferences jobPreferences skills')
       .sort({ createdAt: -1 })
-      .limit(50)
-      .toArray();
+      .limit(50);
 
     return NextResponse.json(users);
   } catch (error) {

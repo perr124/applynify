@@ -6,16 +6,16 @@ import EmailProvider from 'next-auth/providers/email';
 import bcrypt from 'bcrypt';
 import { MongoDBAdapter } from '@auth/mongodb-adapter';
 import config from '@/config';
-import { connectMongo } from '@/libs/connectMongo';
 import { randomBytes } from 'crypto';
 import { AuthOptions } from 'next-auth';
+import connectMongo from './mongo';
 
 interface NextAuthOptionsExtended extends NextAuthOptions {
   adapter?: any;
 }
 
 const getUsersCollection = async () => {
-  const client = await connectMongo();
+  const client = await connectMongo;
   if (!client) throw new Error('Failed to connect to MongoDB');
   return client.db().collection('users');
 };
@@ -97,7 +97,7 @@ export const authOptions: NextAuthOptionsExtended = {
   // New users will be saved in Database (MongoDB Atlas). Each user (model) has some fields like name, email, image, etc..
   // Requires a MongoDB database. Set MONOGODB_URI env variable.
   // Learn more about the model type: https://next-auth.js.org/v3/adapters/models
-  adapter: MongoDBAdapter(connectMongo()),
+  ...(connectMongo && { adapter: MongoDBAdapter(connectMongo) }),
 
   callbacks: {
     async jwt({ token, user }) {

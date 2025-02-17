@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import { ObjectId } from 'mongodb';
-import { connectMongo } from '@/libs/connectMongo';
+import connectMongo from '@/libs/mongoose';
+import User from '@/models/User';
 
 export async function POST(req: Request) {
   try {
@@ -12,12 +12,10 @@ export async function POST(req: Request) {
     }
 
     const { applications, userId, applicationComplete } = await req.json();
-    const client = await connectMongo();
-    const usersCollection = client!.db().collection('users');
+    await connectMongo();
 
-    // Update both appliedRoles and applicationsStatus
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(userId) },
+    const result = await User.updateOne(
+      { _id: userId },
       {
         $set: {
           appliedRoles: applications.map((app: any) => ({
@@ -25,7 +23,6 @@ export async function POST(req: Request) {
             status: applicationComplete ? 'completed' : 'draft',
             appliedAt: app.appliedAt || new Date(),
           })),
-          // Set applicationsStatus to 'completed' when completing applications
           ...(applicationComplete && { applicationsStatus: 'completed' }),
         },
       }
@@ -50,38 +47,18 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const client = await connectMongo();
-    const usersCollection = client!.db().collection('users');
-
-    // Get userId from URL params
+    await connectMongo();
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
 
-    // If userId is provided and user is admin, fetch that specific user's applications
-    if (userId && session.user.isAdmin) {
-      const user = await usersCollection.findOne(
-        { _id: new ObjectId(userId) },
-        { projection: { appliedRoles: 1 } }
-      );
+    const query = userId && session.user.isAdmin ? { _id: userId } : { email: session.user.email };
 
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      }
-
-      return NextResponse.json(user.appliedRoles || []);
-    }
-
-    // For regular users, fetch their own applications
-    const user = await usersCollection.findOne(
-      { email: session.user.email },
-      { projection: { appliedRoles: 1 } }
-    );
+    const user = await User.findOne(query).select('appliedRoles');
 
     if (!user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Sort applications by date, newest first
     const applications = user.appliedRoles || [];
     applications.sort(
       (a: any, b: any) => new Date(b.appliedAt).getTime() - new Date(a.appliedAt).getTime()

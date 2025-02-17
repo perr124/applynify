@@ -1,22 +1,21 @@
 import { NextResponse } from 'next/server';
-import { connectMongo } from '@/libs/connectMongo';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
+import connectMongo from '@/libs/mongoose';
+import User from '@/models/User';
+import { ObjectId } from 'mongodb';
 
 export async function PUT(req: Request, { params }: { params: { userId: string } }) {
   try {
     const session = await getServerSession(authOptions);
-
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const client = await connectMongo();
-    const usersCollection = client!.db().collection('users');
-
-    await usersCollection.updateOne(
-      { _id: params.userId },
+    await connectMongo();
+    await User.updateOne(
+      { _id: new ObjectId(params.userId) },
       { $set: { applicationsStatus: body.applicationsStatus } }
     );
 

@@ -8,7 +8,7 @@ import { Search, UserPlus, Eye, FileEdit } from 'lucide-react';
 import Link from 'next/link';
 
 type User = {
-  _id: string;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -41,6 +41,7 @@ export default function AdminPanel() {
       const response = await fetch(`/api/admin/users?search=${searchQuery}`);
       if (!response.ok) throw new Error('Failed to fetch users');
       const data = await response.json();
+      console.log(data, 'responsejijoijo');
       setUsers(data);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -65,7 +66,7 @@ export default function AdminPanel() {
         },
         body: JSON.stringify({
           ...data,
-          userId: selectedUser._id,
+          userId: selectedUser.id,
         }),
       });
 
@@ -156,21 +157,21 @@ export default function AdminPanel() {
                     </tr>
                   ) : (
                     users.map((user) => (
-                      <tr key={user._id}>
+                      <tr key={user.id}>
                         <td className='px-6 py-4 whitespace-nowrap'>
                           {user.firstName} {user.lastName}
                         </td>
                         <td className='px-6 py-4 whitespace-nowrap'>{user.email}</td>
                         <td className='px-6 py-4 whitespace-nowrap space-x-4'>
                           <Link
-                            href={`/admin/users/${user._id}/view`}
+                            href={`/admin/users/${user.id}/view`}
                             className='text-blue-600 hover:text-blue-900 inline-flex items-center'
                             title='View User Details'
                           >
                             <Eye className='h-5 w-5' />
                           </Link>
                           <Link
-                            href={`/admin/users/${user._id}`}
+                            href={`/admin/users/${user.id}`}
                             className='text-primary-600 hover:text-primary-900 inline-flex items-center'
                             title='Edit Applications'
                           >

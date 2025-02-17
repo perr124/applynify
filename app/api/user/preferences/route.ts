@@ -57,7 +57,6 @@ export async function POST(req: Request) {
     if (!updatedUser) {
       return new NextResponse('User not found', { status: 404 });
     }
-    console.log('preee sesh here3');
 
     return NextResponse.json({
       success: true,
@@ -117,6 +116,7 @@ export async function PUT(request: Request) {
           experience: data.experience,
           availability: {
             startDate: data.availability.startDate,
+            phoneNumber: data.availability.phoneNumber,
           },
         },
       },

@@ -1,7 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import { connectMongo } from '@/libs/connectMongo';
+import connectMongo from '@/libs/mongoose';
 import { createCustomerPortal } from '@/libs/stripe';
 import User from '@/models/User';
 
