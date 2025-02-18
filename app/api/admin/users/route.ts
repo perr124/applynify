@@ -13,6 +13,8 @@ interface UserDocument {
 
 export async function GET(req: Request) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
 
     // Check if user is admin
@@ -22,8 +24,6 @@ export async function GET(req: Request) {
 
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search') || '';
-
-    await connectMongo();
 
     const query = search
       ? {

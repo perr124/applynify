@@ -6,12 +6,13 @@ import User from '@/models/User';
 
 export async function GET(req: Request, { params }: { params: { userId: string } }) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectMongo();
     const user = await User.findById(params.userId)
       .select(
         'firstName lastName email applicationsStatus resumes jobPreferences experience availability'

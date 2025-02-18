@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import dbConnect from '@/libs/mongoose';
+import connectMongo from '@/libs/mongoose';
 import User from '@/models/User';
 
 export async function GET() {
   try {
-    await dbConnect();
+    await connectMongo();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -37,6 +37,7 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    await connectMongo();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

@@ -7,13 +7,14 @@ import { ObjectId } from 'mongodb';
 
 export async function PUT(req: Request, { params }: { params: { userId: string } }) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    await connectMongo();
     await User.updateOne(
       { _id: new ObjectId(params.userId) },
       { $set: { applicationsStatus: body.applicationsStatus } }

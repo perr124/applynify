@@ -10,7 +10,8 @@ export async function POST(req: Request) {
     const { email, password, name, firstName, lastName } = await req.json();
 
     console.log('Connecting to MongoDB...');
-    const client = await connectMongo();
+    await connectMongo();
+
     const db = mongoose.connection.db; // Use mongoose.connection.db instead
 
     const usersCollection = db.collection('users');

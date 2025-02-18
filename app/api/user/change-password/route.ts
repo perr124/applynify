@@ -1,14 +1,14 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
-import dbConnect from '@/libs/mongoose';
+import connectMongo from '@/libs/mongoose';
 import User from '@/models/User';
 import bcrypt from 'bcrypt';
 
 export async function POST(req: Request) {
   try {
     console.log('Connecting to database...');
-    await dbConnect();
+    await connectMongo();
 
     console.log('Getting user session...');
     const session = await getServerSession(authOptions);

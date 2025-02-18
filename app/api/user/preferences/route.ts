@@ -8,6 +8,8 @@ import { PreferencesData, validatePreferences } from '@/libs/validations/userPre
 
 export async function POST(req: Request) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -26,8 +28,6 @@ export async function POST(req: Request) {
     // }
 
     const { jobPreferences, experience, availability } = data;
-
-    await connectMongo();
 
     const updatedUser = await User.findOneAndUpdate(
       { email: session.user.email },
@@ -70,6 +70,8 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {
@@ -100,6 +102,8 @@ export async function GET() {
 
 export async function PUT(request: Request) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

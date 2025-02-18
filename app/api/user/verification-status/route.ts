@@ -1,6 +1,6 @@
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
-import dbConnect from '@/libs/mongoose';
+import connectMongo from '@/libs/mongoose';
 import { getServerSession } from 'next-auth/next';
 import { NextResponse } from 'next/server';
 
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    await dbConnect();
+    await connectMongo();
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.email) {

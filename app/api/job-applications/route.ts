@@ -6,13 +6,14 @@ import User from '@/models/User';
 
 export async function POST(req: Request) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.isAdmin) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const { applications, userId, applicationComplete } = await req.json();
-    await connectMongo();
 
     const result = await User.updateOne(
       { _id: userId },
@@ -42,12 +43,13 @@ export async function POST(req: Request) {
 // Add this to get user's applications
 export async function GET(req: Request) {
   try {
+    await connectMongo();
+
     const session = await getServerSession(authOptions);
     if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    await connectMongo();
     const { searchParams } = new URL(req.url);
     const userId = searchParams.get('userId');
 
