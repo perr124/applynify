@@ -159,6 +159,9 @@ export default function OnboardingQuestionnaire() {
   };
 
   const handleNext = async () => {
+    // Clear error when moving between steps
+    setError(null);
+
     // Check for any pending input before proceeding
     if (step === 1) {
       // Only check on step 1 where roles and locations are
@@ -184,7 +187,6 @@ export default function OnboardingQuestionnaire() {
       setFormData(pendingFormData);
     }
 
-    // Add check for pending skill input in step 2
     if (step === 2) {
       const pendingFormData = { ...formData };
 
@@ -286,6 +288,7 @@ export default function OnboardingQuestionnaire() {
   };
 
   const handleBack = () => {
+    setError(null);
     setStep((prev) => prev - 1);
   };
 
@@ -1162,66 +1165,72 @@ export default function OnboardingQuestionnaire() {
             {step === 5 && renderPricingSection()}
 
             {/* Navigation Buttons */}
-            <div className='mt-6 flex items-center justify-between'>
-              <button
-                type='button'
-                onClick={handleBack}
-                disabled={step === 1 || isSubmitting}
-                className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ${
-                  step === 1 || isSubmitting
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <ChevronLeft className='h-4 w-4 mr-1' />
-                Back
-              </button>
+            <div className='mt-6'>
+              {/* Add error message above buttons */}
+              {error && (
+                <div className='mb-4 p-3 bg-red-50 text-red-700 rounded-md text-center'>
+                  {error}
+                </div>
+              )}
 
-              <button
-                type='button'
-                onClick={handleNext}
-                disabled={isSubmitting || (step === totalSteps && !selectedPriceId)}
-                className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed ${
-                  isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                }`}
-              >
-                {isSubmitting ? (
-                  <>
-                    <svg
-                      className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
-                      fill='none'
-                      viewBox='0 0 24 24'
-                    >
-                      <circle
-                        className='opacity-25'
-                        cx='12'
-                        cy='12'
-                        r='10'
-                        stroke='currentColor'
-                        strokeWidth='4'
-                      />
-                      <path
-                        className='opacity-75'
-                        fill='currentColor'
-                        d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
-                      />
-                    </svg>
-                    {step === totalSteps ? 'Processing Payment...' : 'Processing...'}
-                  </>
-                ) : (
-                  <>
-                    {step === totalSteps
-                      ? 'Proceed to Payment'
-                      : step === totalSteps - 1
-                      ? 'Select Plan'
-                      : 'Next'}
-                    {step !== totalSteps && <ChevronRight className='h-4 w-4 ml-1' />}
-                  </>
-                )}
-              </button>
+              <div className='flex items-center justify-between'>
+                <button
+                  type='button'
+                  onClick={handleBack}
+                  disabled={step === 1 || isSubmitting}
+                  className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md ${
+                    step === 1 || isSubmitting
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <ChevronLeft className='h-4 w-4 mr-1' />
+                  Back
+                </button>
 
-              {/* Add error message display */}
-              {error && <div className='mt-4 p-3 bg-red-50 text-red-700 rounded-md'>{error}</div>}
+                <button
+                  type='button'
+                  onClick={handleNext}
+                  disabled={isSubmitting || (step === totalSteps && !selectedPriceId)}
+                  className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 disabled:bg-primary-400 disabled:cursor-not-allowed ${
+                    isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                  }`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <svg
+                        className='animate-spin -ml-1 mr-3 h-5 w-5 text-white'
+                        fill='none'
+                        viewBox='0 0 24 24'
+                      >
+                        <circle
+                          className='opacity-25'
+                          cx='12'
+                          cy='12'
+                          r='10'
+                          stroke='currentColor'
+                          strokeWidth='4'
+                        />
+                        <path
+                          className='opacity-75'
+                          fill='currentColor'
+                          d='M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z'
+                        />
+                      </svg>
+                      {step === totalSteps ? 'Processing Payment...' : 'Processing...'}
+                    </>
+                  ) : (
+                    <>
+                      {step === totalSteps
+                        ? 'Proceed to Payment'
+                        : step === totalSteps - 1
+                        ? 'Select Plan'
+                        : 'Next'}
+                      {step !== totalSteps && <ChevronRight className='h-4 w-4 ml-1' />}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         </div>
