@@ -7,6 +7,7 @@ import config from '@/config';
 import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import apiClient from '@/libs/api';
+import Link from 'next/link';
 
 type FormData = {
   jobPreferences: {
@@ -34,6 +35,7 @@ type FormData = {
       error: string | null;
     };
   };
+  termsAccepted: boolean;
 };
 
 const initialFormData: FormData = {
@@ -62,6 +64,7 @@ const initialFormData: FormData = {
       error: null,
     },
   },
+  termsAccepted: false,
 };
 
 const formatSalary = (value: string) => {
@@ -126,6 +129,7 @@ export default function OnboardingQuestionnaire() {
                 error: null,
               },
             },
+            termsAccepted: data.termsAccepted || false,
           });
         }
       } catch (error) {
@@ -142,13 +146,16 @@ export default function OnboardingQuestionnaire() {
   const totalSteps = 5;
 
   const updateFormData = (section: keyof FormData, field: string, value: any) => {
-    setFormData((prev) => ({
-      ...prev,
-      [section]: {
-        ...prev[section],
-        [field]: value,
-      },
-    }));
+    setFormData((prev: FormData) => {
+      const sectionData = prev[section] as Record<string, any>;
+      return {
+        ...prev,
+        [section]: {
+          ...sectionData,
+          [field]: value,
+        },
+      };
+    });
   };
 
   const handleNext = async () => {
@@ -193,12 +200,18 @@ export default function OnboardingQuestionnaire() {
       setFormData(pendingFormData);
     }
 
+    if (step === 3) {
+      if (!formData.termsAccepted) {
+        setError('Please accept the terms and conditions to continue');
+        return;
+      }
+    }
+
     if (step === totalSteps) {
       if (!selectedPriceId) {
         setError('Please select a plan to continue');
         return;
       }
-      // Submit data and redirect to payment
       handleSubmit();
     } else if (step === totalSteps - 1) {
       setIsSubmitting(true);
@@ -1108,6 +1121,35 @@ export default function OnboardingQuestionnaire() {
                         {formData.availability.resume.error}
                       </p>
                     )}
+                  </div>
+                </div>
+
+                {/* Add terms and conditions checkbox */}
+                <div className='mt-6 border-t pt-6'>
+                  <div className='flex items-start'>
+                    <div className='flex items-center h-5'>
+                      <input
+                        id='terms'
+                        type='checkbox'
+                        checked={formData.termsAccepted}
+                        onChange={(e) =>
+                          setFormData({ ...formData, termsAccepted: e.target.checked })
+                        }
+                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                      />
+                    </div>
+                    <div className='ml-3 text-sm'>
+                      <label htmlFor='terms' className='font-medium text-gray-700'>
+                        I agree to the{' '}
+                        <Link
+                          href='/privacy'
+                          target='_blank'
+                          className='text-primary-600 hover:text-primary-500'
+                        >
+                          Terms and Conditions
+                        </Link>
+                      </label>
+                    </div>
                   </div>
                 </div>
               </div>

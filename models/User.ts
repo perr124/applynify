@@ -188,6 +188,14 @@ const userSchema = new mongoose.Schema(
         },
       },
     ],
+    termsAccepted: {
+      type: Boolean,
+      default: false,
+    },
+    termsAcceptedAt: {
+      type: Date,
+      select: true,
+    },
   },
   {
     timestamps: true,
