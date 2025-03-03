@@ -18,6 +18,7 @@ type FormData = {
       preferred: string;
     };
     citizenshipStatus: string;
+    requiresSponsorship: boolean;
     jobType: string;
   };
   experience: {
@@ -47,6 +48,7 @@ const initialFormData: FormData = {
       preferred: '',
     },
     citizenshipStatus: '',
+    requiresSponsorship: false,
     jobType: '',
   },
   experience: {
@@ -112,6 +114,7 @@ export default function OnboardingQuestionnaire() {
                 preferred: data.jobPreferences?.salary?.preferred || '',
               },
               citizenshipStatus: data.jobPreferences?.citizenshipStatus || '',
+              requiresSponsorship: data.jobPreferences?.requiresSponsorship || false,
               jobType: data.jobPreferences?.jobType || '',
             },
             experience: {
@@ -254,7 +257,10 @@ export default function OnboardingQuestionnaire() {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            jobPreferences: formData.jobPreferences,
+            jobPreferences: {
+              ...formData.jobPreferences,
+              requiresSponsorship: formData.jobPreferences.requiresSponsorship,
+            },
             experience: formData.experience,
             availability: {
               startDate: formData.availability.startDate,
@@ -882,9 +888,15 @@ export default function OnboardingQuestionnaire() {
                     <select
                       className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       value={formData.jobPreferences.citizenshipStatus}
-                      onChange={(e) =>
-                        updateFormData('jobPreferences', 'citizenshipStatus', e.target.value)
-                      }
+                      onChange={(e) => {
+                        const newStatus = e.target.value;
+                        updateFormData('jobPreferences', 'citizenshipStatus', newStatus);
+
+                        // If changing to US citizen or permanent resident, set requiresSponsorship to false
+                        if (['us-citizen', 'permanent-resident'].includes(newStatus)) {
+                          updateFormData('jobPreferences', 'requiresSponsorship', false);
+                        }
+                      }}
                     >
                       <option value=''>Select status</option>
                       <option value='us-citizen'>U.S. Citizen</option>
@@ -894,6 +906,37 @@ export default function OnboardingQuestionnaire() {
                       <option value='other'>Other</option>
                     </select>
                   </div>
+
+                  {/* Add conditional sponsorship checkbox */}
+                  {formData.jobPreferences.citizenshipStatus &&
+                    !['us-citizen', 'permanent-resident'].includes(
+                      formData.jobPreferences.citizenshipStatus
+                    ) && (
+                      <div className='mt-4'>
+                        <div className='flex items-start'>
+                          <div className='flex items-center h-5'>
+                            <input
+                              id='sponsorship'
+                              type='checkbox'
+                              checked={formData.jobPreferences.requiresSponsorship}
+                              onChange={(e) =>
+                                updateFormData(
+                                  'jobPreferences',
+                                  'requiresSponsorship',
+                                  e.target.checked
+                                )
+                              }
+                              className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                            />
+                          </div>
+                          <div className='ml-3 text-sm'>
+                            <label htmlFor='sponsorship' className='font-medium text-gray-700'>
+                              I require visa sponsorship
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                 </div>
 
                 <div>

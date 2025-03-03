@@ -59,6 +59,8 @@ const userSchema = new mongoose.Schema(
           preferred: '',
         },
         citizenshipStatus: '',
+        requiresSponsorship: false,
+        jobType: '',
       },
     },
     applicationsStatus: {
