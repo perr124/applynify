@@ -13,6 +13,7 @@ import type {
   Experience,
   Availability,
 } from '@/libs/validations/userPreferences';
+import toast from 'react-hot-toast';
 
 type User = {
   _id: string;
@@ -35,9 +36,6 @@ type MultipleApplicationsData = z.infer<typeof multipleApplicationsSchema>;
 export default function UserJobApplication() {
   const params = useParams();
   const router = useRouter();
-
-  if (!params?.userId) return <div>Invalid user ID</div>;
-
   const [user, setUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +48,7 @@ export default function UserJobApplication() {
     reset,
   } = useForm<MultipleApplicationsData>({
     defaultValues: {
-      applications: [{}], // Start with one empty row
+      applications: [{}],
     },
   });
 
@@ -58,6 +56,32 @@ export default function UserJobApplication() {
     control,
     name: 'applications',
   });
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    const loadApplications = async () => {
+      try {
+        const response = await fetch(`/api/job-applications?userId=${params?.userId}`);
+        if (!response.ok) {
+          throw new Error('Failed to load applications');
+        }
+        const applications = await response.json();
+        if (applications && applications.length > 0) {
+          // Reset form with existing applications
+          reset({ applications });
+        }
+      } catch (error) {
+        console.error('Error loading applications:', error);
+        setError('Failed to load existing applications');
+      }
+    };
+    loadApplications();
+  }, [params?.userId, reset]);
+
+  if (!params?.userId) return <div>Invalid user ID</div>;
 
   const defaultApplication = {
     jobTitle: '',
@@ -68,10 +92,6 @@ export default function UserJobApplication() {
     jobLink: '',
     salary: '',
   };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   const fetchUser = async () => {
     try {
@@ -100,45 +120,43 @@ export default function UserJobApplication() {
         body: JSON.stringify({
           applications: data.applications,
           userId: params.userId,
-          applicationComplete: complete,
+          applicationComplete: true,
         }),
       });
 
       if (!response.ok) throw new Error('Failed to submit applications');
 
       if (complete) {
+        const emailResponse = await fetch('/api/notifications/application-complete', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId: params.userId,
+            userEmail: user?.email,
+            userName: `${user?.firstName} ${user?.lastName}`,
+          }),
+        });
+
+        if (!emailResponse.ok) {
+          console.error('Failed to send notification email');
+        }
+
+        // Only redirect if "Complete & Notify" was clicked
         router.push('/admin');
       } else {
-        alert('Applications saved successfully');
+        // Show toast notification for save action
+        toast.success('Applications saved successfully');
       }
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to submit applications');
+      toast.error('Failed to submit applications');
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  useEffect(() => {
-    const loadApplications = async () => {
-      try {
-        const response = await fetch(`/api/job-applications?userId=${params.userId}`);
-        if (!response.ok) {
-          throw new Error('Failed to load applications');
-        }
-        const applications = await response.json();
-        if (applications && applications.length > 0) {
-          // Reset form with existing applications
-          reset({ applications });
-        }
-      } catch (error) {
-        console.error('Error loading applications:', error);
-        setError('Failed to load existing applications');
-      }
-    };
-
-    loadApplications();
-  }, [params.userId, reset]);
 
   if (isSubmitting) return <div>Submitting...</div>;
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
@@ -279,7 +297,7 @@ export default function UserJobApplication() {
               className='inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'
             >
               <Save className='h-4 w-4 mr-2' />
-              Save Draft
+              Save & Complete
             </button>
 
             <button
@@ -289,7 +307,7 @@ export default function UserJobApplication() {
               className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700'
             >
               <CheckCircle className='h-4 w-4 mr-2' />
-              Complete All
+              Complete & Notify
             </button>
           </div>
         </div>
