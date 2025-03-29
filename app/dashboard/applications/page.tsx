@@ -35,34 +35,16 @@ export default function Applications() {
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [isComplete, setIsComplete] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
 
-  useEffect(() => {
-    checkApplicationStatus();
-  }, []);
-
-  const checkApplicationStatus = async () => {
+  const loadApplications = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch('/api/user/me');
-      if (!response.ok) throw new Error('Failed to fetch user status');
-
-      const userData = await response.json();
-      console.log('User data:', userData); // Debug log
-
-      const isComplete = userData.applicationsStatus === 'completed';
-      console.log('Is complete:', isComplete); // Debug log
-      setIsComplete(isComplete);
-
-      if (isComplete) {
-        const applicationsResponse = await fetch('/api/job-applications');
-        if (!applicationsResponse.ok) throw new Error('Failed to fetch applications');
-        const data = await applicationsResponse.json();
-        console.log('Applications data:', data); // Debug log
-        setApplications(data);
-      }
+      const applicationsResponse = await fetch('/api/job-applications');
+      if (!applicationsResponse.ok) throw new Error('Failed to fetch applications');
+      const data = await applicationsResponse.json();
+      setApplications(data);
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load applications');
@@ -71,12 +53,25 @@ export default function Applications() {
     }
   };
 
+  useEffect(() => {
+    loadApplications();
+  }, []);
+
   const filteredApplications = applications.filter(
     (app) =>
       app.jobTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.companyName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       app.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getEmploymentTypeConfig = (type: string) => {
+    return (
+      employmentTypeConfig[type as keyof typeof employmentTypeConfig] || {
+        label: type,
+        color: 'text-gray-600 bg-gray-50 border-gray-200',
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -93,7 +88,7 @@ export default function Applications() {
     );
   }
 
-  if (!isComplete) {
+  if (applications.length === 0 && !isLoading && !error) {
     return (
       <div className='bg-white shadow rounded-xl p-8 text-center border border-gray-100'>
         <Clock className='mx-auto h-12 w-12 text-gray-400' />
@@ -111,7 +106,7 @@ export default function Applications() {
       <div className='bg-red-50 p-6 rounded-xl border border-red-100'>
         <p className='text-red-700'>{error}</p>
         <button
-          onClick={checkApplicationStatus}
+          onClick={() => loadApplications()}
           className='mt-2 text-red-700 underline hover:no-underline'
         >
           Try again
@@ -194,10 +189,10 @@ export default function Applications() {
                 <div className='ml-4'>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      employmentTypeConfig[application.employmentType].color
+                      getEmploymentTypeConfig(application.employmentType).color
                     }`}
                   >
-                    {employmentTypeConfig[application.employmentType].label}
+                    {getEmploymentTypeConfig(application.employmentType).label}
                   </span>
                 </div>
               </div>
@@ -258,10 +253,10 @@ export default function Applications() {
                       <div className='mt-1'>
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            employmentTypeConfig[selectedApplication.employmentType].color
+                            getEmploymentTypeConfig(selectedApplication.employmentType).color
                           }`}
                         >
-                          {employmentTypeConfig[selectedApplication.employmentType].label}
+                          {getEmploymentTypeConfig(selectedApplication.employmentType).label}
                         </span>
                       </div>
                     </div>

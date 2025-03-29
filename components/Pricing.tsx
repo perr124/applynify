@@ -14,7 +14,6 @@ const Pricing = () => {
       description: 'Perfect for job seekers getting started',
       features: [
         '25 jobs applied to directly on company sites',
-        'Resume revamp and optimization',
         'Write cover letters on your behalf',
         'Quick service within 5 days',
         'Email categorization of job responses',
@@ -31,7 +30,6 @@ const Pricing = () => {
       description: 'Best for serious job seekers',
       features: [
         '50 jobs applied to directly on company sites',
-        'Resume revamp and optimization',
         'Write cover letters on your behalf',
         'Priority service within 3 days',
         'Advanced email categorization',

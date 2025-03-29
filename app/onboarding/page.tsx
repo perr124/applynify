@@ -583,7 +583,6 @@ export default function OnboardingQuestionnaire() {
         description: 'For job seekers starting out',
         features: [
           '25 jobs applied to directly on company sites',
-          'Resume revamp and optimization',
           'Write cover letters on your behalf',
           'Quick service within 5 days',
           'Email categorization of job responses',
@@ -598,7 +597,6 @@ export default function OnboardingQuestionnaire() {
         description: 'Best for serious job seekers',
         features: [
           '50 jobs applied to directly on company sites',
-          'Resume revamp and optimization',
           'Write cover letters on your behalf',
           'Priority service within 3 days',
           'Advanced email categorization',
@@ -951,8 +949,6 @@ export default function OnboardingQuestionnaire() {
                     <option value='part-time'>Part Time</option>
                     <option value='contract'>Contract</option>
                     <option value='internship'>Internship</option>
-                    <option value='temporary'>Temporary</option>
-                    <option value='freelance'>Freelance</option>
                   </select>
                 </div>
               </div>
