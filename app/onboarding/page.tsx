@@ -19,7 +19,7 @@ type FormData = {
     };
     citizenshipStatus: string;
     requiresSponsorship: boolean;
-    jobType: string;
+    jobType: string[];
   };
   experience: {
     yearsOfExperience: string;
@@ -49,7 +49,7 @@ const initialFormData: FormData = {
     },
     citizenshipStatus: '',
     requiresSponsorship: false,
-    jobType: '',
+    jobType: [],
   },
   experience: {
     yearsOfExperience: '',
@@ -91,7 +91,10 @@ export default function OnboardingQuestionnaire() {
   // Add loading state
   const [isLoading, setIsLoading] = useState(true);
 
-  // Add useEffect to fetch existing preferences
+  // Add this near the other useState declarations
+  const [isJobTypeDropdownOpen, setIsJobTypeDropdownOpen] = useState(false);
+
+  // Add this near the other useEffect declarations
   useEffect(() => {
     const fetchPreferences = async () => {
       try {
@@ -105,6 +108,13 @@ export default function OnboardingQuestionnaire() {
           // Get the most recent active resume if it exists
           const activeResume = data.resumes && data.resumes[0];
 
+          // Ensure jobType is always an array
+          const jobType = data.jobPreferences?.jobType
+            ? Array.isArray(data.jobPreferences.jobType)
+              ? data.jobPreferences.jobType
+              : [data.jobPreferences.jobType]
+            : [];
+
           setFormData({
             jobPreferences: {
               roles: data.jobPreferences?.roles || [],
@@ -115,7 +125,7 @@ export default function OnboardingQuestionnaire() {
               },
               citizenshipStatus: data.jobPreferences?.citizenshipStatus || '',
               requiresSponsorship: data.jobPreferences?.requiresSponsorship || false,
-              jobType: data.jobPreferences?.jobType || '',
+              jobType: jobType,
             },
             experience: {
               yearsOfExperience: data.experience?.yearsOfExperience || '',
@@ -144,6 +154,18 @@ export default function OnboardingQuestionnaire() {
     };
 
     fetchPreferences();
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const dropdown = document.getElementById('job-type-dropdown');
+      if (dropdown && !dropdown.contains(event.target as Node)) {
+        setIsJobTypeDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const totalSteps = 5;
@@ -497,7 +519,11 @@ export default function OnboardingQuestionnaire() {
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Job Type</dt>
-                <dd className='mt-1'>{formData.jobPreferences.jobType || 'Not specified'}</dd>
+                <dd className='mt-1'>
+                  {formData.jobPreferences.jobType.length > 0
+                    ? formData.jobPreferences.jobType.join(', ')
+                    : 'Not specified'}
+                </dd>
               </div>
             </dl>
           </div>
@@ -939,17 +965,91 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>Job Type</label>
-                  <select
-                    className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                    value={formData.jobPreferences.jobType}
-                    onChange={(e) => updateFormData('jobPreferences', 'jobType', e.target.value)}
-                  >
-                    <option value=''>Select job type</option>
-                    <option value='full-time'>Full Time</option>
-                    <option value='part-time'>Part Time</option>
-                    <option value='contract'>Contract</option>
-                    <option value='internship'>Internship</option>
-                  </select>
+                  <div className='mt-1 relative' id='job-type-dropdown'>
+                    <button
+                      type='button'
+                      onClick={() => setIsJobTypeDropdownOpen(!isJobTypeDropdownOpen)}
+                      className='relative w-full bg-white border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    >
+                      <span className='block truncate'>
+                        {formData.jobPreferences.jobType.length > 0
+                          ? `${formData.jobPreferences.jobType.length} selected`
+                          : 'Select job types'}
+                      </span>
+                      <span className='absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none'>
+                        <svg
+                          className='h-5 w-5 text-gray-400'
+                          xmlns='http://www.w3.org/2000/svg'
+                          viewBox='0 0 20 20'
+                          fill='currentColor'
+                          aria-hidden='true'
+                        >
+                          <path
+                            fillRule='evenodd'
+                            d='M10 3a1 1 0 01.707.293l3 3a1 1 0 01-1.414 1.414L10 5.414 7.707 7.707a1 1 0 01-1.414-1.414l3-3A1 1 0 0110 3zm-3.707 9.293a1 1 0 011.414 0L10 14.586l2.293-2.293a1 1 0 011.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z'
+                            clipRule='evenodd'
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                    {isJobTypeDropdownOpen && (
+                      <div className='absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm'>
+                        {['full-time', 'part-time', 'contract', 'internship'].map((type) => (
+                          <div
+                            key={type}
+                            className='relative flex items-center px-3 py-2 cursor-pointer hover:bg-gray-50'
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              const newJobTypes = formData.jobPreferences.jobType.includes(type)
+                                ? formData.jobPreferences.jobType.filter((t) => t !== type)
+                                : [...formData.jobPreferences.jobType, type];
+                              updateFormData('jobPreferences', 'jobType', newJobTypes);
+                            }}
+                          >
+                            <input
+                              type='checkbox'
+                              className='h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500'
+                              checked={formData.jobPreferences.jobType.includes(type)}
+                              onChange={(e) => {
+                                e.stopPropagation();
+                                const newJobTypes = e.target.checked
+                                  ? [...formData.jobPreferences.jobType, type]
+                                  : formData.jobPreferences.jobType.filter((t) => t !== type);
+                                updateFormData('jobPreferences', 'jobType', newJobTypes);
+                              }}
+                            />
+                            <span className='ml-3 block truncate'>
+                              {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  {formData.jobPreferences.jobType.length > 0 && (
+                    <div className='mt-2 flex flex-wrap gap-2'>
+                      {formData.jobPreferences.jobType.map((type) => (
+                        <span
+                          key={type}
+                          className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
+                        >
+                          {type.charAt(0).toUpperCase() + type.slice(1).replace('-', ' ')}
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const newJobTypes = formData.jobPreferences.jobType.filter(
+                                (t) => t !== type
+                              );
+                              updateFormData('jobPreferences', 'jobType', newJobTypes);
+                            }}
+                            className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                          >
+                            <span className='sr-only'>Remove {type}</span>×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}

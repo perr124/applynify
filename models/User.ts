@@ -60,7 +60,7 @@ const userSchema = new mongoose.Schema(
         },
         citizenshipStatus: '',
         requiresSponsorship: false,
-        jobType: '',
+        jobType: [],
       },
     },
     applicationsStatus: {

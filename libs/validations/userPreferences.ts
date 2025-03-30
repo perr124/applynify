@@ -7,7 +7,7 @@ export interface JobPreferences {
   };
   citizenshipStatus: string;
   requiresSponsorship: boolean;
-  jobType: string;
+  jobType: string[];
 }
 
 export interface Experience {
