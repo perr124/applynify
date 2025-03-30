@@ -2,7 +2,7 @@ export const PRICING_PLANS = {
   LITE: {
     stripeId: 'price_1R8OigDnSxQsct78i9GMR46f',
     name: 'Lite',
-    applicationLimit: 20,
+    applicationLimit: 25,
   },
   PRO: {
     stripeId: 'price_1R8OhODnSxQsct78eGw7xRiE',
