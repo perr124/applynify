@@ -73,7 +73,7 @@ export default function ServicesPage() {
         {[
           {
             name: 'Lite Package',
-            price: 29.99,
+            price: 49.99,
             priceId: config.stripe.plans[0].priceId,
             description: 'Perfect for getting started',
             features: [
@@ -87,17 +87,16 @@ export default function ServicesPage() {
           },
           {
             name: 'Pro Package',
-            price: 59.99,
+            price: 89.99,
             priceId: config.stripe.plans[1].priceId,
             description: 'For serious job seekers',
             features: [
-              '50 job applications submitted on your behalf',
-              'Professional cover letters written for each application',
-              '3-day turnaround time',
-              'Advanced email response categorization',
-              'Priority support with 24/7 availability',
-              'Custom job search strategy consultation',
-              'Interview preparation resources',
+              '50 jobs applied to directly on company sites',
+              'Write cover letters on your behalf',
+              'Priority service within 5 days',
+              'Advanced Application tracking in your dashboard',
+              '24/7 priority support',
+              'Custom job search strategies',
             ],
           },
         ].map((tier) => (

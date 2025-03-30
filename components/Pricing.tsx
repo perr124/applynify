@@ -9,15 +9,14 @@ const Pricing = () => {
   const tiers = [
     {
       name: 'Lite',
-      price: 29.99,
+      price: 49.99,
       priceId: 'price_lite',
       description: 'Perfect for job seekers getting started',
       features: [
         '25 jobs applied to directly on company sites',
         'Write cover letters on your behalf',
-        'Quick service within 5 days',
-        'Email categorization of job responses',
-        'Basic application tracking',
+        'Quick service within 4 days',
+        'Advanced Application tracking in your dashboard',
         'Standard support',
       ],
       buttonText: 'Get Started',
@@ -25,17 +24,16 @@ const Pricing = () => {
     },
     {
       name: 'Pro',
-      price: 59.99,
-      priceId: 'price_pro',
-      description: 'Best for serious job seekers',
+      price: 89.99,
+      priceId: 'price_1R8OhODnSxQsct78eGw7xRiE',
+      description: 'Optimized for maximizing career opportunities',
       features: [
         '50 jobs applied to directly on company sites',
         'Write cover letters on your behalf',
-        'Priority service within 3 days',
-        'Advanced email categorization',
+        'Priority service within 5 days',
+        'Advanced Application tracking in your dashboard',
         '24/7 priority support',
         'Custom job search strategies',
-        'Interview preparation resources',
       ],
       buttonText: 'Go Pro',
       mostPopular: true,
@@ -48,6 +46,9 @@ const Pricing = () => {
         <div className='text-center mb-16'>
           <h2 className='text-4xl font-bold mb-4'>Simple, Transparent Pricing</h2>
           <p className='text-gray-600 text-lg'>Choose the plan that's right for your job search</p>
+          <p className='text-sm text-gray-400 mt-4'>
+            One-time payment, no recurring fees or hidden charges
+          </p>
         </div>
 
         <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
@@ -123,10 +124,6 @@ const Pricing = () => {
             </div>
           ))}
         </div>
-
-        <p className='text-sm text-gray-400 mt-4'>
-          One-time payment, no recurring fees or hidden charges
-        </p>
       </div>
     </section>
   );

@@ -21,16 +21,16 @@ const config = {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:
           process.env.NODE_ENV === 'development'
-            ? 'price_1Qrq5zDnSxQsct78LXCYeeb9'
-            : 'price_1Qrq5zDnSxQsct78LXCYeeb9',
+            ? 'price_1R8OigDnSxQsct78i9GMR46f'
+            : 'price_1R8OigDnSxQsct78i9GMR46f',
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: 'Lite',
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
-        description: 'Perfect for small projects',
+        description: 'Perfect for job seekers getting started',
         // The price you want to display, the one user will be charged on Stripe.
-        price: 29,
+        price: 49.99,
         // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 59,
+        priceAnchor: 49.99,
         features: [
           {
             name: 'NextJS boilerplate',
@@ -43,14 +43,14 @@ const config = {
       {
         priceId:
           process.env.NODE_ENV === 'development'
-            ? 'price_1Qrq6KDnSxQsct78qWWsMNUA'
-            : 'price_1Qrq6KDnSxQsct78qWWsMNUA',
+            ? 'price_1R8OhODnSxQsct78eGw7xRiE'
+            : 'price_1R8OhODnSxQsct78eGw7xRiE',
         // This plan will look different on the pricing page, it will be highlighted. You can only have one plan with isFeatured: true
         isFeatured: true,
         name: 'Pro',
-        description: 'You need more power',
-        price: 59,
-        priceAnchor: 99,
+        description: 'Optimized for maximizing career opportunities',
+        price: 89.99,
+        priceAnchor: 89.99,
         features: [
           {
             name: 'NextJS boilerplate',

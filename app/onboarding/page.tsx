@@ -746,31 +746,29 @@ export default function OnboardingQuestionnaire() {
     const pricingTiers = [
       {
         name: 'Lite',
-        price: 29.99,
+        price: 49.99,
         priceId: config.stripe.plans[0].priceId,
         description: 'For job seekers starting out',
         features: [
           '25 jobs applied to directly on company sites',
           'Write cover letters on your behalf',
-          'Quick service within 5 days',
-          'Email categorization of job responses',
-          'Basic application tracking',
+          'Quick service within 4 days',
+          'Advanced Application tracking in your dashboard',
           'Standard support',
         ],
       },
       {
         name: 'Pro',
-        price: 59.99,
+        price: 89.99,
         priceId: config.stripe.plans[1].priceId,
-        description: 'Best for serious job seekers',
+        description: 'Optimized for maximizing career opportunities',
         features: [
           '50 jobs applied to directly on company sites',
           'Write cover letters on your behalf',
-          'Priority service within 3 days',
-          'Advanced email categorization',
+          'Priority service within 5 days',
+          'Advanced Application tracking in your dashboard',
           '24/7 priority support',
           'Custom job search strategies',
-          'Interview preparation resources',
         ],
       },
     ];
