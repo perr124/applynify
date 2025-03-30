@@ -234,6 +234,24 @@ export default function OnboardingQuestionnaire() {
 
       // Update the form data with any pending inputs
       setFormData(pendingFormData);
+
+      // Validate required fields for step 1
+      if (formData.jobPreferences.roles.length === 0) {
+        setError('Please add at least one desired role');
+        return;
+      }
+      if (formData.jobPreferences.locations.length === 0) {
+        setError('Please add at least one preferred location');
+        return;
+      }
+      if (!formData.jobPreferences.citizenshipStatus) {
+        setError('Please select your citizenship status');
+        return;
+      }
+      if (formData.jobPreferences.jobType.length === 0) {
+        setError('Please select at least one job type');
+        return;
+      }
     }
 
     if (step === 2) {
@@ -249,9 +267,52 @@ export default function OnboardingQuestionnaire() {
 
       // Update the form data with any pending inputs
       setFormData(pendingFormData);
+
+      // Validate required fields for step 2
+      if (!formData.experience.yearsOfExperience) {
+        setError('Please select your years of experience');
+        return;
+      }
+      if (formData.experience.skills.length === 0) {
+        setError('Please add at least one skill');
+        return;
+      }
+      if (!formData.experience.education) {
+        setError('Please select your highest education level');
+        return;
+      }
     }
 
     if (step === 3) {
+      // Validate required fields for step 3
+      if (!formData.availability.startDate) {
+        setError('Please select when you can start');
+        return;
+      }
+      if (!formData.availability.phoneNumber) {
+        setError('Please enter your phone number');
+        return;
+      }
+      if (!formData.availability.address?.city) {
+        setError('Please enter your city');
+        return;
+      }
+      if (!formData.availability.address?.state) {
+        setError('Please enter your state');
+        return;
+      }
+      if (!formData.availability.address?.zipCode) {
+        setError('Please enter your ZIP code');
+        return;
+      }
+      if (!formData.availability.address?.country) {
+        setError('Please enter your country');
+        return;
+      }
+      if (!formData.availability.resume?.file) {
+        setError('Please upload your resume');
+        return;
+      }
       if (!formData.termsAccepted) {
         setError('Please accept the terms and conditions to continue');
         return;
