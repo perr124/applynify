@@ -39,6 +39,7 @@ export default function UserJobApplication() {
   const [user, setUser] = useState<User | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [duplicateCompanies, setDuplicateCompanies] = useState<string[]>([]);
 
   const {
     control,
@@ -46,6 +47,7 @@ export default function UserJobApplication() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
   } = useForm<MultipleApplicationsData>({
     defaultValues: {
       applications: [{}],
@@ -108,7 +110,21 @@ export default function UserJobApplication() {
     }
   };
 
+  const checkDuplicates = (applications: JobApplicationFormData[]) => {
+    const companies = applications.map((app) => app.companyName.trim().toLowerCase());
+    const duplicates = companies.filter(
+      (company, index) => company && companies.indexOf(company) !== index
+    );
+    setDuplicateCompanies(Array.from(new Set(duplicates)));
+    return duplicates.length > 0;
+  };
+
   const onSubmit = async (data: MultipleApplicationsData, complete: boolean) => {
+    if (checkDuplicates(data.applications)) {
+      toast.error('Please remove duplicate company entries before saving');
+      return;
+    }
+
     try {
       setIsSubmitting(true);
 
@@ -174,6 +190,15 @@ export default function UserJobApplication() {
         </div>
       </div>
 
+      {duplicateCompanies.length > 0 && (
+        <div className='mb-4 p-4 bg-red-50 border border-red-200 rounded-md'>
+          <p className='text-red-600'>
+            Duplicate companies detected: {duplicateCompanies.join(', ')}
+          </p>
+          <p className='text-sm text-red-500'>Please remove duplicate entries before saving.</p>
+        </div>
+      )}
+
       <div className='bg-white shadow rounded-lg overflow-hidden'>
         <div className='overflow-x-auto'>
           <table className='min-w-full divide-y divide-gray-200'>
@@ -207,7 +232,16 @@ export default function UserJobApplication() {
             </thead>
             <tbody className='bg-white divide-y divide-gray-200'>
               {fields.map((field, index) => (
-                <tr key={field.id}>
+                <tr
+                  key={field.id}
+                  className={
+                    duplicateCompanies.includes(
+                      watch(`applications.${index}.companyName`)?.trim().toLowerCase() || ''
+                    )
+                      ? 'bg-red-50'
+                      : ''
+                  }
+                >
                   <td className='px-4 py-2'>
                     <input
                       {...register(`applications.${index}.jobTitle`)}
@@ -218,8 +252,18 @@ export default function UserJobApplication() {
                   <td className='px-4 py-2'>
                     <input
                       {...register(`applications.${index}.companyName`)}
-                      className='w-full p-1 border rounded text-sm'
+                      className={`w-full p-1 border rounded text-sm ${
+                        duplicateCompanies.includes(
+                          watch(`applications.${index}.companyName`)?.trim().toLowerCase() || ''
+                        )
+                          ? 'border-red-500'
+                          : ''
+                      }`}
                       placeholder='Company'
+                      onChange={(e) => {
+                        register(`applications.${index}.companyName`).onChange(e);
+                        checkDuplicates(watch('applications'));
+                      }}
                     />
                   </td>
                   <td className='px-4 py-2'>
