@@ -579,7 +579,9 @@ export default function OnboardingQuestionnaire() {
                 <dt className='text-sm text-gray-500'>Desired Roles</dt>
                 <dd className='mt-1'>
                   {formData.jobPreferences.roles.length > 0
-                    ? formData.jobPreferences.roles.join(', ')
+                    ? formData.jobPreferences.roles
+                        .map((role) => role.charAt(0).toUpperCase() + role.slice(1))
+                        .join(', ')
                     : 'None specified'}
                 </dd>
               </div>
@@ -587,27 +589,43 @@ export default function OnboardingQuestionnaire() {
                 <dt className='text-sm text-gray-500'>Preferred Locations</dt>
                 <dd className='mt-1'>
                   {formData.jobPreferences.locations.length > 0
-                    ? formData.jobPreferences.locations.join(', ')
+                    ? formData.jobPreferences.locations
+                        .map((location) => location.charAt(0).toUpperCase() + location.slice(1))
+                        .join(', ')
                     : 'None specified'}
                 </dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Minimum Salary</dt>
                 <dd className='mt-1'>
-                  {formData.jobPreferences.salary.minimum || 'Not specified'}
+                  {formData.jobPreferences.salary.minimum
+                    ? `$${formData.jobPreferences.salary.minimum}`
+                    : 'Not specified'}
                 </dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Citizenship Status</dt>
                 <dd className='mt-1'>
-                  {formData.jobPreferences.citizenshipStatus || 'Not specified'}
+                  {formData.jobPreferences.citizenshipStatus
+                    ? formData.jobPreferences.citizenshipStatus
+                        .split('-')
+                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')
+                    : 'Not specified'}
                 </dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Job Type</dt>
                 <dd className='mt-1'>
                   {formData.jobPreferences.jobType.length > 0
-                    ? formData.jobPreferences.jobType.join(', ')
+                    ? formData.jobPreferences.jobType
+                        .map((type) =>
+                          type
+                            .split('-')
+                            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                            .join(' ')
+                        )
+                        .join(', ')
                     : 'Not specified'}
                 </dd>
               </div>
@@ -633,13 +651,22 @@ export default function OnboardingQuestionnaire() {
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Education</dt>
-                <dd className='mt-1'>{formData.experience.education || 'Not specified'}</dd>
+                <dd className='mt-1'>
+                  {formData.experience.education
+                    ? formData.experience.education
+                        .split('-')
+                        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ')
+                    : 'Not specified'}
+                </dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Skills</dt>
                 <dd className='mt-1'>
                   {formData.experience.skills.length > 0
-                    ? formData.experience.skills.join(', ')
+                    ? formData.experience.skills
+                        .map((skill) => skill.charAt(0).toUpperCase() + skill.slice(1))
+                        .join(', ')
                     : 'None specified'}
                 </dd>
               </div>
@@ -669,13 +696,19 @@ export default function OnboardingQuestionnaire() {
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Additional Information</dt>
-                <dd className='mt-1'>{formData.availability.additionalInfo || 'Not specified'}</dd>
+                <dd className='mt-1'>
+                  {formData.availability.additionalInfo
+                    ? formData.availability.additionalInfo.charAt(0).toUpperCase() +
+                      formData.availability.additionalInfo.slice(1)
+                    : 'Not specified'}
+                </dd>
               </div>
               <div>
                 <dt className='text-sm text-gray-500'>Resume</dt>
                 <dd className='mt-1'>
                   {formData.availability.resume?.file
-                    ? formData.availability.resume.file.name
+                    ? formData.availability.resume.file.name.charAt(0).toUpperCase() +
+                      formData.availability.resume.file.name.slice(1)
                     : 'No resume uploaded'}
                 </dd>
               </div>
@@ -684,12 +717,20 @@ export default function OnboardingQuestionnaire() {
                   <dt className='text-sm text-gray-500'>Address</dt>
                   <dd className='mt-1'>
                     <div className='space-y-1'>
-                      <p>{formData.availability.address.street}</p>
                       <p>
-                        {formData.availability.address.city}, {formData.availability.address.state}{' '}
+                        {formData.availability.address.street.charAt(0).toUpperCase() +
+                          formData.availability.address.street.slice(1)}
+                      </p>
+                      <p>
+                        {formData.availability.address.city.charAt(0).toUpperCase() +
+                          formData.availability.address.city.slice(1)}
+                        , {formData.availability.address.state.toUpperCase()}{' '}
                         {formData.availability.address.zipCode}
                       </p>
-                      <p>{formData.availability.address.country}</p>
+                      <p>
+                        {formData.availability.address.country.charAt(0).toUpperCase() +
+                          formData.availability.address.country.slice(1)}
+                      </p>
                     </div>
                   </dd>
                 </div>
