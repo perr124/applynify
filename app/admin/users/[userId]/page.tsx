@@ -104,7 +104,6 @@ export default function UserJobApplication() {
       if (!response.ok) throw new Error('Failed to fetch user');
       const data = await response.json();
       setUser(data);
-      console.log(data, 'userrr');
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load user details');

@@ -30,6 +30,13 @@ type FormData = {
     startDate: string;
     phoneNumber?: string;
     additionalInfo?: string;
+    address?: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      country: string;
+    };
     resume?: {
       file: File | null;
       uploading: boolean;
@@ -37,6 +44,7 @@ type FormData = {
     };
   };
   termsAccepted: boolean;
+  marketingSource: string;
 };
 
 const initialFormData: FormData = {
@@ -60,6 +68,13 @@ const initialFormData: FormData = {
     startDate: '',
     phoneNumber: '',
     additionalInfo: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: '',
+    },
     resume: {
       file: null,
       uploading: false,
@@ -67,6 +82,7 @@ const initialFormData: FormData = {
     },
   },
   termsAccepted: false,
+  marketingSource: '',
 };
 
 const formatSalary = (value: string) => {
@@ -136,6 +152,13 @@ export default function OnboardingQuestionnaire() {
               startDate: data.availability?.startDate || '',
               phoneNumber: data.availability?.phoneNumber || '',
               additionalInfo: data.availability?.additionalInfo || '',
+              address: data.availability?.address || {
+                street: '',
+                city: '',
+                state: '',
+                zipCode: '',
+                country: '',
+              },
               resume: {
                 file: activeResume ? new File([], activeResume.filename) : null,
                 uploading: false,
@@ -143,6 +166,7 @@ export default function OnboardingQuestionnaire() {
               },
             },
             termsAccepted: data.termsAccepted || false,
+            marketingSource: data.marketingSource || '',
           });
         }
       } catch (error) {
@@ -288,6 +312,7 @@ export default function OnboardingQuestionnaire() {
               startDate: formData.availability.startDate,
               phoneNumber: formData.availability.phoneNumber,
               additionalInfo: formData.availability.additionalInfo,
+              address: formData.availability.address,
               resumeUrl: resumeUrl,
             },
           }),
@@ -593,6 +618,21 @@ export default function OnboardingQuestionnaire() {
                     : 'No resume uploaded'}
                 </dd>
               </div>
+              {formData.availability.address && (
+                <div>
+                  <dt className='text-sm text-gray-500'>Address</dt>
+                  <dd className='mt-1'>
+                    <div className='space-y-1'>
+                      <p>{formData.availability.address.street}</p>
+                      <p>
+                        {formData.availability.address.city}, {formData.availability.address.state}{' '}
+                        {formData.availability.address.zipCode}
+                      </p>
+                      <p>{formData.availability.address.country}</p>
+                    </div>
+                  </dd>
+                </div>
+              )}
             </dl>
           </div>
         </div>
@@ -1204,6 +1244,85 @@ export default function OnboardingQuestionnaire() {
                   </div>
                 </div>
 
+                {/* Add Address Fields */}
+                <div className='space-y-4'>
+                  <label className='block text-sm font-medium text-gray-700'>Address</label>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='Street Address'
+                      value={formData.availability.address?.street || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          street: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div>
+                      <input
+                        type='text'
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        placeholder='City'
+                        value={formData.availability.address?.city || ''}
+                        onChange={(e) =>
+                          updateFormData('availability', 'address', {
+                            ...formData.availability.address,
+                            city: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type='text'
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        placeholder='State'
+                        value={formData.availability.address?.state || ''}
+                        onChange={(e) =>
+                          updateFormData('availability', 'address', {
+                            ...formData.availability.address,
+                            state: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className='grid grid-cols-2 gap-4'>
+                    <div>
+                      <input
+                        type='text'
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        placeholder='ZIP Code'
+                        value={formData.availability.address?.zipCode || ''}
+                        onChange={(e) =>
+                          updateFormData('availability', 'address', {
+                            ...formData.availability.address,
+                            zipCode: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type='text'
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        placeholder='Country'
+                        value={formData.availability.address?.country || ''}
+                        onChange={(e) =>
+                          updateFormData('availability', 'address', {
+                            ...formData.availability.address,
+                            country: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
+                  </div>
+                </div>
+
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
                     Additional Information
@@ -1263,6 +1382,31 @@ export default function OnboardingQuestionnaire() {
                         {formData.availability.resume.error}
                       </p>
                     )}
+                  </div>
+                </div>
+
+                {/* Add marketing source field after resume upload */}
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Where did you hear about Applynify?
+                  </label>
+                  <div className='mt-1'>
+                    <select
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      value={formData.marketingSource}
+                      onChange={(e) =>
+                        setFormData({ ...formData, marketingSource: e.target.value })
+                      }
+                    >
+                      <option value=''>Select an option</option>
+                      <option value='google'>Google Search</option>
+                      <option value='linkedin'>LinkedIn</option>
+                      <option value='facebook'>Facebook</option>
+                      <option value='instagram'>Instagram</option>
+                      <option value='twitter'>X</option>
+                      <option value='friend'>Friend</option>
+                      <option value='other'>Other</option>
+                    </select>
                   </div>
                 </div>
 

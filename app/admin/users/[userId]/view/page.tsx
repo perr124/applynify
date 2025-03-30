@@ -19,6 +19,7 @@ type User = {
   jobPreferences?: JobPreferences;
   experience?: Experience;
   availability?: Availability;
+  marketingSource?: string;
 };
 
 export default function ViewUser() {
@@ -82,6 +83,12 @@ export default function ViewUser() {
               <dt className='text-sm font-medium text-gray-500'>Email</dt>
               <dd>{user.email}</dd>
             </div>
+            {user.marketingSource && (
+              <div>
+                <dt className='text-sm font-medium text-gray-500'>Marketing Source</dt>
+                <dd className='mt-1 capitalize'>{user.marketingSource.replace('-', ' ')}</dd>
+              </div>
+            )}
           </dl>
         </div>
       </div>
@@ -250,6 +257,21 @@ export default function ViewUser() {
                     <div>
                       <dt className='text-sm font-medium text-gray-500'>Phone Number</dt>
                       <dd className='mt-1'>{user.availability.phoneNumber}</dd>
+                    </div>
+                  )}
+                  {user.availability.address && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>Address</dt>
+                      <dd className='mt-1'>
+                        <div className='space-y-1'>
+                          <p>{user.availability.address.street}</p>
+                          <p>
+                            {user.availability.address.city}, {user.availability.address.state}{' '}
+                            {user.availability.address.zipCode}
+                          </p>
+                          <p>{user.availability.address.country}</p>
+                        </div>
+                      </dd>
                     </div>
                   )}
                   {user.availability.additionalInfo && (

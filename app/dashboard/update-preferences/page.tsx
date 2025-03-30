@@ -35,6 +35,13 @@ type FormData = {
     startDate: string;
     phoneNumber?: string;
     additionalInfo?: string;
+    address?: {
+      street: string;
+      city: string;
+      state: string;
+      zipCode: string;
+      country: string;
+    };
   };
 };
 
@@ -59,6 +66,13 @@ const initialFormData: FormData = {
     startDate: '',
     phoneNumber: '',
     additionalInfo: '',
+    address: {
+      street: '',
+      city: '',
+      state: '',
+      zipCode: '',
+      country: '',
+    },
   },
 };
 
@@ -92,6 +106,13 @@ export default function UpdatePreferences() {
             startDate: data.availability?.startDate || '',
             phoneNumber: data.availability?.phoneNumber || '',
             additionalInfo: data.availability?.additionalInfo || '',
+            address: data.availability?.address || {
+              street: '',
+              city: '',
+              state: '',
+              zipCode: '',
+              country: '',
+            },
           },
         });
       } catch (error) {
@@ -725,6 +746,85 @@ export default function UpdatePreferences() {
                   value={formData.availability.phoneNumber || ''}
                   onChange={(e) => updateFormData('availability', 'phoneNumber', e.target.value)}
                 />
+              </div>
+
+              {/* Add Address Fields */}
+              <div className='space-y-4'>
+                <label className='block text-sm font-medium text-gray-700'>Address</label>
+                <div>
+                  <input
+                    type='text'
+                    className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    placeholder='Street Address'
+                    value={formData.availability.address?.street || ''}
+                    onChange={(e) =>
+                      updateFormData('availability', 'address', {
+                        ...formData.availability.address,
+                        street: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='City'
+                      value={formData.availability.address?.city || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          city: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='State'
+                      value={formData.availability.address?.state || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          state: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className='grid grid-cols-2 gap-4'>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='ZIP Code'
+                      value={formData.availability.address?.zipCode || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          zipCode: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='Country'
+                      value={formData.availability.address?.country || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          country: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
               </div>
 
               <div>

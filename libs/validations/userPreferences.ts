@@ -20,6 +20,13 @@ export interface Availability {
   startDate: string;
   phoneNumber?: string;
   additionalInfo?: string;
+  address?: {
+    street: string;
+    city: string;
+    state: string;
+    zipCode: string;
+    country: string;
+  };
 }
 
 export interface Resume {

@@ -112,7 +112,7 @@ export async function PUT(request: Request) {
 
     const data = await request.json();
 
-    const user = await User.findOneAndUpdate(
+    const updatedUser = await User.findOneAndUpdate(
       { email: session.user.email },
       {
         $set: {
@@ -122,13 +122,16 @@ export async function PUT(request: Request) {
             startDate: data.availability.startDate,
             phoneNumber: data.availability.phoneNumber,
             additionalInfo: data.availability.additionalInfo,
+            address: data.availability.address,
+            resumeUrl: data.availability.resumeUrl,
           },
+          marketingSource: data.marketingSource,
         },
       },
       { new: true }
     );
 
-    if (!user) {
+    if (!updatedUser) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 

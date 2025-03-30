@@ -80,6 +80,13 @@ const userSchema = new mongoose.Schema(
         startDate: '',
         phoneNumber: '',
         additionalInfo: '',
+        address: {
+          street: '',
+          city: '',
+          state: '',
+          zipCode: '',
+          country: '',
+        },
       },
     },
     password: {
@@ -196,6 +203,11 @@ const userSchema = new mongoose.Schema(
     },
     termsAcceptedAt: {
       type: Date,
+      select: true,
+    },
+    marketingSource: {
+      type: String,
+      enum: ['google', 'linkedin', 'facebook', 'instagram', 'x', 'friend', 'other'],
       select: true,
     },
   },
