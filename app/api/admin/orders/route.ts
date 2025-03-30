@@ -21,6 +21,18 @@ export async function GET(request: Request) {
 
     await connectMongo();
 
+    // Fetch total count of payment intents if on first page
+    let totalCount = null;
+    if (!startingAfter) {
+      // We can only approximate the total count as Stripe doesn't provide a direct count API
+      // This will get the total count up to 100 (Stripe's maximum limit)
+      // For a more accurate count in a production app, you might need to maintain your own counter
+      const countResult = await stripe.paymentIntents.list({
+        limit: 100,
+      });
+      totalCount = countResult.data.length;
+    }
+
     // Fetch paginated payment intents from Stripe
     const paymentIntents = await stripe.paymentIntents.list({
       limit: limit,
@@ -70,6 +82,7 @@ export async function GET(request: Request) {
       pagination: {
         hasMore: paymentIntents.has_more,
         nextCursor: lastPaymentIntent?.id,
+        totalCount: totalCount,
       },
     });
   } catch (error) {

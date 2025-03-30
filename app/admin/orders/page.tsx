@@ -32,6 +32,7 @@ export default function OrdersPage() {
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [previousCursors, setPreviousCursors] = useState<string[]>([]);
+  const [totalOrders, setTotalOrders] = useState<number | null>(null);
   const ordersPerPage = 10;
 
   useEffect(() => {
@@ -52,6 +53,11 @@ export default function OrdersPage() {
       setOrders(data.orders);
       setHasMore(data.pagination.hasMore);
       setNextCursor(data.pagination.nextCursor);
+
+      // If we're on the first page and there's a total count available, update it
+      if (currentPage === 1 && data.pagination.totalCount !== undefined) {
+        setTotalOrders(data.pagination.totalCount);
+      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       setError('Failed to load orders');
@@ -108,6 +114,9 @@ export default function OrdersPage() {
       minute: '2-digit',
     }).format(date);
   };
+
+  // Calculate the estimated total pages
+  const estimatedTotalPages = totalOrders ? Math.ceil(totalOrders / ordersPerPage) : null;
 
   return (
     <div className='max-w-7xl mx-auto p-6'>
@@ -233,6 +242,19 @@ export default function OrdersPage() {
                       ))
                     )}
                   </tbody>
+                  <tfoot className='bg-gray-50'>
+                    <tr>
+                      <td colSpan={6} className='px-6 py-3 text-sm text-gray-500'>
+                        <div className='flex justify-end items-center'>
+                          {totalOrders && (
+                            <div>
+                              <span className='font-medium'>Total:</span> {totalOrders} orders
+                            </div>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
 
@@ -258,6 +280,18 @@ export default function OrdersPage() {
                   <div>
                     <p className='text-sm text-gray-700'>
                       Page <span className='font-medium'>{currentPage}</span>
+                      {estimatedTotalPages && (
+                        <>
+                          {' '}
+                          of <span className='font-medium'>{estimatedTotalPages}</span>
+                        </>
+                      )}
+                      {totalOrders && (
+                        <>
+                          {' '}
+                          • <span className='font-medium'>{totalOrders}</span> total orders
+                        </>
+                      )}
                     </p>
                   </div>
                   <div>
