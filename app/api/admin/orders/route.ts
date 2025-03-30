@@ -18,24 +18,16 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '10');
     const startingAfter = searchParams.get('starting_after');
+    const search = searchParams.get('search');
 
     await connectMongo();
 
-    // Fetch total count of payment intents if on first page
-    let totalCount = null;
-    if (!startingAfter) {
-      // We can only approximate the total count as Stripe doesn't provide a direct count API
-      // This will get the total count up to 100 (Stripe's maximum limit)
-      // For a more accurate count in a production app, you might need to maintain your own counter
-      const countResult = await stripe.paymentIntents.list({
-        limit: 100,
-      });
-      totalCount = countResult.data.length;
-    }
+    // If searching, fetch more results to ensure we have enough after filtering
+    const fetchLimit = search ? Math.min(limit * 3, 100) : limit;
 
     // Fetch paginated payment intents from Stripe
     const paymentIntents = await stripe.paymentIntents.list({
-      limit: limit,
+      limit: fetchLimit,
       starting_after: startingAfter || undefined,
       expand: ['data.latest_charge'],
     });
@@ -56,13 +48,13 @@ export async function GET(request: Request) {
     const userMap = new Map(users.map((user) => [user.customerId, user]));
 
     // Combine payment data with user details
-    const orders = paymentIntents.data.map((payment) => {
+    let orders = paymentIntents.data.map((payment) => {
       const user = userMap.get(payment.customer as string);
       return {
         id: payment.id,
-        amount: payment.amount / 100, // Convert from cents to dollars
+        amount: payment.amount / 100,
         status: payment.status,
-        created: new Date(payment.created * 1000).toISOString(), // Store as ISO string for better date handling
+        created: new Date(payment.created * 1000).toISOString(),
         customer: {
           id: payment.customer,
           email: user?.email || 'Unknown',
@@ -74,8 +66,83 @@ export async function GET(request: Request) {
       };
     });
 
+    // Apply search filter if search parameter is provided
+    if (search) {
+      const searchLower = search.toLowerCase();
+      orders = orders.filter(
+        (order) =>
+          order.id.toLowerCase().includes(searchLower) ||
+          order.customer.email.toLowerCase().includes(searchLower) ||
+          order.customer.name.toLowerCase().includes(searchLower)
+      );
+
+      // If we're searching and don't have enough results, try to fetch more
+      if (orders.length < limit && paymentIntents.has_more) {
+        const nextPaymentIntents = await stripe.paymentIntents.list({
+          limit: fetchLimit,
+          starting_after: paymentIntents.data[paymentIntents.data.length - 1].id,
+          expand: ['data.latest_charge'],
+        });
+
+        const nextCustomerIds = Array.from(
+          new Set(
+            nextPaymentIntents.data
+              .map((payment) => payment.customer)
+              .filter((id): id is string => id !== null)
+          )
+        );
+
+        const nextUsers = await User.find({ customerId: { $in: nextCustomerIds } });
+        const nextUserMap = new Map(nextUsers.map((user) => [user.customerId, user]));
+
+        const nextOrders = nextPaymentIntents.data.map((payment) => {
+          const user = nextUserMap.get(payment.customer as string);
+          return {
+            id: payment.id,
+            amount: payment.amount / 100,
+            status: payment.status,
+            created: new Date(payment.created * 1000).toISOString(),
+            customer: {
+              id: payment.customer,
+              email: user?.email || 'Unknown',
+              name: user?.name || 'Unknown',
+            },
+            paymentMethod: payment.payment_method_types[0],
+            currency: payment.currency,
+            description: payment.description,
+          };
+        });
+
+        const filteredNextOrders = nextOrders.filter(
+          (order) =>
+            order.id.toLowerCase().includes(searchLower) ||
+            order.customer.email.toLowerCase().includes(searchLower) ||
+            order.customer.name.toLowerCase().includes(searchLower)
+        );
+
+        orders = [...orders, ...filteredNextOrders];
+      }
+    }
+
+    // Limit the results to the requested page size
+    orders = orders.slice(0, limit);
+
     // Get the last payment intent ID for next page
     const lastPaymentIntent = paymentIntents.data[paymentIntents.data.length - 1];
+
+    // Calculate total count for search results
+    let totalCount = null;
+    if (!startingAfter) {
+      if (search) {
+        // For search results, we'll use the length of filtered results
+        totalCount = orders.length;
+      } else {
+        const countResult = await stripe.paymentIntents.list({
+          limit: 100,
+        });
+        totalCount = countResult.data.length;
+      }
+    }
 
     return NextResponse.json({
       orders,

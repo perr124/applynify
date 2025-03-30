@@ -46,7 +46,7 @@ export default function OrdersPage() {
       const response = await fetch(
         `/api/admin/orders?limit=${ordersPerPage}${
           startingAfter ? `&starting_after=${startingAfter}` : ''
-        }`
+        }${searchQuery ? `&search=${encodeURIComponent(searchQuery)}` : ''}`
       );
       if (!response.ok) throw new Error('Failed to fetch orders');
       const data = await response.json();
@@ -63,6 +63,18 @@ export default function OrdersPage() {
       setError('Failed to load orders');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page when searching
+    setPreviousCursors([]); // Clear previous cursors
+    fetchOrders();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
     }
   };
 
@@ -134,10 +146,17 @@ export default function OrdersPage() {
                   placeholder='Search orders by customer email, name, or order ID...'
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   className='w-full pl-10 pr-4 py-2 border rounded-lg'
                 />
               </div>
             </div>
+            <button
+              onClick={handleSearch}
+              className='px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2'
+            >
+              Search
+            </button>
           </div>
 
           {/* Loading State */}
