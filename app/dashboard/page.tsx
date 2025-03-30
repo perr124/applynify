@@ -18,10 +18,12 @@ import {
   AlertCircle,
   Clock,
   XCircle,
+  ChevronRight,
 } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import config from '@/config';
 import ButtonCheckout from '@/components/ButtonCheckout';
+import apiClient from '@/libs/api';
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
@@ -40,6 +42,8 @@ export default function DashboardHome() {
     resume: false,
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const checkProfileStatus = async () => {
@@ -282,12 +286,24 @@ export default function DashboardHome() {
         </div>
       </div>
 
-      {/* Subscription Status */}
-      {/* <div className='bg-white shadow rounded-lg p-6'>
-        <h2 className='text-lg font-semibold text-gray-900 mb-4'>Subscription Status</h2>
-        <ButtonCheckout mode='payment' priceId={config.stripe.plans[0].priceId} />
-        <div className='mt-2 text-xs text-gray-500'>Price ID: {config.stripe.plans[0].priceId}</div>
-      </div> */}
+      {/* Subscription Button */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <div className='flex items-center justify-between'>
+          <div>
+            <h2 className='text-lg font-semibold text-gray-900'>Need More Applications?</h2>
+            <p className='mt-1 text-sm text-gray-500'>
+              Increase your chances of landing your dream job with more applications
+            </p>
+          </div>
+          <a
+            href='/dashboard/subscription'
+            className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-500 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+          >
+            View Plans
+            <ChevronRight className='ml-2 h-4 w-4' />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
