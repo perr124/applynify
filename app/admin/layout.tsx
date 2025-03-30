@@ -10,7 +10,8 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 
 const navigation = [
-  { name: 'Overview', href: '/admin', icon: Home },
+  { name: 'Orders', href: '/admin/orders', icon: Briefcase },
+  { name: 'Overview - Users', href: '/admin', icon: Home },
   // { name: 'Users', href: '/admin/users', icon: Users },
   // { name: 'Applications', href: '/admin/applications', icon: Briefcase },
   // { name: 'Settings', href: '/admin/settings', icon: Settings },
