@@ -36,8 +36,21 @@ export default function OverviewPage() {
 
   if (isLoading) {
     return (
-      <div className='flex items-center justify-center min-h-screen'>
-        <div className='animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600'></div>
+      <div className='max-w-7xl mx-auto p-6'>
+        <h1 className='text-2xl font-bold mb-8'>Dashboard Overview</h1>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8'>
+          {[...Array(4)].map((_, index) => (
+            <div key={index} className='bg-white rounded-lg shadow p-6'>
+              <div className='flex items-center'>
+                <div className='p-3 rounded-full bg-gray-200 animate-pulse h-12 w-12'></div>
+                <div className='ml-4'>
+                  <div className='h-4 bg-gray-200 rounded w-24 animate-pulse mb-2'></div>
+                  <div className='h-8 bg-gray-200 rounded w-16 animate-pulse'></div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }

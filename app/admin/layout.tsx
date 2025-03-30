@@ -11,8 +11,8 @@ import { useSession } from 'next-auth/react';
 
 const navigation = [
   { name: 'Orders', href: '/admin/orders', icon: Briefcase },
-  { name: 'Overview', href: '/admin/overview', icon: Home },
   { name: 'All Users', href: '/admin/users', icon: Users },
+  { name: 'Overview', href: '/admin/overview', icon: Home },
   // { name: 'Applications', href: '/admin/applications', icon: Briefcase },
   // { name: 'Settings', href: '/admin/settings', icon: Settings },
 ];

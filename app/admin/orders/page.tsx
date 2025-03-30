@@ -32,7 +32,6 @@ export default function OrdersPage() {
   const [hasMore, setHasMore] = useState(false);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
   const [previousCursors, setPreviousCursors] = useState<string[]>([]);
-  const [totalOrders, setTotalOrders] = useState<number | null>(null);
   const ordersPerPage = 10;
 
   useEffect(() => {
@@ -53,11 +52,6 @@ export default function OrdersPage() {
       setOrders(data.orders);
       setHasMore(data.pagination.hasMore);
       setNextCursor(data.pagination.nextCursor);
-
-      // If we're on the first page and there's a total count available, update it
-      if (currentPage === 1 && data.pagination.totalCount !== undefined) {
-        setTotalOrders(data.pagination.totalCount);
-      }
     } catch (error) {
       console.error('Error fetching orders:', error);
       setError('Failed to load orders');
@@ -128,7 +122,7 @@ export default function OrdersPage() {
   };
 
   // Calculate the estimated total pages
-  const estimatedTotalPages = totalOrders ? Math.ceil(totalOrders / ordersPerPage) : null;
+  const estimatedTotalPages = null;
 
   return (
     <div className='max-w-7xl mx-auto p-6'>
@@ -161,8 +155,17 @@ export default function OrdersPage() {
 
           {/* Loading State */}
           {isLoading && (
-            <div className='flex justify-center items-center py-8'>
-              <Loader2 className='h-8 w-8 animate-spin text-primary-500' />
+            <div className='animate-pulse'>
+              {[...Array(5)].map((_, index) => (
+                <div key={index} className='flex items-center space-x-4 py-3'>
+                  <div className='h-4 bg-gray-200 rounded w-1/6'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/4'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/4'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/6'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/6'></div>
+                  <div className='h-4 bg-gray-200 rounded w-1/6'></div>
+                </div>
+              ))}
             </div>
           )}
 
@@ -265,11 +268,15 @@ export default function OrdersPage() {
                     <tr>
                       <td colSpan={6} className='px-6 py-3 text-sm text-gray-500'>
                         <div className='flex justify-end items-center'>
-                          {totalOrders && (
-                            <div>
-                              <span className='font-medium'>Total:</span> {totalOrders} orders
-                            </div>
-                          )}
+                          <div>
+                            <span className='font-medium'>Page {currentPage}</span>
+                            {estimatedTotalPages && (
+                              <>
+                                {' '}
+                                of <span className='font-medium'>{estimatedTotalPages}</span>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </td>
                     </tr>
@@ -303,12 +310,6 @@ export default function OrdersPage() {
                         <>
                           {' '}
                           of <span className='font-medium'>{estimatedTotalPages}</span>
-                        </>
-                      )}
-                      {totalOrders && (
-                        <>
-                          {' '}
-                          • <span className='font-medium'>{totalOrders}</span> total orders
                         </>
                       )}
                     </p>

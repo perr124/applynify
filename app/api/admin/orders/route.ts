@@ -130,26 +130,11 @@ export async function GET(request: Request) {
     // Get the last payment intent ID for next page
     const lastPaymentIntent = paymentIntents.data[paymentIntents.data.length - 1];
 
-    // Calculate total count for search results
-    let totalCount = null;
-    if (!startingAfter) {
-      if (search) {
-        // For search results, we'll use the length of filtered results
-        totalCount = orders.length;
-      } else {
-        const countResult = await stripe.paymentIntents.list({
-          limit: 100,
-        });
-        totalCount = countResult.data.length;
-      }
-    }
-
     return NextResponse.json({
       orders,
       pagination: {
         hasMore: paymentIntents.has_more,
         nextCursor: lastPaymentIntent?.id,
-        totalCount: totalCount,
       },
     });
   } catch (error) {
