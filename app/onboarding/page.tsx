@@ -410,12 +410,17 @@ export default function OnboardingQuestionnaire() {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // Only accept PDF files
-    if (file.type !== 'application/pdf') {
+    // Accept PDF, DOC, and DOCX files
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    if (!allowedTypes.includes(file.type)) {
       updateFormData('availability', 'resume', {
         file: null,
         uploading: false,
-        error: 'Please upload a PDF file',
+        error: 'Please upload a PDF, DOC, or DOCX file',
       });
       return;
     }
@@ -480,11 +485,17 @@ export default function OnboardingQuestionnaire() {
     const file = e.dataTransfer.files[0];
     if (!file) return;
 
-    if (file.type !== 'application/pdf') {
+    // Accept PDF, DOC, and DOCX files
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+    if (!allowedTypes.includes(file.type)) {
       updateFormData('availability', 'resume', {
         file: null,
         uploading: false,
-        error: 'Please upload a PDF file',
+        error: 'Please upload a PDF, DOC, or DOCX file',
       });
       return;
     }
@@ -1442,7 +1453,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Upload your resume (PDF)
+                    Upload your resume (PDF, DOC, or DOCX)
                   </label>
                   <div className='mt-1'>
                     <div className='flex items-center justify-center w-full'>
@@ -1461,12 +1472,12 @@ export default function OnboardingQuestionnaire() {
                           <p className='mb-2 text-sm text-gray-500'>
                             <span className='font-semibold'>Click to upload</span> or drag and drop
                           </p>
-                          <p className='text-xs text-gray-500'>PDF (max. 5MB)</p>
+                          <p className='text-xs text-gray-500'>PDF, DOC, or DOCX (max. 5MB)</p>
                         </div>
                         <input
                           type='file'
                           className='hidden'
-                          accept='.pdf'
+                          accept='.pdf,.doc,.docx'
                           onChange={handleFileChange}
                           disabled={formData.availability.resume?.uploading}
                         />
