@@ -27,13 +27,11 @@ export default function ViewUser() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  if (!params?.userId) return <div>Invalid user ID</div>;
-
   useEffect(() => {
     const fetchUser = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch(`/api/admin/users/${params.userId}`);
+        const response = await fetch(`/api/admin/users/${params?.userId}`);
         if (!response.ok) throw new Error('Failed to fetch user');
         const data = await response.json();
         setUser(data);
@@ -45,9 +43,12 @@ export default function ViewUser() {
       }
     };
 
-    fetchUser();
-  }, [params.userId]);
+    if (params?.userId) {
+      fetchUser();
+    }
+  }, [params?.userId]);
 
+  if (!params?.userId) return <div>Invalid user ID</div>;
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
   if (!user) return <div className='p-4'>User not found</div>;
@@ -174,6 +175,12 @@ export default function ViewUser() {
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Citizenship Status</dt>
                     <dd className='mt-1'>{user.jobPreferences.citizenshipStatus}</dd>
+                  </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Requires Sponsorship</dt>
+                    <dd className='mt-1'>
+                      {user.jobPreferences.requiresSponsorship ? 'Yes' : 'No'}
+                    </dd>
                   </div>
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Job Type</dt>

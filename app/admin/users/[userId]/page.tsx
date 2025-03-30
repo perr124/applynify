@@ -14,12 +14,14 @@ import type {
   Availability,
 } from '@/libs/validations/userPreferences';
 import toast from 'react-hot-toast';
+import { PRICING_PLANS, getPlanByStripeId } from '@/libs/constants/pricing';
 
 type User = {
   _id: string;
   firstName: string;
   lastName: string;
   email: string;
+  priceId?: string;
   resumes?: Resume[];
   jobPreferences?: JobPreferences;
   experience?: Experience;
@@ -102,6 +104,7 @@ export default function UserJobApplication() {
       if (!response.ok) throw new Error('Failed to fetch user');
       const data = await response.json();
       setUser(data);
+      console.log(data, 'userrr');
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load user details');
@@ -187,6 +190,39 @@ export default function UserJobApplication() {
             {user?.firstName} {user?.lastName}
           </p>
           <p className='text-gray-600'>{user?.email}</p>
+
+          <div className='mt-4'>
+            {user?.priceId ? (
+              <div className='space-y-2'>
+                <div className='flex items-center justify-between'>
+                  <span className='font-medium text-gray-700'>
+                    Plan: {getPlanByStripeId(user.priceId)?.name || 'Unknown'}
+                  </span>
+                  <span className='text-sm font-medium text-gray-900'>
+                    {fields.length} / {getPlanByStripeId(user.priceId)?.applicationLimit || 0}
+                  </span>
+                </div>
+                <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700'>
+                  <div
+                    className='bg-blue-600 h-2.5 rounded-full transition-all duration-300'
+                    style={{
+                      width: `${
+                        (fields.length / (getPlanByStripeId(user.priceId)?.applicationLimit || 1)) *
+                        100
+                      }%`,
+                    }}
+                  ></div>
+                </div>
+                <p className='text-sm text-gray-500'>
+                  {getPlanByStripeId(user.priceId)?.applicationLimit &&
+                    getPlanByStripeId(user.priceId)!.applicationLimit - fields.length}{' '}
+                  applications remaining
+                </p>
+              </div>
+            ) : (
+              <span className='text-yellow-600'>No active subscription</span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -328,7 +364,11 @@ export default function UserJobApplication() {
           <button
             type='button'
             onClick={() => append(defaultApplication)}
-            className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50'
+            disabled={Boolean(
+              user?.priceId &&
+                fields.length >= (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
+            )}
+            className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Plus className='h-4 w-4 mr-2' />
             Add Row

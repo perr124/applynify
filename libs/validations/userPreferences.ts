@@ -6,6 +6,7 @@ export interface JobPreferences {
     preferred: string;
   };
   citizenshipStatus: string;
+  requiresSponsorship: boolean;
   jobType: string;
 }
 

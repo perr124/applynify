@@ -23,6 +23,7 @@ type FormData = {
       preferred: string;
     };
     citizenshipStatus: string;
+    requiresSponsorship: boolean;
     jobType: string;
   };
   experience: {
@@ -46,6 +47,7 @@ const initialFormData: FormData = {
       preferred: '',
     },
     citizenshipStatus: '',
+    requiresSponsorship: false,
     jobType: '',
   },
   experience: {
@@ -442,6 +444,23 @@ export default function UpdatePreferences() {
                   <option value='f1'>F-1 Visa</option>
                   <option value='other'>Other</option>
                 </select>
+              </div>
+
+              <div>
+                <div className='flex items-center'>
+                  <input
+                    id='requiresSponsorship'
+                    type='checkbox'
+                    className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                    checked={formData.jobPreferences.requiresSponsorship}
+                    onChange={(e) =>
+                      updateFormData('jobPreferences', 'requiresSponsorship', e.target.checked)
+                    }
+                  />
+                  <label htmlFor='requiresSponsorship' className='ml-2 block text-sm text-gray-700'>
+                    Requires visa sponsorship
+                  </label>
+                </div>
               </div>
 
               <div>

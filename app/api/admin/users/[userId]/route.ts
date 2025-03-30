@@ -15,7 +15,7 @@ export async function GET(req: Request, { params }: { params: { userId: string }
 
     const user = await User.findById(params.userId)
       .select(
-        'firstName lastName email applicationsStatus resumes jobPreferences experience availability'
+        'firstName lastName email applicationsStatus resumes jobPreferences experience availability priceId'
       )
       .lean();
 
