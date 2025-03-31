@@ -8,6 +8,8 @@ import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import apiClient from '@/libs/api';
 import Link from 'next/link';
+import Image from 'next/image';
+import logo from '@/app/icon.png';
 import { countries } from '@/app/data/countries';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
@@ -892,9 +894,19 @@ export default function OnboardingQuestionnaire() {
         <LanguageSelector currentRegion={currentRegion} onRegionChange={setCurrentRegion} />
         <ButtonAccount />
       </div>
-      <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>
+      <div className='absolute top-6 left-4'>
+        <Link href='/' className='flex items-center gap-2'>
+          <Image
+            src={logo}
+            alt={`${config.appName} logo`}
+            className='w-24 sm:w-32 md:w-32 lg:w-36 h-auto'
+            priority={true}
+          />
+        </Link>
+      </div>
+      <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:py-12 lg:py-8 sm:px-6 lg:px-8'>
         <div className='sm:mx-auto sm:w-full sm:max-w-md'>
-          <h2 className='text-center text-3xl font-extrabold text-gray-900'>
+          <h2 className='text-center text-3xl font-extrabold text-gray-900 mt-16 sm:mt-0'>
             Let&apos;s personalize your experience
           </h2>
           <p className='mt-2 text-center text-sm text-gray-600'>
