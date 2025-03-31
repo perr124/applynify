@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     //   });
     // }
 
-    const { jobPreferences, experience, availability } = data;
+    const { jobPreferences, experience, availability, marketingSource, termsAccepted } = data;
 
     const updatedUser = await User.findOneAndUpdate(
       { email: session.user.email },
@@ -38,13 +38,15 @@ export async function POST(req: Request) {
           availability,
           applicationsStatus: 'started',
           onboardingComplete: true,
+          marketingSource,
+          termsAccepted,
         },
       },
       {
         new: true,
         strict: false,
         select:
-          'jobPreferences experience availability onboardingComplete email name image applicationsStatus',
+          'jobPreferences experience availability onboardingComplete email name image applicationsStatus marketingSource termsAccepted',
       }
     );
     console.log('preee sesh here2', {

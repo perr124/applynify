@@ -376,6 +376,8 @@ export default function OnboardingQuestionnaire() {
               address: formData.availability.address,
               resumeUrl: resumeUrl,
             },
+            marketingSource: formData.marketingSource,
+            termsAccepted: formData.termsAccepted,
           }),
         });
 

@@ -43,6 +43,8 @@ export interface PreferencesData {
   availability: Availability;
   applicationsStatus?: 'started' | 'completed';
   resumes?: Resume[];
+  marketingSource?: string;
+  termsAccepted?: boolean;
 }
 
 export function validatePreferences(data: PreferencesData): { valid: boolean; errors: string[] } {
