@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
         const priceId = session?.line_items?.data[0]?.price.id;
         const userId = stripeObject.client_reference_id;
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
+        console.log('plansss', plan);
 
         // Add error handling and logging
         if (!session) {
@@ -74,18 +75,16 @@ export async function POST(req: NextRequest) {
           throw new Error('No price ID found in session');
         }
 
-        if (!plan) {
-          console.error('No matching plan found for price ID:', priceId);
-          throw new Error('No matching plan found');
-        }
-
         const customer = (await stripe.customers.retrieve(customerId as string)) as Stripe.Customer;
-
         let user;
 
         // Get or create the user. userId is normally pass in the checkout session (clientReferenceID) to identify the user when we get the webhook event
         if (userId) {
           user = await User.findById(userId);
+          if (!user) {
+            throw new Error(`User not found with ID: ${userId}`);
+          }
+          console.log('user found', user);
         } else if (customer.email) {
           user = await User.findOne({ email: customer.email });
 
@@ -109,11 +108,12 @@ export async function POST(req: NextRequest) {
         }
 
         // Update user data
-        user.priceId = priceId;
-        user.customerId = customerId;
-        user.hasAccess = true;
-        user.onboardingComplete = true;
-        await user.save();
+        await User.findByIdAndUpdate(user._id, {
+          priceId,
+          customerId,
+          hasAccess: true,
+          onboardingComplete: true,
+        });
 
         // Add success logging
         console.log('Successfully updated user after payment:', {
