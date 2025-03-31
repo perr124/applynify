@@ -55,7 +55,7 @@ const LanguageSelector = ({ currentRegion, onRegionChange }: LanguageSelectorPro
       </button>
 
       {isOpen && (
-        <div className='absolute right-0 mt-2 w-48 bg-base-200 rounded-lg shadow-lg z-50'>
+        <div className='fixed left-4 right-4 sm:left-auto sm:right-0 sm:absolute mt-2 w-auto sm:w-48 bg-base-200 rounded-lg shadow-lg z-[100]'>
           <div className='py-1'>
             {regions.map((region) => (
               <button
