@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import type { JSX } from "react";
+import { useRef, useState } from 'react';
+import type { JSX } from 'react';
 
 // <FAQ> component is a lsit of <Item> component
 // Just import the FAQ & add your FAQ content to the const faqList arrayy below.
@@ -13,22 +13,40 @@ interface FAQItemProps {
 
 const faqList: FAQItemProps[] = [
   {
-    question: "What do I get exactly?",
-    answer: <div className="space-y-2 leading-relaxed">Loreum Ipseum</div>,
+    question: 'What is Applynify?',
+    answer: (
+      <div className='space-y-2 leading-relaxed'>
+        Applynify is a personalized job application service where a dedicated human assistant
+        applies to jobs on your behalf based on your preferences, resume, and career goals.
+      </div>
+    ),
   },
   {
-    question: "Can I get a refund?",
+    question: 'How does it work?',
     answer: (
       <p>
-        Yes! You can request a refund within 7 days of your purchase. Reach out
-        by email.
+        Once you sign up and complete your profile, we assign you a trained application assistant.
+        They’ll search for relevant jobs, tailor applications, and submit them for you directly on
+        company websites.
       </p>
     ),
   },
   {
-    question: "I have another question",
+    question: 'Who is this service for?',
     answer: (
-      <div className="space-y-2 leading-relaxed">Cool, contact us by email</div>
+      <div className='space-y-2 leading-relaxed'>
+        Busy professionals, recent grads, job seekers who hate the repetitive application process,
+        and anyone looking to increase their job application output without the stress.
+      </div>
+    ),
+  },
+  {
+    question: 'Do real people apply to jobs for me?',
+    answer: (
+      <div className='space-y-2 leading-relaxed'>
+        Yes! Every application is handled by a real, professionally trained assistant. No bots or
+        generic spam — just personalized, high-quality submissions.
+      </div>
     ),
   },
 ];
@@ -40,39 +58,37 @@ const FaqItem = ({ item }: { item: FAQItemProps }) => {
   return (
     <li>
       <button
-        className="relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10"
+        className='relative flex gap-2 items-center w-full py-5 text-base font-semibold text-left border-t md:text-lg border-base-content/10'
         onClick={(e) => {
           e.preventDefault();
           setIsOpen(!isOpen);
         }}
         aria-expanded={isOpen}
       >
-        <span
-          className={`flex-1 text-base-content ${isOpen ? "text-primary" : ""}`}
-        >
+        <span className={`flex-1 text-base-content ${isOpen ? 'text-primary' : ''}`}>
           {item?.question}
         </span>
         <svg
           className={`flex-shrink-0 w-4 h-4 ml-auto fill-current`}
-          viewBox="0 0 16 16"
-          xmlns="http://www.w3.org/2000/svg"
+          viewBox='0 0 16 16'
+          xmlns='http://www.w3.org/2000/svg'
         >
           <rect
-            y="7"
-            width="16"
-            height="2"
-            rx="1"
+            y='7'
+            width='16'
+            height='2'
+            rx='1'
             className={`transform origin-center transition duration-200 ease-out ${
-              isOpen && "rotate-180"
+              isOpen && 'rotate-180'
             }`}
           />
           <rect
-            y="7"
-            width="16"
-            height="2"
-            rx="1"
+            y='7'
+            width='16'
+            height='2'
+            rx='1'
             className={`transform origin-center rotate-90 transition duration-200 ease-out ${
-              isOpen && "rotate-180 hidden"
+              isOpen && 'rotate-180 hidden'
             }`}
           />
         </svg>
@@ -87,7 +103,7 @@ const FaqItem = ({ item }: { item: FAQItemProps }) => {
             : { maxHeight: 0, opacity: 0 }
         }
       >
-        <div className="pb-5 leading-relaxed">{item?.answer}</div>
+        <div className='pb-5 leading-relaxed'>{item?.answer}</div>
       </div>
     </li>
   );
@@ -95,16 +111,16 @@ const FaqItem = ({ item }: { item: FAQItemProps }) => {
 
 const FAQ = () => {
   return (
-    <section className="bg-base-200" id="faq">
-      <div className="py-24 px-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-12">
-        <div className="flex flex-col text-left basis-1/2">
-          <p className="inline-block font-semibold text-primary mb-4">FAQ</p>
-          <p className="sm:text-4xl text-3xl font-extrabold text-base-content">
+    <section className='bg-base-200' id='faq'>
+      <div className='py-24 px-8 max-w-7xl mx-auto flex flex-col md:flex-row gap-12'>
+        <div className='flex flex-col text-left basis-1/2'>
+          <p className='inline-block font-semibold text-primary mb-4'>FAQ</p>
+          <p className='sm:text-4xl text-3xl font-extrabold text-base-content'>
             Frequently Asked Questions
           </p>
         </div>
 
-        <ul className="basis-1/2">
+        <ul className='basis-1/2'>
           {faqList.map((item, i) => (
             <FaqItem key={i} item={item} />
           ))}
