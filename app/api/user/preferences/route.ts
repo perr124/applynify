@@ -27,7 +27,14 @@ export async function POST(req: Request) {
     //   });
     // }
 
-    const { jobPreferences, experience, availability, marketingSource, termsAccepted } = data;
+    const {
+      jobPreferences,
+      experience,
+      availability,
+      marketingSource,
+      termsAccepted,
+      localization,
+    } = data;
 
     const updatedUser = await User.findOneAndUpdate(
       { email: session.user.email },
@@ -40,13 +47,14 @@ export async function POST(req: Request) {
           onboardingComplete: true,
           marketingSource,
           termsAccepted,
+          localization,
         },
       },
       {
         new: true,
         strict: false,
         select:
-          'jobPreferences experience availability onboardingComplete email name image applicationsStatus marketingSource termsAccepted',
+          'jobPreferences experience availability onboardingComplete email name image applicationsStatus marketingSource termsAccepted localization',
       }
     );
     console.log('preee sesh here2', {
@@ -82,7 +90,7 @@ export async function GET() {
 
     const user = await User.findOne(
       { email: session.user.email },
-      'jobPreferences experience availability applicationsStatus resumes'
+      'jobPreferences experience availability applicationsStatus resumes localization'
     );
 
     if (!user) {
@@ -95,6 +103,7 @@ export async function GET() {
       availability: user.availability || {},
       applicationsStatus: user.applicationsStatus || 'started',
       resumes: user.resumes || [],
+      localization: user.localization || '',
     });
   } catch (error) {
     console.error('Error fetching preferences:', error);
@@ -128,6 +137,7 @@ export async function PUT(request: Request) {
             resumeUrl: data.availability.resumeUrl,
           },
           marketingSource: data.marketingSource,
+          localization: data.localization,
         },
       },
       { new: true }

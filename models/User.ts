@@ -210,6 +210,10 @@ const userSchema = new mongoose.Schema(
       enum: ['google', 'linkedin', 'facebook', 'instagram', 'x', 'friend', 'other'],
       select: true,
     },
+    localization: {
+      type: String,
+      select: true,
+    },
   },
   {
     timestamps: true,

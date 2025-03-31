@@ -10,6 +10,15 @@ import type {
   Availability,
 } from '@/libs/validations/userPreferences';
 
+// Add regions mapping
+const regions: Record<string, { name: string; flag: string }> = {
+  US: { name: 'United States', flag: '🇺🇸' },
+  GB: { name: 'United Kingdom', flag: '🇬🇧' },
+  EU: { name: 'European Union', flag: '🇪🇺' },
+  CA: { name: 'Canada', flag: '🇨🇦' },
+  AU: { name: 'Australia', flag: '🇦🇺' },
+};
+
 type User = {
   _id: string;
   firstName: string;
@@ -20,6 +29,7 @@ type User = {
   experience?: Experience;
   availability?: Availability;
   marketingSource?: string;
+  localization?: string;
 };
 
 export default function ViewUser() {
@@ -87,6 +97,15 @@ export default function ViewUser() {
               <div>
                 <dt className='text-sm font-medium text-gray-500'>Marketing Source</dt>
                 <dd className='mt-1 capitalize'>{user.marketingSource.replace('-', ' ')}</dd>
+              </div>
+            )}
+            {user.localization && (
+              <div>
+                <dt className='text-sm font-medium text-gray-500'>Country</dt>
+                <dd className='mt-1 flex items-center gap-2'>
+                  <span className='text-lg'>{regions[user.localization]?.flag}</span>
+                  <span>{regions[user.localization]?.name || user.localization}</span>
+                </dd>
               </div>
             )}
           </dl>

@@ -387,6 +387,7 @@ export default function OnboardingQuestionnaire() {
             },
             marketingSource: formData.marketingSource,
             termsAccepted: formData.termsAccepted,
+            localization: currentRegion.code,
           }),
         });
 

@@ -45,6 +45,7 @@ export interface PreferencesData {
   resumes?: Resume[];
   marketingSource?: string;
   termsAccepted?: boolean;
+  localization?: string;
 }
 
 export function validatePreferences(data: PreferencesData): { valid: boolean; errors: string[] } {

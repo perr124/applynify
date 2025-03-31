@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useLocalization } from '@/contexts/LocalizationContext';
+import { CitizenshipStatus, citizenshipStatusByCountry } from '@/app/data/citizenshipStatus';
 
 type FormData = {
   jobPreferences: {
@@ -478,20 +479,15 @@ export default function UpdatePreferences() {
                 <label className='block text-sm font-medium text-gray-700'>
                   Citizenship Status
                 </label>
-                <select
-                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                  value={formData.jobPreferences.citizenshipStatus}
-                  onChange={(e) =>
-                    updateFormData('jobPreferences', 'citizenshipStatus', e.target.value)
-                  }
-                >
-                  <option value=''>Select status</option>
-                  <option value='us-citizen'>U.S. Citizen</option>
-                  <option value='permanent-resident'>Permanent Resident</option>
-                  <option value='h1b'>H1-B Visa</option>
-                  <option value='f1'>F-1 Visa</option>
-                  <option value='other'>Other</option>
-                </select>
+                {(
+                  citizenshipStatusByCountry[
+                    currentRegion.code as keyof typeof citizenshipStatusByCountry
+                  ] || citizenshipStatusByCountry.DEFAULT
+                ).map((status: CitizenshipStatus) => (
+                  <option key={status.value} value={status.value}>
+                    {status.label}
+                  </option>
+                ))}
               </div>
 
               <div>
