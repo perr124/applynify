@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
     const subject = formData.get('Subject');
     const html = formData.get('body-html');
 
-    // send email to the admin if forwardRepliesTo is set & all required data exists
+    // send email to the admin if forwardRepliesTo is set & all required data exists.
     if (config.mailgun.forwardRepliesTo && html && subject && sender) {
       await sendEmail({
         to: config.mailgun.forwardRepliesTo,
