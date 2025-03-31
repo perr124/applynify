@@ -1,13 +1,17 @@
+import { getStripePriceId } from './stripe-prices';
+
 export const PRICING_PLANS = {
   LITE: {
-    stripeId: 'price_1R8OigDnSxQsct78i9GMR46f',
     name: 'Lite',
     applicationLimit: 25,
+    getStripeId: (regionCode: 'US' | 'GB' | 'EU' | 'CA' | 'AU') =>
+      getStripePriceId('LITE', regionCode),
   },
   PRO: {
-    stripeId: 'price_1R8OhODnSxQsct78eGw7xRiE',
     name: 'Pro',
     applicationLimit: 50,
+    getStripeId: (regionCode: 'US' | 'GB' | 'EU' | 'CA' | 'AU') =>
+      getStripePriceId('PRO', regionCode),
   },
 } as const;
 
@@ -26,11 +30,10 @@ const REGIONAL_MULTIPLIERS = {
   AU: 1.52, // AUD
 } as const;
 
+type RegionCode = keyof typeof REGIONAL_MULTIPLIERS;
+
 // Get the price for a specific plan and region
-export const getPlanPrice = (
-  plan: keyof typeof PRICING_PLANS,
-  regionCode: keyof typeof REGIONAL_MULTIPLIERS
-) => {
+export const getPlanPrice = (plan: keyof typeof PRICING_PLANS, regionCode: RegionCode) => {
   const basePrice = BASE_PRICES_USD[plan];
   const multiplier = REGIONAL_MULTIPLIERS[regionCode];
   const rawPrice = basePrice * multiplier;
@@ -40,5 +43,9 @@ export const getPlanPrice = (
 
 // Get the plan by Stripe ID
 export const getPlanByStripeId = (stripeId: string) => {
-  return Object.values(PRICING_PLANS).find((plan) => plan.stripeId === stripeId);
+  return Object.values(PRICING_PLANS).find((plan) =>
+    (Object.keys(REGIONAL_MULTIPLIERS) as RegionCode[]).some(
+      (regionCode) => plan.getStripeId(regionCode) === stripeId
+    )
+  );
 };

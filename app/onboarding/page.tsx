@@ -771,7 +771,9 @@ export default function OnboardingQuestionnaire() {
       {
         name: PRICING_PLANS.LITE.name,
         price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
-        priceId: PRICING_PLANS.LITE.stripeId,
+        priceId: PRICING_PLANS.LITE.getStripeId(
+          currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+        ),
         description: 'For job seekers starting out',
         features: [
           `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
@@ -784,7 +786,9 @@ export default function OnboardingQuestionnaire() {
       {
         name: PRICING_PLANS.PRO.name,
         price: getPlanPrice('PRO', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
-        priceId: PRICING_PLANS.PRO.stripeId,
+        priceId: PRICING_PLANS.PRO.getStripeId(
+          currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+        ),
         description: 'Optimized for maximizing career opportunities',
         features: [
           `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
@@ -1469,9 +1473,9 @@ export default function OnboardingQuestionnaire() {
                     <textarea
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       rows={5}
-                      placeholder='This could include any additional languages you speak, job roles you’ve recently applied to (please note that we only apply to newly posted jobs within the last 7–10 days), or any other important information we should know.'
+                      placeholder="This could include any additional languages you speak, job roles you've recently applied to (please note that we only apply to newly posted jobs within the last 7-10 days), or any other important information we should know."
                       value={formData.availability.additionalInfo}
-                      onChange={(e) =>
+                      onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         updateFormData('availability', 'additionalInfo', e.target.value)
                       }
                     />
