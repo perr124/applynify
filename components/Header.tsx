@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import type { JSX } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import ButtonSignin from './ButtonSignin';
@@ -31,15 +31,20 @@ const links: {
   },
 ];
 
-const cta: JSX.Element = (
-  <ButtonSignin extraStyle='bg-primary-500 text-white hover:bg-primary-800' />
-);
-
 // A header with a logo on the left, links in the center (like Pricing, etc...), and a CTA (like Get Started or Login) on the right.
 // The header is responsive, and on mobile, the links are hidden behind a burger button.
 const Header = () => {
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  // Check if we're on an auth page
+  const isAuthPage = pathname?.startsWith('/auth/');
+
+  // Create CTA element only if not on auth page
+  const cta: JSX.Element | null = !isAuthPage ? (
+    <ButtonSignin extraStyle='bg-primary-500 text-white hover:bg-primary-800' />
+  ) : null;
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
   useEffect(() => {
@@ -104,7 +109,7 @@ const Header = () => {
         </div>
 
         {/* CTA on large screens */}
-        <div className='hidden lg:flex lg:justify-end lg:flex-1'>{cta}</div>
+        {cta && <div className='hidden lg:flex lg:justify-end lg:flex-1'>{cta}</div>}
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -163,9 +168,13 @@ const Header = () => {
                 ))}
               </div>
             </div>
-            <div className='divider'></div>
-            {/* Your CTA on small screens */}
-            <div className='flex flex-col'>{cta}</div>
+            {cta && (
+              <>
+                <div className='divider'></div>
+                {/* Your CTA on small screens */}
+                <div className='flex flex-col'>{cta}</div>
+              </>
+            )}
           </div>
         </div>
       </div>
