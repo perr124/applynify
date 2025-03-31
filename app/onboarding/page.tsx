@@ -18,6 +18,8 @@ import {
 } from '@/app/data/citizenshipStatus';
 import LanguageSelector from '@/components/LanguageSelector';
 import { getAddressPlaceholders } from '@/libs/constants/address';
+import { getPhoneFormat } from '@/libs/constants/phone';
+import { countryCodes, getCountryCodeByRegion } from '@/libs/constants/countryCodes';
 
 type FormData = {
   jobPreferences: {
@@ -1373,16 +1375,59 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>Phone Number</label>
-                  <div className='mt-1'>
-                    <input
-                      type='tel'
-                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                      placeholder='+1 (555) 123-4567'
-                      value={formData.availability.phoneNumber}
-                      onChange={(e) =>
-                        updateFormData('availability', 'phoneNumber', e.target.value)
-                      }
-                    />
+                  <div className='flex gap-2'>
+                    <div className='flex-shrink-0 w-20'>
+                      <select
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        value={
+                          formData.availability.phoneNumber?.split(' ')[0] ||
+                          getPhoneFormat(currentRegion.code).countryCode
+                        }
+                        onChange={(e) => {
+                          const selectedCode = countryCodes.find(
+                            (code) => code.dialCode === e.target.value
+                          );
+                          if (selectedCode) {
+                            const currentNumber =
+                              formData.availability.phoneNumber?.split(' ').slice(1).join(' ') ||
+                              '';
+                            updateFormData(
+                              'availability',
+                              'phoneNumber',
+                              `${selectedCode.dialCode} ${currentNumber}`
+                            );
+                          }
+                        }}
+                      >
+                        {countryCodes.map((code) => (
+                          <option key={code.code} value={code.dialCode}>
+                            {code.dialCode}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className='flex-grow'>
+                      <input
+                        type='tel'
+                        className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        placeholder={getPhoneFormat(currentRegion.code).placeholder}
+                        value={
+                          formData.availability.phoneNumber?.split(' ').slice(1).join(' ') || ''
+                        }
+                        onChange={(e) => {
+                          const selectedCode =
+                            countryCodes.find(
+                              (code) =>
+                                code.dialCode === formData.availability.phoneNumber?.split(' ')[0]
+                            ) || getCountryCodeByRegion(currentRegion.code);
+                          updateFormData(
+                            'availability',
+                            'phoneNumber',
+                            `${selectedCode.dialCode} ${e.target.value}`
+                          );
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
 
