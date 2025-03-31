@@ -55,20 +55,26 @@ const Pricing = () => {
           {tiers.map((tier) => (
             <div
               key={tier.name}
-              className={`relative rounded-2xl p-8 ${
-                tier.mostPopular ? 'border-2 border-primary shadow-xl' : 'border border-gray-200'
+              className={`relative rounded-2xl p-8 transition-all duration-300 ${
+                tier.mostPopular
+                  ? 'border-2 border-primary shadow-2xl bg-gradient-to-b from-primary/10 to-transparent md:scale-110 z-10'
+                  : 'border border-gray-200 bg-white hover:scale-[1.02]'
               }`}
             >
               {tier.mostPopular && (
-                <span className='absolute top-0 -translate-y-1/2 bg-primary text-black px-4 py-1 rounded-full text-sm font-medium'>
-                  Most Popular
+                <span className='absolute top-0 -translate-y-1/2 bg-primary text-black px-8 py-2 rounded-full text-base font-bold shadow-lg animate-pulse'>
+                  ⭐ Most Popular
                 </span>
               )}
 
               <div className='text-center'>
-                <h3 className='text-2xl font-bold'>{tier.name}</h3>
+                <h3 className={`text-2xl font-bold ${tier.mostPopular ? 'text-primary' : ''}`}>
+                  {tier.name}
+                </h3>
                 <div className='mt-4 flex items-baseline justify-center'>
-                  <span className='text-5xl font-bold'>${tier.price}</span>
+                  <span className={`text-5xl font-bold ${tier.mostPopular ? 'text-primary' : ''}`}>
+                    ${tier.price}
+                  </span>
                   <span className='text-gray-400'>one-time</span>
                 </div>
                 <p className='mt-4 text-gray-600'>{tier.description}</p>
