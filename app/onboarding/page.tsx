@@ -9,6 +9,13 @@ import ButtonAccount from '@/components/ButtonAccount';
 import apiClient from '@/libs/api';
 import Link from 'next/link';
 import { countries } from '@/app/data/countries';
+import { useLocalization } from '@/contexts/LocalizationContext';
+import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
+import {
+  citizenshipStatusByCountry,
+  CitizenshipStatus,
+  CountryCode,
+} from '@/app/data/citizenshipStatus';
 
 type FormData = {
   jobPreferences: {
@@ -94,6 +101,7 @@ const formatSalary = (value: string) => {
 };
 
 export default function OnboardingQuestionnaire() {
+  const { formatCurrency, currentRegion } = useLocalization();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -613,7 +621,7 @@ export default function OnboardingQuestionnaire() {
                 <dt className='text-sm text-gray-500'>Minimum Salary</dt>
                 <dd className='mt-1'>
                   {formData.jobPreferences.salary.minimum
-                    ? `$${formData.jobPreferences.salary.minimum}`
+                    ? `${getCurrencySymbol()}${formData.jobPreferences.salary.minimum}`
                     : 'Not specified'}
                 </dd>
               </div>
@@ -759,12 +767,12 @@ export default function OnboardingQuestionnaire() {
   const renderPricingSection = () => {
     const pricingTiers = [
       {
-        name: 'Lite',
-        price: 49.99,
-        priceId: config.stripe.plans[0].priceId,
+        name: PRICING_PLANS.LITE.name,
+        price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+        priceId: PRICING_PLANS.LITE.stripeId,
         description: 'For job seekers starting out',
         features: [
-          '25 jobs applied to directly on company sites',
+          `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
           'Write cover letters on your behalf',
           'Quick service within 5 days',
           'Advanced Application tracking in your dashboard',
@@ -772,12 +780,12 @@ export default function OnboardingQuestionnaire() {
         ],
       },
       {
-        name: 'Pro',
-        price: 89.99,
-        priceId: config.stripe.plans[1].priceId,
+        name: PRICING_PLANS.PRO.name,
+        price: getPlanPrice('PRO', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+        priceId: PRICING_PLANS.PRO.stripeId,
         description: 'Optimized for maximizing career opportunities',
         features: [
-          '50 jobs applied to directly on company sites',
+          `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
           'Write cover letters on your behalf',
           'Priority service within 4 days',
           'Advanced Application tracking in your dashboard',
@@ -808,7 +816,7 @@ export default function OnboardingQuestionnaire() {
                   <h4 className='text-xl font-semibold'>{tier.name}</h4>
                   <p className='text-gray-600'>{tier.description}</p>
                 </div>
-                <div className='text-2xl font-bold'>${tier.price}</div>
+                <div className='text-2xl font-bold'>{formatCurrency(tier.price)}</div>
               </div>
               <ul className='space-y-3'>
                 {tier.features.map((feature) => (
@@ -835,6 +843,15 @@ export default function OnboardingQuestionnaire() {
         </div>
       </div>
     );
+  };
+
+  // Add this helper function
+  const getCurrencySymbol = () => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currentRegion.currency,
+    });
+    return formatter.format(0).replace(/[\d,]/g, '').trim().replace('.', '');
   };
 
   // Add loading state UI
@@ -1031,12 +1048,16 @@ export default function OnboardingQuestionnaire() {
                   </label>
                   <div className='mt-1 relative'>
                     <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                      <span className='text-gray-500 sm:text-sm'>$</span>
+                      <span className='text-gray-500 sm:text-sm whitespace-nowrap'>
+                        {getCurrencySymbol()}
+                      </span>
                     </div>
                     <input
                       type='text'
-                      className='appearance-none block w-full pl-7 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                      placeholder='e.g., 45,000'
+                      className={`appearance-none block w-full ${
+                        getCurrencySymbol().length > 1 ? 'pl-10' : 'pl-7'
+                      } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                      placeholder={`e.g., ${formatSalary('45000')}`}
                       value={formData.jobPreferences.salary.minimum}
                       onChange={(e) => {
                         const formatted = formatSalary(e.target.value);
@@ -1070,26 +1091,29 @@ export default function OnboardingQuestionnaire() {
                         const newStatus = e.target.value;
                         updateFormData('jobPreferences', 'citizenshipStatus', newStatus);
 
-                        // If changing to US citizen or permanent resident, set requiresSponsorship to false
-                        if (['us-citizen', 'permanent-resident'].includes(newStatus)) {
+                        // If changing to citizen or permanent resident, set requiresSponsorship to false
+                        if (newStatus.includes('citizen') || newStatus.includes('permanent')) {
                           updateFormData('jobPreferences', 'requiresSponsorship', false);
                         }
                       }}
                     >
                       <option value=''>Select status</option>
-                      <option value='us-citizen'>U.S. Citizen</option>
-                      <option value='permanent-resident'>Permanent Resident</option>
-                      <option value='h1b'>H1-B Visa</option>
-                      <option value='f1'>F-1 Visa</option>
-                      <option value='other'>Other</option>
+                      {(
+                        citizenshipStatusByCountry[
+                          currentRegion.code as keyof typeof citizenshipStatusByCountry
+                        ] || citizenshipStatusByCountry.DEFAULT
+                      ).map((status: CitizenshipStatus) => (
+                        <option key={status.value} value={status.value}>
+                          {status.label}
+                        </option>
+                      ))}
                     </select>
                   </div>
 
                   {/* Add conditional sponsorship checkbox */}
                   {formData.jobPreferences.citizenshipStatus &&
-                    !['us-citizen', 'permanent-resident'].includes(
-                      formData.jobPreferences.citizenshipStatus
-                    ) && (
+                    !formData.jobPreferences.citizenshipStatus.includes('citizen') &&
+                    !formData.jobPreferences.citizenshipStatus.includes('permanent') && (
                       <div className='mt-4'>
                         <div className='flex items-start'>
                           <div className='flex items-center h-5'>

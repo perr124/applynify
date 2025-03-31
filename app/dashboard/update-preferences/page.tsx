@@ -13,6 +13,7 @@ import {
   CheckCircle,
 } from 'lucide-react';
 import Link from 'next/link';
+import { useLocalization } from '@/contexts/LocalizationContext';
 
 type FormData = {
   jobPreferences: {
@@ -84,6 +85,7 @@ const formatSalary = (value: string) => {
 };
 
 export default function UpdatePreferences() {
+  const { formatCurrency, currentRegion } = useLocalization();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -208,6 +210,14 @@ export default function UpdatePreferences() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const getCurrencySymbol = () => {
+    const formatter = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currentRegion.currency,
+    });
+    return formatter.format(0).replace(/[\d,]/g, '').trim().replace('.', '');
   };
 
   if (isLoading) {
@@ -433,11 +443,15 @@ export default function UpdatePreferences() {
                 <label className='block text-sm font-medium text-gray-700'>Minimum Salary</label>
                 <div className='mt-1 relative'>
                   <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                    <span className='text-gray-500 sm:text-sm'>$</span>
+                    <span className='text-gray-500 sm:text-sm whitespace-nowrap'>
+                      {getCurrencySymbol()}
+                    </span>
                   </div>
                   <input
                     type='text'
-                    className='appearance-none block w-full pl-7 px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    className={`appearance-none block w-full ${
+                      getCurrencySymbol().length > 1 ? 'pl-12' : 'pl-7'
+                    } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
                     value={formData.jobPreferences.salary.minimum}
                     onChange={(e) => {
                       const formatted = formatSalary(e.target.value);
@@ -452,7 +466,7 @@ export default function UpdatePreferences() {
                         e.preventDefault();
                       }
                     }}
-                    placeholder='e.g., 45,000'
+                    placeholder={`e.g., ${formatSalary('45000')}`}
                   />
                 </div>
                 <p className='mt-1 text-sm text-gray-500'>

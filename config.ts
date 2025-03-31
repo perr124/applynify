@@ -1,6 +1,12 @@
 import themes from 'daisyui/src/theming/themes';
 import { ConfigProps } from './types/config';
 
+// Base prices in USD
+const BASE_PRICES = {
+  lite: 49,
+  pro: 89,
+};
+
 const config = {
   // REQUIRED
   appName: 'Applynify',
@@ -28,9 +34,9 @@ const config = {
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
         description: 'Perfect for job seekers getting started',
         // The price you want to display, the one user will be charged on Stripe.
-        price: 49,
+        price: BASE_PRICES.lite,
         // If you have an anchor price (i.e. $29) that you want to display crossed out, put it here. Otherwise, leave it empty
-        priceAnchor: 49,
+        priceAnchor: BASE_PRICES.lite,
         features: [
           {
             name: 'NextJS boilerplate',
@@ -49,8 +55,8 @@ const config = {
         isFeatured: true,
         name: 'Pro',
         description: 'Optimized for maximizing career opportunities',
-        price: 89,
-        priceAnchor: 89,
+        price: BASE_PRICES.pro,
+        priceAnchor: BASE_PRICES.pro,
         features: [
           {
             name: 'NextJS boilerplate',

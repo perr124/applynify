@@ -6,6 +6,8 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import ButtonSignin from './ButtonSignin';
+import LanguageSelector from './LanguageSelector';
+import { useLocalization } from '@/contexts/LocalizationContext';
 import logo from '@/app/icon.png';
 import config from '@/config';
 
@@ -40,6 +42,7 @@ const cta: JSX.Element = (
 const Header = () => {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { currentRegion, setCurrentRegion } = useLocalization();
 
   // setIsOpen(false) when the route changes (i.e: when the user clicks on a link on mobile)
   useEffect(() => {
@@ -103,8 +106,11 @@ const Header = () => {
           ))}
         </div>
 
-        {/* CTA on large screens */}
-        <div className='hidden lg:flex lg:justify-end lg:flex-1'>{cta}</div>
+        {/* CTA and Language Selector on large screens */}
+        <div className='hidden lg:flex lg:justify-end lg:flex-1 lg:items-center lg:gap-4'>
+          <LanguageSelector currentRegion={currentRegion} onRegionChange={setCurrentRegion} />
+          {cta}
+        </div>
       </nav>
 
       {/* Mobile menu, show/hide based on menu state. */}
@@ -164,8 +170,11 @@ const Header = () => {
               </div>
             </div>
             <div className='divider'></div>
-            {/* Your CTA on small screens */}
-            <div className='flex flex-col'>{cta}</div>
+            {/* Your CTA and Language Selector on small screens */}
+            <div className='flex flex-col gap-4'>
+              <LanguageSelector currentRegion={currentRegion} onRegionChange={setCurrentRegion} />
+              {cta}
+            </div>
           </div>
         </div>
       </div>

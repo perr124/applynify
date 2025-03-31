@@ -4,8 +4,11 @@ import React from 'react';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import config from '@/config';
 import apiClient from '@/libs/api';
+import { useLocalization } from '@/contexts/LocalizationContext';
+import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
 
 export default function ServicesPage() {
+  const { formatCurrency, currentRegion } = useLocalization();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -72,12 +75,12 @@ export default function ServicesPage() {
       <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
         {[
           {
-            name: 'Lite Package',
-            price: 49.99,
-            priceId: config.stripe.plans[0].priceId,
+            name: PRICING_PLANS.LITE.name,
+            price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+            priceId: PRICING_PLANS.LITE.stripeId,
             description: 'Perfect for getting started',
             features: [
-              '25 job applications submitted on your behalf',
+              `${PRICING_PLANS.LITE.applicationLimit} job applications submitted on your behalf`,
               'Professional cover letters written for each application',
               '5-day turnaround time',
               'Email response categorization',
@@ -86,12 +89,12 @@ export default function ServicesPage() {
             ],
           },
           {
-            name: 'Pro Package',
-            price: 89.99,
-            priceId: config.stripe.plans[1].priceId,
+            name: PRICING_PLANS.PRO.name,
+            price: getPlanPrice('PRO', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+            priceId: PRICING_PLANS.PRO.stripeId,
             description: 'For serious job seekers',
             features: [
-              '50 jobs applied to directly on company sites',
+              `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
               'Write cover letters on your behalf',
               'Priority service within 5 days',
               'Advanced Application tracking in your dashboard',
@@ -106,7 +109,7 @@ export default function ServicesPage() {
                 <h2 className='text-xl font-semibold text-gray-900'>{tier.name}</h2>
                 <p className='text-sm text-gray-500'>{tier.description}</p>
               </div>
-              <div className='text-2xl font-bold text-gray-900'>${tier.price}</div>
+              <div className='text-2xl font-bold text-gray-900'>{formatCurrency(tier.price)}</div>
             </div>
 
             <div className='space-y-4'>

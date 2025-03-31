@@ -1,13 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import Image from 'next/image';
+import { useState, useEffect } from 'react';
 
 interface Region {
   code: string;
   name: string;
   flag: string;
   currency: string;
+}
+
+interface LanguageSelectorProps {
+  currentRegion: Region;
+  onRegionChange: (region: Region) => void;
 }
 
 const regions: Region[] = [
@@ -18,13 +22,27 @@ const regions: Region[] = [
   { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
 ];
 
-interface LanguageSelectorProps {
-  onRegionChange: (region: Region) => void;
-  currentRegion: Region;
-}
-
-const LanguageSelector = ({ onRegionChange, currentRegion }: LanguageSelectorProps) => {
+const LanguageSelector = ({ currentRegion, onRegionChange }: LanguageSelectorProps) => {
+  const [isClient, setIsClient] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Show loading state during server-side rendering
+  if (!isClient) {
+    return (
+      <div className='relative'>
+        <button
+          type='button'
+          className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+        >
+          <div className='h-4 w-4 bg-gray-200 rounded animate-pulse'></div>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className='relative'>
@@ -33,7 +51,7 @@ const LanguageSelector = ({ onRegionChange, currentRegion }: LanguageSelectorPro
         className='flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-300 transition-colors'
       >
         <span className='text-xl'>{currentRegion.flag}</span>
-        <span className='text-sm font-medium'>{currentRegion.currency}</span>
+        <span className='text-sm font-medium'>{currentRegion.code}</span>
       </button>
 
       {isOpen && (

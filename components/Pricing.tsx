@@ -1,19 +1,31 @@
+'use client';
+
 import config from '@/config';
 import Link from 'next/link';
+import { useLocalization } from '@/contexts/LocalizationContext';
+import { PRICING_PLANS, getPlanPrice } from '@/libs/constants/pricing';
+import { useEffect, useState } from 'react';
 
 // <Pricing/> displays the pricing plans for your app
 // It's your Stripe config in config.js.stripe.plans[] that will be used to display the plans
 // <ButtonCheckout /> renders a button that will redirect the user to Stripe checkout called the /api/stripe/create-checkout API endpoint with the correct priceId
 
 const Pricing = () => {
+  const { formatCurrency, currentRegion } = useLocalization();
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
   const tiers = [
     {
-      name: 'Lite',
-      price: 49.99,
-      priceId: 'price_lite',
+      name: PRICING_PLANS.LITE.name,
+      price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+      priceId: PRICING_PLANS.LITE.stripeId,
       description: 'Perfect for job seekers getting started',
       features: [
-        '25 jobs applied to directly on company sites',
+        `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
         'Write cover letters on your behalf',
         'Quick service within 5 days',
         'Advanced Application tracking in your dashboard',
@@ -23,12 +35,12 @@ const Pricing = () => {
       mostPopular: false,
     },
     {
-      name: 'Pro',
-      price: 89.99,
-      priceId: 'price_1R8OhODnSxQsct78eGw7xRiE',
+      name: PRICING_PLANS.PRO.name,
+      price: getPlanPrice('PRO', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+      priceId: PRICING_PLANS.PRO.stripeId,
       description: 'Optimized for maximizing career opportunities',
       features: [
-        '50 jobs applied to directly on company sites',
+        `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
         'Write cover letters on your behalf',
         'Priority service within 4 days',
         'Advanced Application tracking in your dashboard',
@@ -39,6 +51,41 @@ const Pricing = () => {
       mostPopular: true,
     },
   ];
+
+  // Show loading state during server-side rendering
+  if (!isClient) {
+    return (
+      <section className='py-16 bg-gray-50' id='pricing'>
+        <div className='container px-4 mx-auto'>
+          <div className='text-center mb-16'>
+            <h2 className='text-4xl font-bold mb-4'>Simple, Transparent Pricing</h2>
+            <p className='text-gray-600 text-lg'>
+              Choose the plan that's right for your job search
+            </p>
+            <p className='text-sm text-gray-400 mt-4'>
+              One-time payment, no recurring fees or hidden charges
+            </p>
+          </div>
+          <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
+            {[1, 2].map((i) => (
+              <div key={i} className='relative rounded-2xl p-8 border border-gray-200 bg-white'>
+                <div className='animate-pulse space-y-4'>
+                  <div className='h-8 bg-gray-200 rounded w-1/3 mx-auto'></div>
+                  <div className='h-12 bg-gray-200 rounded w-1/2 mx-auto'></div>
+                  <div className='h-4 bg-gray-200 rounded w-3/4 mx-auto'></div>
+                  <div className='space-y-2'>
+                    {[1, 2, 3, 4, 5].map((j) => (
+                      <div key={j} className='h-4 bg-gray-200 rounded'></div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className='py-16 bg-gray-50' id='pricing'>
@@ -73,7 +120,7 @@ const Pricing = () => {
                 </h3>
                 <div className='mt-4 flex items-baseline justify-center'>
                   <span className={`text-5xl font-bold ${tier.mostPopular ? 'text-primary' : ''}`}>
-                    ${tier.price}
+                    {formatCurrency(tier.price)}
                   </span>
                   <span className='text-gray-400'>one-time</span>
                 </div>
