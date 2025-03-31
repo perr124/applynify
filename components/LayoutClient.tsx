@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import { ReactNode, useEffect } from "react";
-import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { Crisp } from "crisp-sdk-web";
-import { SessionProvider } from "next-auth/react";
-import NextTopLoader from "nextjs-toploader";
-import { Toaster } from "react-hot-toast";
-import { Tooltip } from "react-tooltip";
-import config from "@/config";
+import { ReactNode, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { Crisp } from 'crisp-sdk-web';
+import { SessionProvider } from 'next-auth/react';
+import NextTopLoader from 'nextjs-toploader';
+import { Toaster } from 'react-hot-toast';
+import { Tooltip } from 'react-tooltip';
+import { LocalizationProvider } from '@/contexts/LocalizationContext';
+import config from '@/config';
 
 // Crisp customer chat support:
 // This component is separated from ClientLayout because it needs to be wrapped with <SessionProvider> to use useSession() hook
@@ -23,10 +24,7 @@ const CrispChat = (): null => {
 
       // (Optional) If onlyShowOnRoutes array is not empty in config.js file, Crisp will be hidden on the routes in the array.
       // Use <AppButtonSupport> instead to show it (user clicks on the button to show Crisp—it cleans the UI)
-      if (
-        config.crisp.onlyShowOnRoutes &&
-        !config.crisp.onlyShowOnRoutes?.includes(pathname)
-      ) {
+      if (config.crisp.onlyShowOnRoutes && !config.crisp.onlyShowOnRoutes?.includes(pathname)) {
         Crisp.chat.hide();
         Crisp.chat.onChatClosed(() => {
           Crisp.chat.hide();
@@ -51,31 +49,31 @@ const CrispChat = (): null => {
 // 3. Toaster: Show Success/Error messages anywhere from the app with toast()
 // 4. Tooltip: Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content=""
 // 5. CrispChat: Set Crisp customer chat support (see above)
+// 6. LocalizationProvider: Handle region and currency localization
 const ClientLayout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <SessionProvider>
-        {/* Show a progress bar at the top when navigating between pages */}
-        <NextTopLoader color={config.colors.main} showSpinner={false} />
+        <LocalizationProvider>
+          {/* Show a progress bar at the top when navigating between pages */}
+          <NextTopLoader color={config.colors.main} showSpinner={false} />
 
-        {/* Content inside app/page.js files  */}
-        {children}
+          {/* Content inside app/page.js files  */}
+          {children}
 
-        {/* Show Success/Error messages anywhere from the app with toast() */}
-        <Toaster
-          toastOptions={{
-            duration: 3000,
-          }}
-        />
+          {/* Show Success/Error messages anywhere from the app with toast() */}
+          <Toaster
+            toastOptions={{
+              duration: 3000,
+            }}
+          />
 
-        {/* Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content="" */}
-        <Tooltip
-          id="tooltip"
-          className="z-[60] !opacity-100 max-w-sm shadow-lg"
-        />
+          {/* Show tooltips if any JSX elements has these 2 attributes: data-tooltip-id="tooltip" data-tooltip-content="" */}
+          <Tooltip id='tooltip' className='z-[60] !opacity-100 max-w-sm shadow-lg' />
 
-        {/* Set Crisp customer chat support */}
-        <CrispChat />
+          {/* Set Crisp customer chat support */}
+          <CrispChat />
+        </LocalizationProvider>
       </SessionProvider>
     </>
   );
