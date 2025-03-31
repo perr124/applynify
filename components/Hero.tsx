@@ -46,7 +46,7 @@ const Hero = () => {
         {/* Stats */}
         <div className='grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 pt-8'>
           <div className='space-y-2'>
-            <h3 className='text-4xl font-bold'>1000+</h3>
+            <h3 className='text-4xl font-bold'>450+</h3>
             <p className='text-base-content/60'>Applications Sent</p>
           </div>
           <div className='space-y-2'>
@@ -58,8 +58,8 @@ const Hero = () => {
             <p className='text-base-content/60'>Hours saved</p>
           </div> */}
           <div className='space-y-2 col-span-2 md:col-span-1'>
-            <h3 className='text-4xl font-bold'>92%</h3>
-            <p className='text-base-content/60'>Interview Rate</p>
+            <h3 className='text-4xl font-bold'>24/7</h3>
+            <p className='text-base-content/60'>Support Available</p>
           </div>
         </div>
       </div>
