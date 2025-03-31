@@ -41,6 +41,7 @@ type FormData = {
     additionalInfo?: string;
     address?: {
       street: string;
+      street2?: string;
       city: string;
       state: string;
       zipCode: string;
@@ -79,6 +80,7 @@ const initialFormData: FormData = {
     additionalInfo: '',
     address: {
       street: '',
+      street2: '',
       city: '',
       state: '',
       zipCode: '',
@@ -164,6 +166,7 @@ export default function OnboardingQuestionnaire() {
               additionalInfo: data.availability?.additionalInfo || '',
               address: data.availability?.address || {
                 street: '',
+                street2: '',
                 city: '',
                 state: '',
                 zipCode: '',
@@ -1399,6 +1402,20 @@ export default function OnboardingQuestionnaire() {
                       }
                     />
                   </div>
+                  <div>
+                    <input
+                      type='text'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='Apartment, suite, unit, etc. (optional)'
+                      value={formData.availability.address?.street2 || ''}
+                      onChange={(e) =>
+                        updateFormData('availability', 'address', {
+                          ...formData.availability.address,
+                          street2: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
                   <div className='grid grid-cols-2 gap-4'>
                     <div>
                       <input
@@ -1473,7 +1490,7 @@ export default function OnboardingQuestionnaire() {
                     <textarea
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       rows={5}
-                      placeholder="This could include any additional languages you speak, job roles you've recently applied to (please note that we only apply to newly posted jobs within the last 7-10 days), or any other important information we should know."
+                      placeholder="This could include any additional languages you speak, job roles you've recently applied to, or any other important information we should know."
                       value={formData.availability.additionalInfo}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         updateFormData('availability', 'additionalInfo', e.target.value)

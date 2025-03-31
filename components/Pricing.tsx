@@ -22,7 +22,9 @@ const Pricing = () => {
     {
       name: PRICING_PLANS.LITE.name,
       price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
-      priceId: PRICING_PLANS.LITE.stripeId,
+      priceId: PRICING_PLANS.LITE.getStripeId(
+        currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+      ),
       description: 'Perfect for job seekers getting started',
       features: [
         `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
@@ -37,7 +39,9 @@ const Pricing = () => {
     {
       name: PRICING_PLANS.PRO.name,
       price: getPlanPrice('PRO', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
-      priceId: PRICING_PLANS.PRO.stripeId,
+      priceId: PRICING_PLANS.PRO.getStripeId(
+        currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+      ),
       description: 'Optimized for maximizing career opportunities',
       features: [
         `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
