@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import config from '@/config';
 
 const CTA = () => {
@@ -21,7 +22,9 @@ const CTA = () => {
             most - landing your dream role.
           </p>
 
-          <button className='btn btn-primary btn-wide'>Start Now</button>
+          <Link href='/auth/signin'>
+            <button className='btn btn-primary btn-wide'>Start Now</button>
+          </Link>
         </div>
       </div>
     </section>
