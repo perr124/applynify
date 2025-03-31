@@ -25,6 +25,10 @@ const links: {
     href: '/about',
     label: 'About',
   },
+  {
+    href: '/contact',
+    label: 'Contact',
+  },
 ];
 
 const cta: JSX.Element = (
