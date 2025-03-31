@@ -97,7 +97,7 @@ const Pricing = () => {
 
               <div className='mt-8'>
                 <Link
-                  href={'/auth/signin'}
+                  href={'/auth/register'}
                   className='btn bg-primary-500 hover:bg-primary-800 btn-block group'
                 >
                   {/* <button className='btn bg-primary-500 hover:bg-primary-800 btn-block group'> */}

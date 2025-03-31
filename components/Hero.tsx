@@ -35,7 +35,7 @@ const Hero = () => {
 
         <div className='flex flex-col items-center gap-8'>
           <Link
-            href={'/auth/signin'}
+            href={'/auth/register'}
             className='btn bg-primary-500 text-white btn-wide btn-lg hover:bg-primary-800'
           >
             Get Started

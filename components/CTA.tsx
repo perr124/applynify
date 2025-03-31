@@ -22,7 +22,7 @@ const CTA = () => {
             most - landing your dream role.
           </p>
 
-          <Link href='/auth/signin'>
+          <Link href='/auth/register'>
             <button className='btn btn-primary btn-wide'>Start Now</button>
           </Link>
         </div>
