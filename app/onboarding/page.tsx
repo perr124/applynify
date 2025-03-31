@@ -738,10 +738,26 @@ export default function OnboardingQuestionnaire() {
               <div>
                 <dt className='text-sm text-gray-500'>Resume</dt>
                 <dd className='mt-1'>
-                  {formData.availability.resume?.file
-                    ? formData.availability.resume.file.name.charAt(0).toUpperCase() +
-                      formData.availability.resume.file.name.slice(1)
-                    : 'No resume uploaded'}
+                  {formData.availability.resume?.file && (
+                    <div className='mt-2 flex items-center justify-between'>
+                      <p className='text-sm text-gray-600'>
+                        Selected file: {formData.availability.resume.file.name}
+                      </p>
+                      <button
+                        type='button'
+                        onClick={() => {
+                          updateFormData('availability', 'resume', {
+                            file: null,
+                            uploading: false,
+                            error: null,
+                          });
+                        }}
+                        className='inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                      >
+                        <span className='sr-only'>Remove resume</span>×
+                      </button>
+                    </div>
+                  )}
                 </dd>
               </div>
               {formData.availability.address && (
@@ -1592,9 +1608,24 @@ export default function OnboardingQuestionnaire() {
                       </label>
                     </div>
                     {formData.availability.resume?.file && (
-                      <p className='mt-2 text-sm text-gray-600'>
-                        Selected file: {formData.availability.resume.file.name}
-                      </p>
+                      <div className='mt-2 flex items-center justify-between'>
+                        <p className='text-sm text-gray-600'>
+                          Selected file: {formData.availability.resume.file.name}
+                        </p>
+                        <button
+                          type='button'
+                          onClick={() => {
+                            updateFormData('availability', 'resume', {
+                              file: null,
+                              uploading: false,
+                              error: null,
+                            });
+                          }}
+                          className='inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                        >
+                          <span className='sr-only'>Remove resume</span>×
+                        </button>
+                      </div>
                     )}
                     {formData.availability.resume?.error && (
                       <p className='mt-2 text-sm text-red-600'>
