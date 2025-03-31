@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 
@@ -204,4 +204,10 @@ function ContactPage() {
   );
 }
 
-export default ContactPage;
+export default function Contact() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ContactPage />
+    </Suspense>
+  );
+}
