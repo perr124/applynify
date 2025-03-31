@@ -13,6 +13,7 @@ import {
   Bell,
   Menu as MenuIcon,
   X,
+  MessageSquare,
 } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
@@ -146,6 +147,18 @@ function SidebarContent({
             </ul>
           </li>
           <li className='mt-auto'>
+            <Link
+              href='/contact'
+              className={classNames(
+                currentPath === '/contact'
+                  ? 'bg-primary-700 text-white'
+                  : 'text-primary-200 hover:bg-primary-700 hover:text-white',
+                'group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold'
+              )}
+            >
+              {/* <MessageSquare className='h-6 w-6 shrink-0' /> */}
+              Contact Us
+            </Link>
             <Link
               href='/dashboard/settings'
               className={classNames(
