@@ -121,7 +121,9 @@ function SidebarContent({
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <Image src={logo} alt='Admin Panel' className='h-8 w-auto' />
+        <Link href='/'>
+          <Image src={logo} alt='Admin Panel' className='h-8 w-auto' />
+        </Link>
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>
