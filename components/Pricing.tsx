@@ -15,7 +15,7 @@ const Pricing = () => {
       features: [
         '25 jobs applied to directly on company sites',
         'Write cover letters on your behalf',
-        'Quick service within 4 days',
+        'Quick service within 5 days',
         'Advanced Application tracking in your dashboard',
         'Standard support',
       ],
@@ -30,7 +30,7 @@ const Pricing = () => {
       features: [
         '50 jobs applied to directly on company sites',
         'Write cover letters on your behalf',
-        'Priority service within 5 days',
+        'Priority service within 4 days',
         'Advanced Application tracking in your dashboard',
         '24/7 priority support',
         'Custom job search strategies',
