@@ -7,8 +7,9 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Suspense } from 'react';
 
-export default function SignIn() {
+function SignInPage() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -149,5 +150,13 @@ export default function SignIn() {
       </div>
       <Footer />
     </div>
+  );
+}
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInPage />
+    </Suspense>
   );
 }
