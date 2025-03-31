@@ -17,6 +17,7 @@ import {
 import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
 import Image from 'next/image';
+import logo from '@/app/icon.png';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -119,13 +120,7 @@ function SidebarContent({
   return (
     <>
       <div className='flex h-16 shrink-0 items-center'>
-        <Image
-          src='/api/placeholder/32/32'
-          alt='Applynify'
-          width={32}
-          height={32}
-          className='h-8 w-auto'
-        />
+        <Image src={logo} alt='Admin Panel' className='h-8 w-auto' />
       </div>
       <nav className='flex flex-1 flex-col'>
         <ul role='list' className='flex flex-1 flex-col gap-y-7'>
