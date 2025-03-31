@@ -16,6 +16,7 @@ import {
   CitizenshipStatus,
   CountryCode,
 } from '@/app/data/citizenshipStatus';
+import LanguageSelector from '@/components/LanguageSelector';
 
 type FormData = {
   jobPreferences: {
@@ -101,7 +102,7 @@ const formatSalary = (value: string) => {
 };
 
 export default function OnboardingQuestionnaire() {
-  const { formatCurrency, currentRegion } = useLocalization();
+  const { formatCurrency, currentRegion, setCurrentRegion } = useLocalization();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -877,14 +878,8 @@ export default function OnboardingQuestionnaire() {
 
   return (
     <div className='min-h-screen bg-gray-50 flex flex-col'>
-      <div className='absolute top-4 right-4'>
-        {/* <button
-          // onClick={handleLogout}
-          className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
-        >
-          <div className='h-4 w-4 mr-2' />
-          Logout
-        </button> */}
+      <div className='absolute top-4 right-4 flex items-center gap-4'>
+        <LanguageSelector currentRegion={currentRegion} onRegionChange={setCurrentRegion} />
         <ButtonAccount />
       </div>
       <div className='min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8'>

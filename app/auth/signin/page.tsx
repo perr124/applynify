@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import React from 'react';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Header from '@/components/Header';
@@ -11,8 +11,28 @@ import { Suspense } from 'react';
 
 function SignInPage() {
   const router = useRouter();
+  const { data: session, status } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Show loading state while checking session
+  if (status === 'loading') {
+    return (
+      <div className='min-h-screen flex flex-col'>
+        <Header />
+        <div className='flex flex-1 items-center justify-center'>
+          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#0d824a]'></div>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Redirect if authenticated
+  if (status === 'authenticated') {
+    router.push('/dashboard');
+    return null;
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
