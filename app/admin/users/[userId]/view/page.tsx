@@ -195,7 +195,7 @@ export default function ViewUser() {
                     <dt className='text-sm font-medium text-gray-500'>Salary Range</dt>
                     <dd className='mt-1 space-y-1'>
                       <p>Minimum: {user.jobPreferences.salary.minimum}</p>
-                      <p>Preferred: {user.jobPreferences.salary.preferred}</p>
+                      {/* <p>Preferred: {user.jobPreferences.salary.preferred}</p> */}
                     </dd>
                   </div>
                   <div>
