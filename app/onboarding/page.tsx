@@ -1012,7 +1012,7 @@ export default function OnboardingQuestionnaire() {
                     <input
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                      placeholder='e.g., New York, Remote, Hybrid, London'
+                      placeholder='e.g., New York, US Remote, London'
                       value={currentLocationInput}
                       onChange={(e) => {
                         const input = e.target.value;
@@ -1048,6 +1048,10 @@ export default function OnboardingQuestionnaire() {
                       +
                     </button>
                   </div>
+                  <p className='mt-1 text-sm text-gray-500'>
+                    Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
+                    Adding multiple locations with "Remote" indicates hybrid opportunities.
+                  </p>
                 </div>
 
                 {/* Display selected locations */}
