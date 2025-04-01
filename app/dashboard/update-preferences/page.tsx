@@ -18,6 +18,7 @@ import { CitizenshipStatus, citizenshipStatusByCountry } from '@/app/data/citize
 import { getAddressPlaceholders } from '@/libs/constants/address';
 import { getPhoneFormat } from '@/libs/constants/phone';
 import { countryCodes, getCountryCodeByRegion } from '@/libs/constants/countryCodes';
+import { countries } from '@/app/data/countries';
 
 type FormData = {
   jobPreferences: {
@@ -920,10 +921,8 @@ export default function UpdatePreferences() {
                     />
                   </div>
                   <div>
-                    <input
-                      type='text'
+                    <select
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                      placeholder='Country'
                       value={formData.availability.address?.country || ''}
                       onChange={(e) =>
                         updateFormData('availability', 'address', {
@@ -931,7 +930,13 @@ export default function UpdatePreferences() {
                           country: e.target.value,
                         })
                       }
-                    />
+                    >
+                      {countries.map((country) => (
+                        <option key={country.value} value={country.value}>
+                          {country.label}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </div>
