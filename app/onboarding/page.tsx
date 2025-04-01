@@ -1048,37 +1048,38 @@ export default function OnboardingQuestionnaire() {
                       +
                     </button>
                   </div>
+
+                  {/* Display selected locations */}
+                  {formData.jobPreferences.locations.length > 0 && (
+                    <div className='mt-2 flex flex-wrap gap-2'>
+                      {formData.jobPreferences.locations.map((location, index) => (
+                        <span
+                          key={index}
+                          className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
+                        >
+                          {location}
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const updatedLocations = formData.jobPreferences.locations.filter(
+                                (_, i) => i !== index
+                              );
+                              updateFormData('jobPreferences', 'locations', updatedLocations);
+                            }}
+                            className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                          >
+                            <span className='sr-only'>Remove {location}</span>×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
                   <p className='mt-1 text-sm text-gray-500'>
                     Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
                     Adding multiple locations with "Remote" indicates hybrid opportunities.
                   </p>
                 </div>
-
-                {/* Display selected locations */}
-                {formData.jobPreferences.locations.length > 0 && (
-                  <div className='mt-2 flex flex-wrap gap-2'>
-                    {formData.jobPreferences.locations.map((location, index) => (
-                      <span
-                        key={index}
-                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
-                      >
-                        {location}
-                        <button
-                          type='button'
-                          onClick={() => {
-                            const updatedLocations = formData.jobPreferences.locations.filter(
-                              (_, i) => i !== index
-                            );
-                            updateFormData('jobPreferences', 'locations', updatedLocations);
-                          }}
-                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
-                        >
-                          <span className='sr-only'>Remove {location}</span>×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>

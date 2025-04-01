@@ -448,6 +448,11 @@ export default function UpdatePreferences() {
                     ))}
                   </div>
                 )}
+
+                <p className='mt-1 text-sm text-gray-500'>
+                  Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
+                  Adding multiple locations with "Remote" indicates hybrid opportunities.
+                </p>
               </div>
 
               <div>
