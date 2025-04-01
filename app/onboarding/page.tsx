@@ -270,6 +270,10 @@ export default function OnboardingQuestionnaire() {
         setError('Please select at least one job type');
         return;
       }
+      if (!formData.jobPreferences.salary.minimum) {
+        setError('Please enter your minimum salary expectation');
+        return;
+      }
     }
 
     if (step === 2) {
