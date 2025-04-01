@@ -19,6 +19,8 @@ import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
 import Image from 'next/image';
 import logo from '@/app/icon.png';
+import LanguageSelector from '@/components/LanguageSelector';
+import { useLocalization } from '@/contexts/LocalizationContext';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -36,6 +38,7 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
+  const { currentRegion, setCurrentRegion } = useLocalization();
 
   // Add effect to close sidebar when pathname changes
   useEffect(() => {
@@ -92,12 +95,8 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
           {/* Right side elements */}
           <div className='flex items-center gap-x-4 lg:gap-x-6'>
-            {/* <button className='-m-2.5 p-2.5 text-gray-400 hover:text-gray-500'>
-              <Bell className='h-6 w-6' />
-            </button> */}
-
+            <LanguageSelector currentRegion={currentRegion} onRegionChange={setCurrentRegion} />
             <div className='hidden lg:block lg:h-6 lg:w-px lg:bg-gray-900/10' />
-
             <ButtonAccount />
           </div>
         </div>

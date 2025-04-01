@@ -197,7 +197,10 @@ export default function UpdatePreferences() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(pendingFormData),
+        body: JSON.stringify({
+          ...pendingFormData,
+          localization: currentRegion.code,
+        }),
       });
 
       if (!response.ok) {
@@ -485,32 +488,62 @@ export default function UpdatePreferences() {
                 <label className='block text-sm font-medium text-gray-700'>
                   Citizenship Status
                 </label>
-                {(
-                  citizenshipStatusByCountry[
-                    currentRegion.code as keyof typeof citizenshipStatusByCountry
-                  ] || citizenshipStatusByCountry.DEFAULT
-                ).map((status: CitizenshipStatus) => (
-                  <option key={status.value} value={status.value}>
-                    {status.label}
-                  </option>
-                ))}
-              </div>
+                <div className='mt-1'>
+                  <select
+                    className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                    value={formData.jobPreferences.citizenshipStatus}
+                    onChange={(e) => {
+                      const newStatus = e.target.value;
+                      updateFormData('jobPreferences', 'citizenshipStatus', newStatus);
 
-              <div>
-                <div className='flex items-center'>
-                  <input
-                    id='requiresSponsorship'
-                    type='checkbox'
-                    className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-                    checked={formData.jobPreferences.requiresSponsorship}
-                    onChange={(e) =>
-                      updateFormData('jobPreferences', 'requiresSponsorship', e.target.checked)
-                    }
-                  />
-                  <label htmlFor='requiresSponsorship' className='ml-2 block text-sm text-gray-700'>
-                    Requires visa sponsorship
-                  </label>
+                      // If changing to citizen or permanent resident, set requiresSponsorship to false
+                      if (newStatus.includes('citizen') || newStatus.includes('permanent')) {
+                        updateFormData('jobPreferences', 'requiresSponsorship', false);
+                      }
+                    }}
+                  >
+                    <option value=''>Select status</option>
+                    {(
+                      citizenshipStatusByCountry[
+                        currentRegion.code as keyof typeof citizenshipStatusByCountry
+                      ] || citizenshipStatusByCountry.DEFAULT
+                    ).map((status: CitizenshipStatus) => (
+                      <option key={status.value} value={status.value}>
+                        {status.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
+
+                {/* Add conditional sponsorship checkbox */}
+                {formData.jobPreferences.citizenshipStatus &&
+                  !formData.jobPreferences.citizenshipStatus.includes('citizen') &&
+                  !formData.jobPreferences.citizenshipStatus.includes('permanent') && (
+                    <div className='mt-4'>
+                      <div className='flex items-start'>
+                        <div className='flex items-center h-5'>
+                          <input
+                            id='sponsorship'
+                            type='checkbox'
+                            checked={formData.jobPreferences.requiresSponsorship}
+                            onChange={(e) =>
+                              updateFormData(
+                                'jobPreferences',
+                                'requiresSponsorship',
+                                e.target.checked
+                              )
+                            }
+                            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                          />
+                        </div>
+                        <div className='ml-3 text-sm'>
+                          <label htmlFor='sponsorship' className='font-medium text-gray-700'>
+                            I require visa sponsorship
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  )}
               </div>
 
               <div>

@@ -45,11 +45,27 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
     return defaultRegion;
   });
 
-  // Detect user's location on first load
+  // Fetch user's localization from database on first load
   useEffect(() => {
-    const detectLocation = async () => {
-      // Only detect if no region is saved
-      if (!localStorage.getItem('selectedRegion')) {
+    const fetchUserLocalization = async () => {
+      try {
+        const response = await fetch('/api/user/preferences');
+        if (!response.ok) throw new Error('Failed to fetch preferences');
+        const data = await response.json();
+
+        // If user has a localization preference in the database, use it
+        if (data.localization && regions[data.localization]) {
+          setCurrentRegion(regions[data.localization]);
+        } else {
+          // If no database preference, try to detect location
+          const location = await getUserLocation();
+          if (location && regions[location.countryCode]) {
+            setCurrentRegion(regions[location.countryCode]);
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching user localization:', error);
+        // Fallback to geolocation if database fetch fails
         const location = await getUserLocation();
         if (location && regions[location.countryCode]) {
           setCurrentRegion(regions[location.countryCode]);
@@ -57,7 +73,7 @@ export function LocalizationProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    detectLocation();
+    fetchUserLocalization();
   }, []);
 
   // Save region to localStorage when it changes
