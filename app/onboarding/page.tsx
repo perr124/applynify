@@ -1077,7 +1077,9 @@ export default function OnboardingQuestionnaire() {
 
                   <p className='mt-1 text-sm text-gray-500'>
                     Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
-                    Adding multiple locations with "Remote" indicates hybrid opportunities.
+                    <br></br>
+                    Adding multiple locations in addition to "Remote" indicates hybrid opportunities
+                    (e.g., "NY Remote, New York, New Jersey").
                   </p>
                 </div>
 
