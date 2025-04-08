@@ -6,6 +6,7 @@ import { MessageSquare, Send } from 'lucide-react';
 import { format } from 'date-fns';
 
 interface Message {
+  _id: string;
   from: 'admin' | 'user';
   content: string;
   read: boolean;
@@ -16,8 +17,7 @@ export default function MessagesPage() {
   const { data: session } = useSession();
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
-  const [replyContent, setReplyContent] = useState('');
-  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [newMessageContent, setNewMessageContent] = useState('');
 
   useEffect(() => {
     fetchMessages();
@@ -35,26 +35,55 @@ export default function MessagesPage() {
     }
   };
 
-  const sendReply = async (e: React.FormEvent, index: number) => {
-    e.preventDefault();
-    if (!replyContent.trim()) return;
+  const markAdminMessagesAsRead = async () => {
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) => (msg.from === 'admin' && !msg.read ? { ...msg, read: true } : msg))
+    );
 
     try {
+      const response = await fetch(`/api/user/messages/read`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        console.error('Failed to mark admin messages as read on server');
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.from === 'admin' && msg.read ? { ...msg, read: false } : msg
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Error marking admin messages as read:', error);
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.from === 'admin' && msg.read ? { ...msg, read: false } : msg
+        )
+      );
+    }
+  };
+
+  const sendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessageContent.trim()) return;
+
+    try {
+      await markAdminMessagesAsRead();
+
       const response = await fetch('/api/user/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content: replyContent }),
+        body: JSON.stringify({ content: newMessageContent }),
       });
 
       if (response.ok) {
-        setReplyContent('');
-        setReplyingTo(null);
+        setNewMessageContent('');
         fetchMessages();
       }
     } catch (error) {
-      console.error('Error sending reply:', error);
+      console.error('Error sending message:', error);
     }
   };
 
@@ -74,9 +103,13 @@ export default function MessagesPage() {
           {messages.length === 0 ? (
             <div className='text-center text-gray-500 py-8'>No messages yet.</div>
           ) : (
-            messages.map((message, index) => (
-              <div key={index}>
-                <div className={`p-4 ${!message.read ? 'bg-primary-50' : ''}`}>
+            messages.map((message) => (
+              <div key={message._id}>
+                <div
+                  className={`p-4 ${
+                    message.from === 'admin' && !message.read ? 'bg-primary-50' : ''
+                  }`}
+                >
                   <div className='flex justify-between items-start mb-2'>
                     <div className='flex items-center gap-2'>
                       <span
@@ -86,7 +119,7 @@ export default function MessagesPage() {
                       >
                         {message.from === 'admin' ? 'Admin' : 'You'}
                       </span>
-                      {!message.read && (
+                      {message.from === 'admin' && !message.read && (
                         <span className='bg-primary-600 text-white text-xs px-2 py-0.5 rounded-full'>
                           New
                         </span>
@@ -97,53 +130,30 @@ export default function MessagesPage() {
                     </span>
                   </div>
                   <p className='text-gray-700'>{message.content}</p>
-
-                  {message.from === 'admin' && (
-                    <div className='mt-4'>
-                      <button
-                        onClick={() => setReplyingTo(replyingTo === index ? null : index)}
-                        className='text-sm text-primary-600 hover:text-primary-700'
-                      >
-                        {replyingTo === index ? 'Cancel Reply' : 'Reply'}
-                      </button>
-                    </div>
-                  )}
                 </div>
-
-                {replyingTo === index && (
-                  <div className='bg-gray-50 p-4'>
-                    <form onSubmit={(e) => sendReply(e, index)} className='space-y-2'>
-                      <textarea
-                        value={replyContent}
-                        onChange={(e) => setReplyContent(e.target.value)}
-                        placeholder='Type your reply...'
-                        className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[100px]'
-                      />
-                      <div className='flex justify-end gap-2'>
-                        <button
-                          type='button'
-                          onClick={() => {
-                            setReplyingTo(null);
-                            setReplyContent('');
-                          }}
-                          className='px-4 py-2 text-sm text-gray-600 hover:text-gray-700'
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type='submit'
-                          className='bg-primary-600 text-white rounded-md px-4 py-2 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500'
-                        >
-                          Send Reply
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                )}
               </div>
             ))
           )}
         </div>
+        <form onSubmit={sendMessage} className='border-t border-gray-200 p-4'>
+          <div className='space-y-2'>
+            <textarea
+              value={newMessageContent}
+              onChange={(e) => setNewMessageContent(e.target.value)}
+              placeholder='Type your message...'
+              className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[100px]'
+            />
+            <div className='flex justify-end'>
+              <button
+                type='submit'
+                className='bg-primary-600 text-white rounded-md px-4 py-2 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500'
+              >
+                <Send className='h-4 w-4 inline-block mr-2' />
+                Send Message
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
     </div>
   );

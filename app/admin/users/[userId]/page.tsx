@@ -26,6 +26,7 @@ type User = {
   jobPreferences?: JobPreferences;
   experience?: Experience;
   availability?: Availability;
+  hasUnreadMessages?: boolean;
 };
 
 // Modified schema for multiple applications
@@ -42,6 +43,7 @@ export default function UserJobApplication() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [duplicateCompanies, setDuplicateCompanies] = useState<string[]>([]);
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
 
   const {
     control,
@@ -104,6 +106,7 @@ export default function UserJobApplication() {
       if (!response.ok) throw new Error('Failed to fetch user');
       const data = await response.json();
       setUser(data);
+      setHasUnreadMessages(data.hasUnreadMessages || false);
     } catch (error) {
       console.error('Error:', error);
       setError('Failed to load user details');
@@ -192,8 +195,11 @@ export default function UserJobApplication() {
           <div className='mt-4'>
             <a
               href={`/admin/users/${params.userId}/messages`}
-              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
+              className='relative inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
             >
+              {hasUnreadMessages && (
+                <span className='absolute top-0 right-0 block h-2.5 w-2.5 transform -translate-y-1/2 translate-x-1/2 rounded-full bg-red-500 ring-2 ring-white'></span>
+              )}
               <MessageSquare className='h-4 w-4 mr-2' />
               Message User
             </a>

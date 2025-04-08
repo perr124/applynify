@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import Link from 'next/link';
 
 interface Message {
+  _id: string;
   from: 'admin' | 'user';
   content: string;
   read: boolean;
@@ -44,11 +45,51 @@ export default function AdminUserMessagesPage() {
       // Fetch messages
       const messagesResponse = await fetch(`/api/admin/users/${params.userId}/messages`);
       const messagesData = await messagesResponse.json();
-      setMessages(messagesData.messages || []);
+      const fetchedMessages: Message[] = messagesData.messages || [];
+      setMessages(fetchedMessages);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const markUserMessagesAsRead = async () => {
+    if (!params?.userId) return;
+
+    // Optimistically update UI
+    setMessages((prevMessages) =>
+      prevMessages.map((msg) => (msg.from === 'user' ? { ...msg, read: true } : msg))
+    );
+
+    try {
+      // Send request to backend to mark messages as read
+      const response = await fetch(`/api/admin/users/${params.userId}/messages/read`, {
+        method: 'PATCH',
+      });
+
+      if (!response.ok) {
+        console.error('Failed to mark user messages as read on server');
+        // Revert optimistic update on failure
+        setMessages((prevMessages) =>
+          prevMessages.map((msg) =>
+            msg.from === 'user' && msg.read // Only revert those we tried to change
+              ? { ...msg, read: false }
+              : msg
+          )
+        );
+      }
+      // No need to refetch on success because of optimistic update
+    } catch (error) {
+      console.error('Error marking user messages as read:', error);
+      // Revert optimistic update on error
+      setMessages((prevMessages) =>
+        prevMessages.map((msg) =>
+          msg.from === 'user' && msg.read // Only revert those we tried to change
+            ? { ...msg, read: false }
+            : msg
+        )
+      );
     }
   };
 
@@ -67,6 +108,9 @@ export default function AdminUserMessagesPage() {
 
       if (response.ok) {
         setNewMessage('');
+        // Mark user's messages as read after successfully sending a reply
+        await markUserMessagesAsRead();
+        // Refetch to get the new message from the admin and confirm read status
         fetchUserAndMessages();
       }
     } catch (error) {
@@ -106,8 +150,11 @@ export default function AdminUserMessagesPage() {
           {messages.length === 0 ? (
             <div className='text-center text-gray-500 py-8'>No messages yet.</div>
           ) : (
-            messages.map((message, index) => (
-              <div key={index} className={`p-4 ${!message.read ? 'bg-primary-50' : ''}`}>
+            messages.map((message) => (
+              <div
+                key={message._id}
+                className={`p-4 ${message.from === 'user' && !message.read ? 'bg-primary-50' : ''}`}
+              >
                 <div className='flex justify-between items-start mb-2'>
                   <div className='flex items-center gap-2'>
                     <span
@@ -115,9 +162,9 @@ export default function AdminUserMessagesPage() {
                         message.from === 'admin' ? 'text-primary-600' : 'text-gray-600'
                       }`}
                     >
-                      {message.from === 'admin' ? 'You' : user.firstName}
+                      {message.from === 'admin' ? 'Admin' : user.firstName}
                     </span>
-                    {!message.read && (
+                    {message.from === 'user' && !message.read && (
                       <span className='bg-primary-600 text-white text-xs px-2 py-0.5 rounded-full'>
                         New
                       </span>
