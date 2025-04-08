@@ -5,7 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { JobApplicationFormData, jobApplicationSchema } from '@/libs/validations/jobApplication';
 import { useRouter, useParams } from 'next/navigation';
-import { Plus, Trash2, Save, CheckCircle } from 'lucide-react';
+import { Plus, Trash2, Save, CheckCircle, MessageSquare } from 'lucide-react';
 import { z } from 'zod';
 import type {
   Resume,
@@ -189,7 +189,15 @@ export default function UserJobApplication() {
             {user?.firstName} {user?.lastName}
           </p>
           <p className='text-gray-600'>{user?.email}</p>
-
+          <div className='mt-4'>
+            <a
+              href={`/admin/users/${params.userId}/messages`}
+              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
+            >
+              <MessageSquare className='h-4 w-4 mr-2' />
+              Message User
+            </a>
+          </div>
           <div className='mt-4'>
             {user?.priceId ? (
               <div className='space-y-2'>
@@ -388,7 +396,7 @@ export default function UserJobApplication() {
               type='button'
               onClick={handleSubmit((data) => onSubmit(data, true))}
               disabled={isSubmitting}
-              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700'
+              className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
             >
               <CheckCircle className='h-4 w-4 mr-2' />
               Complete & Notify

@@ -215,6 +215,27 @@ const userSchema = new mongoose.Schema(
       type: String,
       select: true,
     },
+    messages: [
+      {
+        from: {
+          type: String,
+          enum: ['admin', 'user'],
+          required: true,
+        },
+        content: {
+          type: String,
+          required: true,
+        },
+        read: {
+          type: Boolean,
+          default: false,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,
