@@ -63,11 +63,6 @@ export async function POST(request: Request, { params }: { params: { userId: str
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    // Ensure marketingSource is set to a valid value if it's empty
-    if (!user.marketingSource) {
-      user.marketingSource = 'other';
-    }
-
     user.messages.push({
       from: 'admin',
       content,
