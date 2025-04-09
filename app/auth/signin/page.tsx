@@ -53,7 +53,10 @@ function SignInPage() {
       if (result?.error) {
         setError(result.error);
       } else {
-        router.push('/onboarding'); // Or wherever you want to redirect after login
+        // Get the callback URL from query parameters or default to onboarding
+        const callbackUrl =
+          new URLSearchParams(window.location.search).get('callbackUrl') || '/onboarding';
+        router.push(callbackUrl);
         router.refresh();
       }
     } catch (error) {
@@ -65,7 +68,10 @@ function SignInPage() {
 
   const handleGoogleSignIn = () => {
     setIsLoading(true);
-    signIn('google', { callbackUrl: '/onboarding' });
+    // Get the callback URL from query parameters or default to onboarding
+    const callbackUrl =
+      new URLSearchParams(window.location.search).get('callbackUrl') || '/onboarding';
+    signIn('google', { callbackUrl });
   };
 
   return (

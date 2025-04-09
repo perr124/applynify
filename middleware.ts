@@ -23,7 +23,9 @@ export default withAuth(
     }
 
     if (!token) {
-      return NextResponse.redirect(new URL('/auth/signin', req.url));
+      // Preserve the original URL as callbackUrl when redirecting to sign-in
+      const callbackUrl = encodeURIComponent(req.nextUrl.pathname + req.nextUrl.search);
+      return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${callbackUrl}`, req.url));
     }
 
     try {
