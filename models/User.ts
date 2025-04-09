@@ -72,6 +72,15 @@ const userSchema = new mongoose.Schema(
     experience: {
       type: mongoose.Schema.Types.Mixed,
       select: true,
+      default: {
+        yearsOfExperience: '',
+        education: '',
+        skills: [],
+        isVeteran: false,
+        hasDisability: false,
+        ethnicity: '',
+        dateOfBirth: '',
+      },
     },
     availability: {
       type: mongoose.Schema.Types.Mixed,

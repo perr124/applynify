@@ -36,6 +36,10 @@ type FormData = {
     yearsOfExperience: string;
     education: string;
     skills: string[];
+    isVeteran: boolean;
+    hasDisability: boolean;
+    ethnicity: string;
+    dateOfBirth: string;
   };
   availability: {
     startDate: string;
@@ -68,6 +72,10 @@ const initialFormData: FormData = {
     yearsOfExperience: '',
     education: '',
     skills: [],
+    isVeteran: false,
+    hasDisability: false,
+    ethnicity: '',
+    dateOfBirth: '',
   },
   availability: {
     startDate: '',
@@ -759,6 +767,82 @@ export default function UpdatePreferences() {
                     ))}
                   </div>
                 )}
+              </div>
+
+              {/* New fields */}
+              <div className='space-y-4'>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>Ethnicity</label>
+                  <div className='mt-1'>
+                    <select
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      value={formData.experience.ethnicity}
+                      onChange={(e) => updateFormData('experience', 'ethnicity', e.target.value)}
+                    >
+                      <option value=''>Prefer not to say</option>
+                      <option value='american-indian'>American Indian or Alaska Native</option>
+                      <option value='asian'>Asian</option>
+                      <option value='black'>Black or African American</option>
+                      <option value='hispanic'>Hispanic or Latino</option>
+                      <option value='native-hawaiian'>
+                        Native Hawaiian or Other Pacific Islander
+                      </option>
+                      <option value='white'>White</option>
+                      <option value='two-or-more'>Two or More Races</option>
+                      <option value='other'>Other</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>Date of Birth</label>
+                  <div className='mt-1'>
+                    <input
+                      type='date'
+                      className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      value={formData.experience.dateOfBirth}
+                      onChange={(e) => updateFormData('experience', 'dateOfBirth', e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className='space-y-2'>
+                  <div className='flex items-start'>
+                    <div className='flex items-center h-5'>
+                      <input
+                        id='veteran'
+                        type='checkbox'
+                        checked={formData.experience.isVeteran}
+                        onChange={(e) =>
+                          updateFormData('experience', 'isVeteran', e.target.checked)
+                        }
+                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                      />
+                    </div>
+                    <div className='ml-3 text-sm'>
+                      <label htmlFor='veteran' className='font-medium text-gray-700'>
+                        I identify as a veteran
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className='flex items-start'>
+                    <div className='flex items-center h-5'>
+                      <input
+                        id='disability'
+                        type='checkbox'
+                        checked={formData.experience.hasDisability}
+                        onChange={(e) =>
+                          updateFormData('experience', 'hasDisability', e.target.checked)
+                        }
+                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                      />
+                    </div>
+                    <div className='ml-3 text-sm'>
+                      <label htmlFor='disability' className='font-medium text-gray-700'>
+                        I have a disability
+                      </label>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

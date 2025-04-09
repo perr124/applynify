@@ -10,11 +10,15 @@ export interface JobPreferences {
   jobType: string[];
 }
 
-export interface Experience {
+export type Experience = {
   yearsOfExperience: string;
   education: string;
   skills: string[];
-}
+  isVeteran: boolean;
+  hasDisability: boolean;
+  ethnicity: string;
+  dateOfBirth: string;
+};
 
 export interface Availability {
   startDate: string;

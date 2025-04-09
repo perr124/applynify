@@ -267,6 +267,37 @@ export default function ViewUser() {
                       </div>
                     </dd>
                   </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Ethnicity</dt>
+                    <dd className='mt-1'>{user.experience.ethnicity || 'Not specified'}</dd>
+                  </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Date of Birth</dt>
+                    <dd className='mt-1'>
+                      {user.experience.dateOfBirth ? (
+                        <div className='space-y-1'>
+                          <div>{user.experience.dateOfBirth}</div>
+                          <div className='text-sm text-gray-500'>
+                            {new Date(user.experience.dateOfBirth).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        'Not specified'
+                      )}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Veteran Status</dt>
+                    <dd className='mt-1'>{user.experience.isVeteran ? 'Yes' : 'No'}</dd>
+                  </div>
+                  <div>
+                    <dt className='text-sm font-medium text-gray-500'>Disability Status</dt>
+                    <dd className='mt-1'>{user.experience.hasDisability ? 'Yes' : 'No'}</dd>
+                  </div>
                 </dl>
               </div>
             )}

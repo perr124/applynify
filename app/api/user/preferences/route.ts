@@ -128,7 +128,15 @@ export async function PUT(request: Request) {
       {
         $set: {
           jobPreferences: data.jobPreferences,
-          experience: data.experience,
+          experience: {
+            yearsOfExperience: data.experience.yearsOfExperience,
+            education: data.experience.education,
+            skills: data.experience.skills,
+            isVeteran: data.experience.isVeteran,
+            hasDisability: data.experience.hasDisability,
+            ethnicity: data.experience.ethnicity,
+            dateOfBirth: data.experience.dateOfBirth,
+          },
           availability: {
             startDate: data.availability.startDate,
             phoneNumber: data.availability.phoneNumber,
