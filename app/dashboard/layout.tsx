@@ -22,6 +22,7 @@ import logo from '@/app/icon.png';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { useMessageContext } from '@/app/contexts/MessageContext';
+import PageTitle from '@/components/PageTitle';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -62,6 +63,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <div>
+      <PageTitle />
       {/* Mobile sidebar */}
       <Dialog
         as='div'

@@ -9,6 +9,7 @@ import { Dialog } from '@headlessui/react';
 import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import logo from '@/app/icon.png';
+import PageTitle from '@/components/PageTitle';
 
 const navigation = [
   { name: 'Orders', href: '/admin/orders', icon: Briefcase },
@@ -40,6 +41,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div>
+      <PageTitle />
       {/* Mobile sidebar */}
       <Dialog
         as='div'
