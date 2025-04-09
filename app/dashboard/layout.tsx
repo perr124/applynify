@@ -21,6 +21,7 @@ import Image from 'next/image';
 import logo from '@/app/icon.png';
 import LanguageSelector from '@/components/LanguageSelector';
 import { useLocalization } from '@/contexts/LocalizationContext';
+import { useMessageContext } from '@/app/contexts/MessageContext';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
@@ -40,7 +41,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { currentRegion, setCurrentRegion } = useLocalization();
-  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const { hasUnreadMessages, setHasUnreadMessages } = useMessageContext();
 
   useEffect(() => {
     const fetchUnreadStatus = async () => {
@@ -53,7 +54,7 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       }
     };
     fetchUnreadStatus();
-  }, []);
+  }, [setHasUnreadMessages]);
 
   useEffect(() => {
     setSidebarOpen(false);

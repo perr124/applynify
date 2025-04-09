@@ -5,6 +5,7 @@ import { getSEOTags } from '@/libs/seo';
 import ClientLayout from '@/components/LayoutClient';
 import config from '@/config';
 import './globals.css';
+import { MessageProvider } from './contexts/MessageContext';
 
 const font = Inter({ subsets: ['latin'] });
 
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en' data-theme={config.colors.theme} className={font.className}>
       <body>
-        <ClientLayout>{children}</ClientLayout>
+        <MessageProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </MessageProvider>
       </body>
     </html>
   );

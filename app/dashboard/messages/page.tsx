@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { MessageSquare, Send } from 'lucide-react';
 import { format } from 'date-fns';
 import Linkify from 'react-linkify';
+import { useMessageContext } from '@/app/contexts/MessageContext';
 
 interface Message {
   _id: string;
@@ -33,6 +34,7 @@ export default function MessagesPage() {
   const [loading, setLoading] = useState(true);
   const [newMessageContent, setNewMessageContent] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { setHasUnreadMessages } = useMessageContext();
 
   useEffect(() => {
     fetchMessages();
@@ -71,6 +73,9 @@ export default function MessagesPage() {
             msg.from === 'admin' && msg.read ? { ...msg, read: false } : msg
           )
         );
+      } else {
+        // Update the global unread status
+        setHasUnreadMessages(false);
       }
     } catch (error) {
       console.error('Error marking admin messages as read:', error);
