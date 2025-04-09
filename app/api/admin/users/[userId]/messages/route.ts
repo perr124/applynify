@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
 import connectMongo from '@/libs/mongoose';
+import { sendAdminMessageNotification } from '@/libs/mail';
 
 export async function GET(request: Request, { params }: { params: { userId: string } }) {
   try {
@@ -71,6 +72,14 @@ export async function POST(request: Request, { params }: { params: { userId: str
     });
 
     await user.save();
+
+    // Send email notification to the user
+    try {
+      await sendAdminMessageNotification(user.email, user.firstName);
+    } catch (emailError) {
+      console.error('Error sending admin message notification:', emailError);
+      // Don't fail the request if email fails
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

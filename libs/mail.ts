@@ -42,3 +42,29 @@ export async function sendVerificationEmail(email: string, token: string) {
     throw error;
   }
 }
+
+export async function sendAdminMessageNotification(email: string, userFirstName: string) {
+  const dashboardLink = `${process.env.NEXTAUTH_URL}/dashboard/messages`;
+
+  await sendEmail({
+    to: email,
+    subject: 'New Message from Applynify Admin',
+    text: `Hello ${userFirstName}, you have received a new message from Admin. Please log in to your dashboard to view and respond to this message.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #333;">New Message from Admin</h2>
+        <p>Hello ${userFirstName},</p>
+        <p>You have received a new message from Admin.</p>
+        <p>Please log in to your dashboard to view and respond to this message.</p>
+        <div style="margin: 20px 0;">
+          <a href="${dashboardLink}" 
+             style="background-color: #0c7543; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            View Message in Dashboard
+          </a>
+        </div>
+        <p>If you have any questions, please don't hesitate to contact us.</p>
+        <p>Best regards,<br>Applynify Support</p>
+      </div>
+    `,
+  });
+}
