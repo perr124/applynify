@@ -25,8 +25,8 @@ import { useLocalization } from '@/contexts/LocalizationContext';
 const navigation = [
   { name: 'Overview', href: '/dashboard', icon: Home },
   { name: 'Applications', href: '/dashboard/applications', icon: Briefcase },
-  { name: 'Document Bank', href: '/dashboard/resumes', icon: FileText },
   { name: 'Messages', href: '/dashboard/messages', icon: MessageSquare },
+  { name: 'Document Bank', href: '/dashboard/resumes', icon: FileText },
   { name: 'Update Preferences', href: '/dashboard/update-preferences', icon: Settings },
   { name: 'More applications?', href: '/dashboard/subscription', icon: ClipboardList },
   // { name: 'Your Assistant', href: '/dashboard/assistant', icon: Users },

@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import { MessageSquare, Send, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import Link from 'next/link';
+import Linkify from 'react-linkify';
 
 interface Message {
   _id: string;
@@ -19,6 +20,19 @@ interface User {
   lastName: string;
   email: string;
 }
+
+// Linkify decorator to open links in new tab and style them
+const linkDecorator = (href: string, text: string, key: number) => (
+  <a
+    href={href}
+    key={key}
+    target='_blank'
+    rel='noopener noreferrer'
+    className='text-blue-500 hover:underline'
+  >
+    {text}
+  </a>
+);
 
 export default function AdminUserMessagesPage() {
   const params = useParams<{ userId: string }>();
@@ -210,7 +224,9 @@ export default function AdminUserMessagesPage() {
                     : ''
                 }`}
               >
-                <p className='text-sm whitespace-pre-wrap'>{message.content}</p>
+                <p className='text-sm whitespace-pre-wrap'>
+                  <Linkify componentDecorator={linkDecorator}>{message.content}</Linkify>
+                </p>
                 <div
                   className={`text-xs mt-1 ${
                     message.from === 'admin' ? 'text-primary-100' : 'text-gray-500'
@@ -256,7 +272,7 @@ export default function AdminUserMessagesPage() {
             disabled={!newMessage.trim()}
             className='px-4 py-2 rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
           >
-            Send Message
+            Send
           </button>
         </div>
       </form>

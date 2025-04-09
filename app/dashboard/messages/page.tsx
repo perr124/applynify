@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { MessageSquare, Send } from 'lucide-react';
 import { format } from 'date-fns';
+import Linkify from 'react-linkify';
 
 interface Message {
   _id: string;
@@ -12,6 +13,19 @@ interface Message {
   read: boolean;
   createdAt: Date;
 }
+
+// Linkify decorator to open links in new tab and style them
+const linkDecorator = (href: string, text: string, key: number) => (
+  <a
+    href={href}
+    key={key}
+    target='_blank'
+    rel='noopener noreferrer'
+    className='text-blue-500 hover:underline'
+  >
+    {text}
+  </a>
+);
 
 export default function MessagesPage() {
   const { data: session } = useSession();
@@ -143,7 +157,9 @@ export default function MessagesPage() {
                   message.from === 'user' ? 'bg-primary-600 text-white' : 'bg-white text-gray-800'
                 }`}
               >
-                <p className='text-sm whitespace-pre-wrap'>{message.content}</p>
+                <p className='text-sm whitespace-pre-wrap'>
+                  <Linkify componentDecorator={linkDecorator}>{message.content}</Linkify>
+                </p>
                 <div
                   className={`text-xs mt-1 ${
                     message.from === 'user' ? 'text-primary-100' : 'text-gray-500'
@@ -151,7 +167,7 @@ export default function MessagesPage() {
                 >
                   {format(new Date(message.createdAt), 'MMM d, h:mm a')}
                   {message.from === 'admin' && !message.read && (
-                    <span className='ml-2 text-xs font-bold text-primary-600'>(New)</span>
+                    <span className='ml-2 text-xs font-bold text-red-600'>(Unread)</span>
                   )}
                 </div>
               </div>
@@ -191,7 +207,7 @@ export default function MessagesPage() {
             disabled={!newMessageContent.trim()}
             className='px-4 py-2 rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
           >
-            Send Message
+            Send
           </button>
         </div>
       </form>
