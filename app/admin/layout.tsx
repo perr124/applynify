@@ -3,7 +3,7 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Users, Briefcase, Settings, Menu as MenuIcon, X } from 'lucide-react';
+import { Home, Users, Briefcase, Settings, Menu as MenuIcon, X, MessageSquare } from 'lucide-react';
 import ButtonAccount from '@/components/ButtonAccount';
 import { Dialog } from '@headlessui/react';
 import Image from 'next/image';
@@ -13,6 +13,7 @@ import logo from '@/app/icon.png';
 const navigation = [
   { name: 'Orders', href: '/admin/orders', icon: Briefcase },
   { name: 'All Users', href: '/admin/users', icon: Users },
+  { name: 'Messages', href: '/admin/messages', icon: MessageSquare },
   { name: 'Overview', href: '/admin/overview', icon: Home },
   // { name: 'Applications', href: '/admin/applications', icon: Briefcase },
   // { name: 'Settings', href: '/admin/settings', icon: Settings },

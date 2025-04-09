@@ -11,45 +11,58 @@ interface UserDocument {
   lastName: string;
 }
 
-export async function GET(req: Request) {
+export async function GET(request: Request) {
   try {
-    await connectMongo();
-
     const session = await getServerSession(authOptions);
-
-    // Check if user is admin
-    if (!session?.user?.isAdmin) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { searchParams } = new URL(req.url);
-    const search = searchParams.get('search') || '';
+    // Check if the user is an admin
+    const adminUser = await User.findOne({ email: session.user.email });
+    if (!adminUser?.isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
 
-    const query = search
+    await connectMongo();
+
+    // Get query parameters
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get('search') || '';
+    const withMessages = searchParams.get('withMessages') === 'true';
+
+    // Build base query
+    let baseQuery = {};
+    if (withMessages) {
+      baseQuery = {
+        messages: { $exists: true, $not: { $size: 0 } },
+      };
+    }
+
+    // Add search filter if provided
+    const searchQuery = search
       ? {
           $or: [
-            { email: { $regex: search, $options: 'i' } },
             { firstName: { $regex: search, $options: 'i' } },
             { lastName: { $regex: search, $options: 'i' } },
+            { email: { $regex: search, $options: 'i' } },
           ],
         }
       : {};
 
-    const users = (await User.find(query)
-      .select('_id email firstName lastName createdAt resumeUrl preferences jobPreferences skills')
-      .sort({ createdAt: -1 })
-      .limit(50)
-      .lean()) as UserDocument[];
+    // Combine queries
+    const finalQuery = {
+      $and: [baseQuery, searchQuery],
+    };
 
-    // Transform the users to ensure proper id field
-    const transformedUsers = users.map((user) => ({
-      ...user,
-      id: user._id.toString(), // Ensure id is available
-    }));
+    // Find users with combined query
+    const users = await User.find(finalQuery)
+      .select('_id firstName lastName email messages')
+      .sort(withMessages ? { 'messages.createdAt': -1 } : { createdAt: -1 });
 
-    return NextResponse.json(transformedUsers);
+    return NextResponse.json(users);
   } catch (error) {
-    console.error('Error in admin users API:', error);
-    return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
+    console.error('Error fetching users:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
