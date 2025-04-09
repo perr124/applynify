@@ -224,7 +224,7 @@ export default function AdminUserMessagesPage() {
                     : ''
                 }`}
               >
-                <p className='text-sm whitespace-pre-wrap'>
+                <p className='text-sm whitespace-pre-wrap break-words overflow-wrap-anywhere'>
                   <Linkify componentDecorator={linkDecorator}>{message.content}</Linkify>
                 </p>
                 <div

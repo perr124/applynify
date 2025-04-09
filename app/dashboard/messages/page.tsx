@@ -157,7 +157,7 @@ export default function MessagesPage() {
                   message.from === 'user' ? 'bg-primary-600 text-white' : 'bg-white text-gray-800'
                 }`}
               >
-                <p className='text-sm whitespace-pre-wrap'>
+                <p className='text-sm whitespace-pre-wrap break-words overflow-wrap-anywhere'>
                   <Linkify componentDecorator={linkDecorator}>{message.content}</Linkify>
                 </p>
                 <div
