@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
 import { MessageSquare, Send } from 'lucide-react';
 import { format } from 'date-fns';
@@ -18,10 +18,15 @@ export default function MessagesPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(true);
   const [newMessageContent, setNewMessageContent] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchMessages();
   }, []);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const fetchMessages = async () => {
     try {
@@ -67,6 +72,19 @@ export default function MessagesPage() {
     e.preventDefault();
     if (!newMessageContent.trim()) return;
 
+    const tempId = `temp-${Date.now()}`;
+    const optimisticMessage: Message = {
+      _id: tempId,
+      from: 'user',
+      content: newMessageContent,
+      read: true,
+      createdAt: new Date(),
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+    const currentMessage = newMessageContent;
+    setNewMessageContent('');
+
     try {
       await markAdminMessagesAsRead();
 
@@ -75,86 +93,108 @@ export default function MessagesPage() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ content: newMessageContent }),
+        body: JSON.stringify({ content: currentMessage }),
       });
 
       if (response.ok) {
-        setNewMessageContent('');
         fetchMessages();
+      } else {
+        setMessages((prev) => prev.filter((msg) => msg._id !== tempId));
+        setNewMessageContent(currentMessage);
+        console.error('Failed to send message');
       }
     } catch (error) {
+      setMessages((prev) => prev.filter((msg) => msg._id !== tempId));
+      setNewMessageContent(currentMessage);
       console.error('Error sending message:', error);
     }
   };
 
-  if (loading) {
-    return <div className='flex justify-center items-center h-64'>Loading...</div>;
-  }
-
   return (
-    <div className='max-w-4xl mx-auto p-6'>
-      <div className='flex items-center gap-2 mb-6'>
-        <MessageSquare className='h-6 w-6' />
-        <h1 className='text-2xl font-semibold'>Messages</h1>
+    <div className='flex flex-col h-[calc(100vh-100px)]'>
+      <div className='p-4 border-b border-gray-200 bg-white'>
+        <div className='flex items-center gap-2'>
+          <MessageSquare className='h-6 w-6 text-gray-600' />
+          <h1 className='text-xl font-semibold text-gray-800'>Messages with Admin</h1>
+        </div>
       </div>
 
-      <div className='bg-white rounded-lg shadow-sm border border-gray-200'>
-        <div className='divide-y divide-gray-200'>
-          {messages.length === 0 ? (
-            <div className='text-center text-gray-500 py-8'>No messages yet.</div>
-          ) : (
-            messages.map((message) => (
-              <div key={message._id}>
+      <div className='flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50'>
+        {loading ? (
+          <div className='flex justify-center items-center h-full'>Loading...</div>
+        ) : messages.length === 0 ? (
+          <div className='text-center text-gray-500 py-8'>No messages yet.</div>
+        ) : (
+          messages.map((message) => (
+            <div
+              key={message._id}
+              className={`flex items-end gap-2 ${
+                message.from === 'user' ? 'justify-end' : 'justify-start'
+              }`}
+            >
+              {message.from === 'admin' && (
+                <div className='flex items-center justify-center h-8 w-8 rounded-full bg-primary-500 text-white text-sm font-bold flex-shrink-0'>
+                  A
+                </div>
+              )}
+
+              <div
+                className={`max-w-xs lg:max-w-md p-3 rounded-lg shadow-sm ${
+                  message.from === 'user' ? 'bg-primary-600 text-white' : 'bg-white text-gray-800'
+                }`}
+              >
+                <p className='text-sm whitespace-pre-wrap'>{message.content}</p>
                 <div
-                  className={`p-4 ${
-                    message.from === 'admin' && !message.read ? 'bg-primary-50' : ''
-                  }`}
+                  className={`text-xs mt-1 ${
+                    message.from === 'user' ? 'text-primary-100' : 'text-gray-500'
+                  } ${message.from === 'user' ? 'text-right' : 'text-left'}`}
                 >
-                  <div className='flex justify-between items-start mb-2'>
-                    <div className='flex items-center gap-2'>
-                      <span
-                        className={`text-sm font-medium ${
-                          message.from === 'admin' ? 'text-primary-600' : 'text-gray-600'
-                        }`}
-                      >
-                        {message.from === 'admin' ? 'Admin' : 'You'}
-                      </span>
-                      {message.from === 'admin' && !message.read && (
-                        <span className='bg-primary-600 text-white text-xs px-2 py-0.5 rounded-full'>
-                          New
-                        </span>
-                      )}
-                    </div>
-                    <span className='text-xs text-gray-500'>
-                      {format(new Date(message.createdAt), 'MMM d, yyyy h:mm a')}
-                    </span>
-                  </div>
-                  <p className='text-gray-700'>{message.content}</p>
+                  {format(new Date(message.createdAt), 'MMM d, h:mm a')}
+                  {message.from === 'admin' && !message.read && (
+                    <span className='ml-2 text-xs font-bold text-primary-600'>(New)</span>
+                  )}
                 </div>
               </div>
-            ))
-          )}
-        </div>
-        <form onSubmit={sendMessage} className='border-t border-gray-200 p-4'>
-          <div className='space-y-2'>
-            <textarea
-              value={newMessageContent}
-              onChange={(e) => setNewMessageContent(e.target.value)}
-              placeholder='Type your message...'
-              className='w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[100px]'
-            />
-            <div className='flex justify-end'>
-              <button
-                type='submit'
-                className='bg-primary-600 text-white rounded-md px-4 py-2 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500'
-              >
-                <Send className='h-4 w-4 inline-block mr-2' />
-                Send Message
-              </button>
+
+              {message.from === 'user' && (
+                <div className='flex items-center justify-center h-8 w-8 rounded-full bg-gray-300 text-gray-700 text-sm font-bold flex-shrink-0'>
+                  {(session?.user as { firstName?: string; name?: string })?.firstName
+                    ?.charAt(0)
+                    .toUpperCase() || 'U'}
+                </div>
+              )}
             </div>
-          </div>
-        </form>
+          ))
+        )}
+        <div ref={messagesEndRef} />
       </div>
+
+      <form onSubmit={sendMessage} className='p-4 bg-white border-t border-gray-200'>
+        <div className='flex items-center gap-3'>
+          <textarea
+            value={newMessageContent}
+            onChange={(e) => setNewMessageContent(e.target.value)}
+            placeholder='Type your message...'
+            className='flex-grow rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none bg-gray-100'
+            rows={1}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                if (newMessageContent.trim()) {
+                  sendMessage(e);
+                }
+              }
+            }}
+          />
+          <button
+            type='submit'
+            disabled={!newMessageContent.trim()}
+            className='px-4 py-2 rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0'
+          >
+            Send Message
+          </button>
+        </div>
+      </form>
     </div>
   );
 }
