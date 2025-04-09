@@ -148,20 +148,25 @@ export default function UserJobApplication() {
       if (!response.ok) throw new Error('Failed to submit applications');
 
       if (complete) {
-        const emailResponse = await fetch('/api/notifications/application-complete', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            userId: params.userId,
-            userEmail: user?.email,
-            userName: `${user?.firstName} ${user?.lastName}`,
-          }),
-        });
+        // Send application completion email
+        try {
+          const emailResponse = await fetch('/api/notifications/application-complete', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: params.userId,
+              userEmail: user?.email,
+              userFirstName: user?.firstName,
+            }),
+          });
 
-        if (!emailResponse.ok) {
-          console.error('Failed to send notification email');
+          if (!emailResponse.ok) {
+            console.error('Failed to send completion notification email');
+          }
+        } catch (emailError) {
+          console.error('Error sending completion notification:', emailError);
         }
 
         // Only redirect if "Complete & Notify" was clicked
