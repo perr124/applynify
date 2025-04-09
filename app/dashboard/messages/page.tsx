@@ -174,7 +174,7 @@ export default function MessagesPage() {
 
               {message.from === 'user' && (
                 <div className='flex items-center justify-center h-8 w-8 rounded-full bg-gray-300 text-gray-700 text-sm font-bold flex-shrink-0'>
-                  {(session?.user as { firstName?: string; name?: string })?.firstName
+                  {(session?.user as { firstName?: string; name?: string })?.name
                     ?.charAt(0)
                     .toUpperCase() || 'U'}
                 </div>
