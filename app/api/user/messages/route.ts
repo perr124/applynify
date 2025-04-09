@@ -3,6 +3,16 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/libs/next-auth';
 import User from '@/models/User';
 import connectMongo from '@/libs/mongoose';
+import mongoose from 'mongoose';
+
+// Define the Message type based on your User model
+interface Message extends mongoose.Document {
+  from: 'admin' | 'user';
+  content: string;
+  read: boolean;
+  createdAt: Date;
+  _id: mongoose.Types.ObjectId;
+}
 
 export async function GET() {
   try {
@@ -19,7 +29,12 @@ export async function GET() {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    return NextResponse.json({ messages: user.messages });
+    // Calculate if there are unread messages from the admin
+    const hasUnreadAdminMessages = user.messages.some(
+      (message: Message) => message.from === 'admin' && !message.read
+    );
+
+    return NextResponse.json({ messages: user.messages, hasUnreadAdminMessages });
   } catch (error) {
     console.error('Error fetching messages:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

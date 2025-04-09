@@ -40,8 +40,21 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
   const { currentRegion, setCurrentRegion } = useLocalization();
+  const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
 
-  // Add effect to close sidebar when pathname changes
+  useEffect(() => {
+    const fetchUnreadStatus = async () => {
+      try {
+        const response = await fetch('/api/user/messages');
+        const data = await response.json();
+        setHasUnreadMessages(data.hasUnreadAdminMessages || false);
+      } catch (error) {
+        console.error('Error fetching unread message status:', error);
+      }
+    };
+    fetchUnreadStatus();
+  }, []);
+
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
@@ -64,7 +77,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
               </button>
             </div>
             <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
-              <SidebarContent currentPath={pathname || ''} setSidebarOpen={setSidebarOpen} />
+              <SidebarContent
+                currentPath={pathname || ''}
+                setSidebarOpen={setSidebarOpen}
+                hasUnreadMessages={hasUnreadMessages}
+              />
             </div>
           </Dialog.Panel>
         </div>
@@ -73,7 +90,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
       {/* Static sidebar for desktop */}
       <div className='hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col'>
         <div className='flex grow flex-col gap-y-5 overflow-y-auto bg-black px-6 pb-4'>
-          <SidebarContent currentPath={pathname || ''} setSidebarOpen={setSidebarOpen} />
+          <SidebarContent
+            currentPath={pathname || ''}
+            setSidebarOpen={setSidebarOpen}
+            hasUnreadMessages={hasUnreadMessages}
+          />
         </div>
       </div>
 
@@ -114,9 +135,11 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
 function SidebarContent({
   currentPath,
   setSidebarOpen,
+  hasUnreadMessages,
 }: {
   currentPath: string;
   setSidebarOpen: (open: boolean) => void;
+  hasUnreadMessages: boolean;
 }) {
   return (
     <>
@@ -130,7 +153,7 @@ function SidebarContent({
           <li>
             <ul role='list' className='-mx-2 space-y-1'>
               {navigation.map((item) => (
-                <li key={item.name}>
+                <li key={item.name} className='relative'>
                   <Link
                     href={item.href}
                     onClick={() => setSidebarOpen(false)}
@@ -143,6 +166,9 @@ function SidebarContent({
                   >
                     <item.icon className='h-6 w-6 shrink-0' />
                     {item.name}
+                    {item.name === 'Messages' && hasUnreadMessages && (
+                      <span className='absolute right-2 top-1/2 transform -translate-y-1/2 block h-2 w-2 rounded-full bg-red-500'></span>
+                    )}
                   </Link>
                 </li>
               ))}
