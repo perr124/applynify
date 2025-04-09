@@ -94,3 +94,28 @@ export async function sendApplicationCompleteNotification(email: string, userFir
     `,
   });
 }
+
+export async function sendPaymentConfirmationEmail(email: string, userFirstName: string) {
+  const dashboardLink = `${process.env.NEXTAUTH_URL}/dashboard`;
+
+  await sendEmail({
+    to: email,
+    subject: 'Thank You for Your Purchase',
+    text: `Hello ${userFirstName}, thank you for your purchase. We are working on your order and will notify you once it's complete.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+        <h2 style="color: #333;">Thank You for Your Purchase</h2>
+        <p>Hello ${userFirstName},</p>
+        <p>Thank you for your purchase. We are working on your order and will notify you once it's complete.</p>
+        <div style="margin: 20px 0;">
+          <a href="${dashboardLink}" 
+             style="background-color: #0c7543; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            View Your Dashboard
+          </a>
+        </div>
+        <p>If you have any questions, please don't hesitate to contact us.</p>
+        <p>Best regards,<br>Applynify Support</p>
+      </div>
+    `,
+  });
+}

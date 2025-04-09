@@ -6,6 +6,7 @@ import connectMongo from '@/libs/mongoose';
 import configFile from '@/config';
 import User from '@/models/User';
 import { findCheckoutSession } from '@/libs/stripe';
+import { sendPaymentConfirmationEmail } from '@/libs/mail';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2023-08-16',
@@ -115,19 +116,21 @@ export async function POST(req: NextRequest) {
           onboardingComplete: true,
         });
 
+        // Send payment confirmation email
+        try {
+          await sendPaymentConfirmationEmail(user.email, user.name || 'there');
+          console.log('Payment confirmation email sent successfully');
+        } catch (emailError) {
+          console.error('Failed to send payment confirmation email:', emailError);
+          // Don't throw the error as the payment was successful, just log it
+        }
+
         // Add success logging
         console.log('Successfully updated user after payment:', {
           userId: user._id,
           priceId,
           customerId,
         });
-
-        // Extra: send email with user link, product page, etc...
-        // try {
-        //   await sendEmail(...);
-        // } catch (e) {
-        //   console.error("Email issue:" + e?.message);
-        // }
 
         break;
       }
