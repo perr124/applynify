@@ -15,6 +15,7 @@ import type {
 } from '@/libs/validations/userPreferences';
 import toast from 'react-hot-toast';
 import { PRICING_PLANS, getPlanByStripeId } from '@/libs/constants/pricing';
+import { Dialog } from '@headlessui/react';
 
 type User = {
   _id: string;
@@ -27,6 +28,7 @@ type User = {
   experience?: Experience;
   availability?: Availability;
   hasUnreadMessages?: boolean;
+  applicationsStatus?: string;
 };
 
 // Modified schema for multiple applications
@@ -44,6 +46,8 @@ export default function UserJobApplication() {
   const [error, setError] = useState<string | null>(null);
   const [duplicateCompanies, setDuplicateCompanies] = useState<string[]>([]);
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const {
     control,
@@ -124,6 +128,19 @@ export default function UserJobApplication() {
     return duplicates.length > 0;
   };
 
+  // Add a function to count non-empty applications
+  const countNonEmptyApplications = (applications: any[]) => {
+    return applications.filter(
+      (app) =>
+        app.jobTitle &&
+        app.companyName &&
+        app.location &&
+        app.jobType &&
+        app.employmentType &&
+        app.jobLink
+    ).length;
+  };
+
   const onSubmit = async (data: MultipleApplicationsData, complete: boolean) => {
     if (checkDuplicates(data.applications)) {
       toast.error('Please remove duplicate company entries before saving');
@@ -184,6 +201,19 @@ export default function UserJobApplication() {
     }
   };
 
+  const handleDelete = (index: number) => {
+    setDeleteIndex(index);
+    setIsDeleteModalOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteIndex !== null) {
+      remove(deleteIndex);
+      setDeleteIndex(null);
+    }
+    setIsDeleteModalOpen(false);
+  };
+
   if (isSubmitting) return <div>Submitting...</div>;
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
   if (!user) return <div className='p-4'>Loading...</div>;
@@ -193,10 +223,19 @@ export default function UserJobApplication() {
       <div className='mb-6'>
         <h1 className='text-2xl font-bold mb-2'>Job Applications for User</h1>
         <div className='bg-gray-50 p-4 rounded-lg'>
-          <p className='font-medium'>
-            {user?.firstName} {user?.lastName}
-          </p>
-          <p className='text-gray-600'>{user?.email}</p>
+          <div className='flex justify-between items-center'>
+            <div>
+              <p className='font-medium'>
+                {user?.firstName} {user?.lastName}
+              </p>
+              <p className='text-gray-600'>{user?.email}</p>
+            </div>
+            {user?.applicationsStatus === 'completed' && (
+              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'>
+                Completed
+              </span>
+            )}
+          </div>
           <div className='mt-4'>
             <a
               href={`/admin/users/${params.userId}/messages`}
@@ -217,7 +256,8 @@ export default function UserJobApplication() {
                     Plan: {getPlanByStripeId(user.priceId)?.name || 'Unknown'}
                   </span>
                   <span className='text-sm font-medium text-gray-900'>
-                    {fields.length} / {getPlanByStripeId(user.priceId)?.applicationLimit || 0}
+                    {countNonEmptyApplications(fields)} /{' '}
+                    {getPlanByStripeId(user.priceId)?.applicationLimit || 0}
                   </span>
                 </div>
                 <div className='w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700'>
@@ -225,7 +265,8 @@ export default function UserJobApplication() {
                     className='bg-blue-600 h-2.5 rounded-full transition-all duration-300'
                     style={{
                       width: `${
-                        (fields.length / (getPlanByStripeId(user.priceId)?.applicationLimit || 1)) *
+                        (countNonEmptyApplications(fields) /
+                          (getPlanByStripeId(user.priceId)?.applicationLimit || 1)) *
                         100
                       }%`,
                     }}
@@ -233,7 +274,8 @@ export default function UserJobApplication() {
                 </div>
                 <p className='text-sm text-gray-500'>
                   {getPlanByStripeId(user.priceId)?.applicationLimit &&
-                    getPlanByStripeId(user.priceId)!.applicationLimit - fields.length}{' '}
+                    getPlanByStripeId(user.priceId)!.applicationLimit -
+                      countNonEmptyApplications(fields)}{' '}
                   applications remaining
                 </p>
               </div>
@@ -298,14 +340,17 @@ export default function UserJobApplication() {
                 >
                   <td className='px-4 py-2'>
                     <input
-                      {...register(`applications.${index}.jobTitle`)}
+                      {...register(`applications.${index}.jobTitle`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                       placeholder='Job Title'
                     />
+                    {errors.applications?.[index]?.jobTitle && (
+                      <p className='text-red-500 text-xs mt-1'>Job title is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <input
-                      {...register(`applications.${index}.companyName`)}
+                      {...register(`applications.${index}.companyName`, { required: true })}
                       className={`w-full p-1 border rounded text-sm ${
                         duplicateCompanies.includes(
                           watch(`applications.${index}.companyName`)?.trim().toLowerCase() || ''
@@ -319,13 +364,19 @@ export default function UserJobApplication() {
                         checkDuplicates(watch('applications'));
                       }}
                     />
+                    {errors.applications?.[index]?.companyName && (
+                      <p className='text-red-500 text-xs mt-1'>Company name is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <input
-                      {...register(`applications.${index}.location`)}
+                      {...register(`applications.${index}.location`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                       placeholder='Location'
                     />
+                    {errors.applications?.[index]?.location && (
+                      <p className='text-red-500 text-xs mt-1'>Location is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <input
@@ -336,17 +387,20 @@ export default function UserJobApplication() {
                   </td>
                   <td className='px-4 py-2'>
                     <select
-                      {...register(`applications.${index}.jobType`)}
+                      {...register(`applications.${index}.jobType`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                     >
                       <option value='remote'>Remote</option>
                       <option value='hybrid'>Hybrid</option>
                       <option value='on-site'>On-site</option>
                     </select>
+                    {errors.applications?.[index]?.jobType && (
+                      <p className='text-red-500 text-xs mt-1'>Job type is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <select
-                      {...register(`applications.${index}.employmentType`)}
+                      {...register(`applications.${index}.employmentType`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                     >
                       <option value='full-time'>Full-time</option>
@@ -354,19 +408,25 @@ export default function UserJobApplication() {
                       <option value='contract'>Contract</option>
                       <option value='internship'>Internship</option>
                     </select>
+                    {errors.applications?.[index]?.employmentType && (
+                      <p className='text-red-500 text-xs mt-1'>Employment type is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <input
-                      {...register(`applications.${index}.jobLink`)}
+                      {...register(`applications.${index}.jobLink`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                       placeholder='URL'
                       type='url'
                     />
+                    {errors.applications?.[index]?.jobLink && (
+                      <p className='text-red-500 text-xs mt-1'>Job link is required</p>
+                    )}
                   </td>
                   <td className='px-4 py-2'>
                     <button
                       type='button'
-                      onClick={() => remove(index)}
+                      onClick={() => handleDelete(index)}
                       className='text-red-500 hover:text-red-700'
                     >
                       <Trash2 className='h-4 w-4' />
@@ -384,7 +444,8 @@ export default function UserJobApplication() {
             onClick={() => append(defaultApplication)}
             disabled={Boolean(
               user?.priceId &&
-                fields.length >= (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
+                countNonEmptyApplications(fields) >=
+                  (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
             )}
             className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
           >
@@ -415,6 +476,43 @@ export default function UserJobApplication() {
           </div>
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        className='relative z-50'
+      >
+        <div className='fixed inset-0 bg-black/30' aria-hidden='true' />
+        <div className='fixed inset-0 flex items-center justify-center p-4'>
+          <Dialog.Panel className='mx-auto max-w-sm w-full bg-white rounded-xl shadow-lg'>
+            <div className='p-6'>
+              <Dialog.Title className='text-lg font-medium text-gray-900 mb-4'>
+                Delete Application
+              </Dialog.Title>
+              <p className='text-gray-500 mb-6'>
+                Are you sure you want to delete this application?
+              </p>
+              <div className='flex justify-end gap-4'>
+                <button
+                  type='button'
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                >
+                  Cancel
+                </button>
+                <button
+                  type='button'
+                  onClick={confirmDelete}
+                  className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700'
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 }

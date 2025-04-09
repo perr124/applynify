@@ -30,6 +30,7 @@ type User = {
   availability?: Availability;
   marketingSource?: string;
   localization?: string;
+  applicationsStatus?: string;
 };
 
 export default function ViewUser() {
@@ -67,7 +68,14 @@ export default function ViewUser() {
   return (
     <div className='max-w-7xl mx-auto p-6'>
       <div className='mb-6 flex justify-between items-center'>
-        <h1 className='text-2xl font-bold'>User Details</h1>
+        <div className='flex items-center gap-4'>
+          <h1 className='text-2xl font-bold'>User Details</h1>
+          {user.applicationsStatus === 'completed' && (
+            <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'>
+              Completed
+            </span>
+          )}
+        </div>
         <Link
           href={`/admin/users/${user._id}`}
           className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
