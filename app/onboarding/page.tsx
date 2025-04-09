@@ -941,7 +941,7 @@ export default function OnboardingQuestionnaire() {
               <div className='space-y-6'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    What roles are you interested in?
+                    What roles are you interested in? <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1 flex gap-2'>
                     <input
@@ -1010,7 +1010,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Preferred locations
+                    Preferred locations <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1 flex gap-2'>
                     <input
@@ -1089,7 +1089,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Minimum salary expectation
+                    Minimum salary expectation <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1 relative'>
                     <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
@@ -1126,7 +1126,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Citizenship Status
+                    Citizenship Status <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <select
@@ -1187,7 +1187,9 @@ export default function OnboardingQuestionnaire() {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>Job Type</label>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Job Type <span className='text-red-500'>*</span>
+                  </label>
                   <div className='mt-1 relative' id='job-type-dropdown'>
                     <button
                       type='button'
@@ -1282,7 +1284,7 @@ export default function OnboardingQuestionnaire() {
               <div className='space-y-6'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Years of experience
+                    Years of experience <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <select
@@ -1303,7 +1305,9 @@ export default function OnboardingQuestionnaire() {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>Key skills</label>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Key skills <span className='text-red-500'>*</span>
+                  </label>
                   <div className='mt-1 flex gap-2'>
                     <input
                       type='text'
@@ -1369,7 +1373,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Highest education level
+                    Highest education level <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <select
@@ -1394,7 +1398,7 @@ export default function OnboardingQuestionnaire() {
               <div className='space-y-6'>
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    When can you start?
+                    When can you start? <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <select
@@ -1413,7 +1417,9 @@ export default function OnboardingQuestionnaire() {
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>Phone Number</label>
+                  <label className='block text-sm font-medium text-gray-700'>
+                    Phone Number <span className='text-red-500'>*</span>
+                  </label>
                   <div className='flex gap-2'>
                     <div className='flex-shrink-0 w-20'>
                       <select
@@ -1588,7 +1594,7 @@ export default function OnboardingQuestionnaire() {
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Upload your resume (PDF, DOC, or DOCX)
+                    Upload your resume (PDF, DOC, or DOCX) <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <div className='flex items-center justify-center w-full'>
@@ -1649,7 +1655,7 @@ export default function OnboardingQuestionnaire() {
                 {/* Add marketing source field after resume upload */}
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
-                    Where did you hear about Applynify?
+                    Where did you hear about Applynify? <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
                     <select
