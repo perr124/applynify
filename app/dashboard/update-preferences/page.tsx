@@ -340,6 +340,20 @@ export default function UpdatePreferences() {
                         }
                       }
                     }}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const pastedText = e.clipboardData.getData('text');
+                      const roles = pastedText
+                        .split(',')
+                        .map((role) => role.trim())
+                        .filter((role) => role.length > 0);
+
+                      if (roles.length > 0) {
+                        const updatedRoles = [...formData.jobPreferences.roles, ...roles];
+                        updateFormData('jobPreferences', 'roles', updatedRoles);
+                        setCurrentRoleInput('');
+                      }
+                    }}
                   />
                   <button
                     type='button'
@@ -410,6 +424,23 @@ export default function UpdatePreferences() {
                           updateFormData('jobPreferences', 'locations', updatedLocations);
                           setCurrentLocationInput('');
                         }
+                      }
+                    }}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const pastedText = e.clipboardData.getData('text');
+                      const locations = pastedText
+                        .split(',')
+                        .map((location) => location.trim())
+                        .filter((location) => location.length > 0);
+
+                      if (locations.length > 0) {
+                        const updatedLocations = [
+                          ...formData.jobPreferences.locations,
+                          ...locations,
+                        ];
+                        updateFormData('jobPreferences', 'locations', updatedLocations);
+                        setCurrentLocationInput('');
                       }
                     }}
                   />
@@ -723,6 +754,20 @@ export default function UpdatePreferences() {
                           updateFormData('experience', 'skills', updatedSkills);
                           setCurrentSkillInput('');
                         }
+                      }
+                    }}
+                    onPaste={(e) => {
+                      e.preventDefault();
+                      const pastedText = e.clipboardData.getData('text');
+                      const skills = pastedText
+                        .split(',')
+                        .map((skill) => skill.trim())
+                        .filter((skill) => skill.length > 0);
+
+                      if (skills.length > 0) {
+                        const updatedSkills = [...formData.experience.skills, ...skills];
+                        updateFormData('experience', 'skills', updatedSkills);
+                        setCurrentSkillInput('');
                       }
                     }}
                   />

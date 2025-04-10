@@ -974,6 +974,20 @@ export default function OnboardingQuestionnaire() {
                           }
                         }
                       }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        const roles = pastedText
+                          .split(',')
+                          .map((role) => role.trim())
+                          .filter((role) => role.length > 0);
+
+                        if (roles.length > 0) {
+                          const updatedRoles = [...formData.jobPreferences.roles, ...roles];
+                          updateFormData('jobPreferences', 'roles', updatedRoles);
+                          setCurrentRoleInput('');
+                        }
+                      }}
                     />
                     <button
                       type='button'
@@ -992,33 +1006,32 @@ export default function OnboardingQuestionnaire() {
                       +
                     </button>
                   </div>
-                </div>
-
-                {/* Display selected roles */}
-                {formData.jobPreferences.roles.length > 0 && (
-                  <div className='mt-2 flex flex-wrap gap-2'>
-                    {formData.jobPreferences.roles.map((role, index) => (
-                      <span
-                        key={index}
-                        className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
-                      >
-                        {role}
-                        <button
-                          type='button'
-                          onClick={() => {
-                            const updatedRoles = formData.jobPreferences.roles.filter(
-                              (_, i) => i !== index
-                            );
-                            updateFormData('jobPreferences', 'roles', updatedRoles);
-                          }}
-                          className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                  {/* Keep the chips container here */}
+                  {formData.jobPreferences.roles.length > 0 && (
+                    <div className='mt-2 flex flex-wrap gap-2'>
+                      {formData.jobPreferences.roles.map((role, index) => (
+                        <span
+                          key={index}
+                          className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800'
                         >
-                          <span className='sr-only'>Remove {role}</span>×
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                )}
+                          {role}
+                          <button
+                            type='button'
+                            onClick={() => {
+                              const updatedRoles = formData.jobPreferences.roles.filter(
+                                (_, i) => i !== index
+                              );
+                              updateFormData('jobPreferences', 'roles', updatedRoles);
+                            }}
+                            className='ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full hover:bg-primary-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                          >
+                            <span className='sr-only'>Remove {role}</span>×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
 
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
@@ -1044,6 +1057,23 @@ export default function OnboardingQuestionnaire() {
                             updateFormData('jobPreferences', 'locations', updatedLocations);
                             setCurrentLocationInput('');
                           }
+                        }
+                      }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        const locations = pastedText
+                          .split(',')
+                          .map((location) => location.trim())
+                          .filter((location) => location.length > 0);
+
+                        if (locations.length > 0) {
+                          const updatedLocations = [
+                            ...formData.jobPreferences.locations,
+                            ...locations,
+                          ];
+                          updateFormData('jobPreferences', 'locations', updatedLocations);
+                          setCurrentLocationInput('');
                         }
                       }}
                     />
@@ -1337,6 +1367,20 @@ export default function OnboardingQuestionnaire() {
                             updateFormData('experience', 'skills', updatedSkills);
                             setCurrentSkillInput('');
                           }
+                        }
+                      }}
+                      onPaste={(e) => {
+                        e.preventDefault();
+                        const pastedText = e.clipboardData.getData('text');
+                        const skills = pastedText
+                          .split(',')
+                          .map((skill) => skill.trim())
+                          .filter((skill) => skill.length > 0);
+
+                        if (skills.length > 0) {
+                          const updatedSkills = [...formData.experience.skills, ...skills];
+                          updateFormData('experience', 'skills', updatedSkills);
+                          setCurrentSkillInput('');
                         }
                       }}
                     />
