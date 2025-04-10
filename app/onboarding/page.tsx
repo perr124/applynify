@@ -237,6 +237,45 @@ export default function OnboardingQuestionnaire() {
     });
   };
 
+  const savePreferences = async (data: FormData) => {
+    try {
+      const response = await fetch('/api/user/preferences', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          jobPreferences: {
+            ...data.jobPreferences,
+            requiresSponsorship: data.jobPreferences.requiresSponsorship,
+          },
+          experience: data.experience,
+          availability: {
+            startDate: data.availability.startDate,
+            phoneNumber: data.availability.phoneNumber,
+            additionalInfo: data.availability.additionalInfo,
+            address: data.availability.address,
+            resumeUrl: data.availability.resume?.file ? null : undefined,
+          },
+          marketingSource: data.marketingSource,
+          termsAccepted: data.termsAccepted,
+          localization: currentRegion.code,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.errors) {
+          throw new Error(errorData.errors.join(', '));
+        }
+        throw new Error('Failed to save preferences');
+      }
+    } catch (error) {
+      console.error('Error saving preferences:', error);
+      throw error;
+    }
+  };
+
   const handleNext = async () => {
     // Clear error when moving between steps
     setError(null);
@@ -286,6 +325,14 @@ export default function OnboardingQuestionnaire() {
         setError('Please enter your minimum salary expectation');
         return;
       }
+
+      // Save step 1 data
+      try {
+        await savePreferences(pendingFormData);
+      } catch (error) {
+        setError('Failed to save preferences. Please try again.');
+        return;
+      }
     }
 
     if (step === 2) {
@@ -313,6 +360,14 @@ export default function OnboardingQuestionnaire() {
       }
       if (!formData.experience.education) {
         setError('Please select your highest education level');
+        return;
+      }
+
+      // Save step 2 data
+      try {
+        await savePreferences(pendingFormData);
+      } catch (error) {
+        setError('Failed to save preferences. Please try again.');
         return;
       }
     }
@@ -349,6 +404,14 @@ export default function OnboardingQuestionnaire() {
       }
       if (!formData.termsAccepted) {
         setError('Please accept the terms and conditions to continue');
+        return;
+      }
+
+      // Save step 3 data
+      try {
+        await savePreferences(formData);
+      } catch (error) {
+        setError('Failed to save preferences. Please try again.');
         return;
       }
     }
@@ -391,8 +454,8 @@ export default function OnboardingQuestionnaire() {
           }
         }
 
-        // Save preferences
-        const preferencesResponse = await fetch('/api/user/preferences', {
+        // Save preferences with resume URL
+        const response = await fetch('/api/user/preferences', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -416,8 +479,8 @@ export default function OnboardingQuestionnaire() {
           }),
         });
 
-        if (!preferencesResponse.ok) {
-          const data = await preferencesResponse.json();
+        if (!response.ok) {
+          const data = await response.json();
           if (data.errors) {
             setError(data.errors.join(', '));
             return;
