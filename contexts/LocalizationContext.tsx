@@ -26,7 +26,7 @@ const defaultRegion: Region = {
 const regions: Record<string, Region> = {
   US: { code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD' },
   GB: { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP' },
-  EU: { code: 'EU', name: 'European Union', flag: '🇪🇺', currency: 'EUR' },
+  EU: { code: 'EU', name: 'Europe', flag: '🇪🇺', currency: 'EUR' },
   CA: { code: 'CA', name: 'Canada', flag: '🇨🇦', currency: 'CAD' },
   AU: { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
 };

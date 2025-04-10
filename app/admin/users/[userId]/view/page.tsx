@@ -14,7 +14,7 @@ import type {
 const regions: Record<string, { name: string; flag: string }> = {
   US: { name: 'United States', flag: '🇺🇸' },
   GB: { name: 'United Kingdom', flag: '🇬🇧' },
-  EU: { name: 'European Union', flag: '🇪🇺' },
+  EU: { name: 'Europe', flag: '🇪🇺' },
   CA: { name: 'Canada', flag: '🇨🇦' },
   AU: { name: 'Australia', flag: '🇦🇺' },
 };

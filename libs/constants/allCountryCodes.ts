@@ -10,7 +10,7 @@ export const allCountryCodes: CountryCode[] = [
   { code: 'GB', name: 'United Kingdom', dialCode: '+44' },
   { code: 'CA', name: 'Canada', dialCode: '+1' },
   { code: 'AU', name: 'Australia', dialCode: '+61' },
-  { code: 'EU', name: 'European Union', dialCode: '+33' },
+  { code: 'EU', name: 'Europe', dialCode: '+33' },
 
   // Rest of the countries in alphabetical order
   { code: 'AF', name: 'Afghanistan', dialCode: '+93' },

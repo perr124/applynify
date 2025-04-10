@@ -17,7 +17,7 @@ interface LanguageSelectorProps {
 const regions: Region[] = [
   { code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD' },
   { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP' },
-  { code: 'EU', name: 'European Union', flag: '🇪🇺', currency: 'EUR' },
+  { code: 'EU', name: 'Europe', flag: '🇪🇺', currency: 'EUR' },
   { code: 'CA', name: 'Canada', flag: '🇨🇦', currency: 'CAD' },
   { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
 ];
