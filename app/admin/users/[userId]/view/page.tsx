@@ -352,7 +352,7 @@ export default function ViewUser() {
                           <dt className='text-sm font-medium text-yellow-800'>
                             Additional Information
                           </dt>
-                          <dd className='mt-1 text-sm text-yellow-700'>
+                          <dd className='mt-1 text-sm text-yellow-700 whitespace-pre-wrap'>
                             {user.availability.additionalInfo}
                           </dd>
                         </div>
