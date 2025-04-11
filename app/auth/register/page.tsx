@@ -16,6 +16,34 @@ function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [password, setPassword] = useState('');
+  const [passwordFocused, setPasswordFocused] = useState(false);
+
+  const validatePassword = (password: string) => {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&amp;*(),.?&quot;:{}|&lt;&gt;]/.test(password);
+
+    if (password.length < minLength) {
+      return 'Password must be at least 8 characters long';
+    }
+    if (!hasUpperCase) {
+      return 'Password must contain at least one uppercase letter';
+    }
+    if (!hasLowerCase) {
+      return 'Password must contain at least one lowercase letter';
+    }
+    if (!hasNumbers) {
+      return 'Password must contain at least one number';
+    }
+    if (!hasSpecialChar) {
+      return 'Password must contain at least one special character (!@#$%^&amp;*(),.?&quot;:{}|&lt;&gt;)';
+    }
+    return null;
+  };
 
   // Show loading state while checking session
   if (status === 'loading') {
@@ -40,6 +68,7 @@ function RegisterPage() {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setPasswordError(null);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -47,6 +76,14 @@ function RegisterPage() {
     const confirmPassword = formData.get('confirmPassword') as string;
     const firstName = formData.get('firstName') as string;
     const lastName = formData.get('lastName') as string;
+
+    // Validate password
+    const passwordValidationError = validatePassword(password);
+    if (passwordValidationError) {
+      setPasswordError(passwordValidationError);
+      setIsLoading(false);
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
@@ -170,6 +207,10 @@ function RegisterPage() {
                     name='password'
                     type={showPassword ? 'text' : 'password'}
                     required
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    onFocus={() => setPasswordFocused(true)}
+                    onBlur={() => setPasswordFocused(false)}
                     className='relative block w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:border-[#0d824a] focus:ring-[#0d824a] sm:text-sm'
                     placeholder='Password'
                   />
@@ -216,6 +257,172 @@ function RegisterPage() {
                     )}
                   </button>
                 </div>
+                {passwordError && <p className='mt-2 text-sm text-red-600'>{passwordError}</p>}
+                {passwordFocused && (
+                  <div className='mt-2 text-xs text-gray-500'>
+                    <div className='grid grid-cols-2 gap-1'>
+                      <div
+                        className={`flex items-center ${
+                          password.length >= 8 ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 mr-1 ${
+                            password.length >= 8 ? 'text-green-600' : 'text-red-600'
+                          }`}
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          {password.length >= 8 ? (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M5 13l4 4L19 7'
+                            />
+                          ) : (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          )}
+                        </svg>
+                        8+ characters
+                      </div>
+                      <div
+                        className={`flex items-center ${
+                          /[A-Z]/.test(password) ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 mr-1 ${
+                            /[A-Z]/.test(password) ? 'text-green-600' : 'text-red-600'
+                          }`}
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          {/[A-Z]/.test(password) ? (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M5 13l4 4L19 7'
+                            />
+                          ) : (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          )}
+                        </svg>
+                        Uppercase
+                      </div>
+                      <div
+                        className={`flex items-center ${
+                          /[a-z]/.test(password) ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 mr-1 ${
+                            /[a-z]/.test(password) ? 'text-green-600' : 'text-red-600'
+                          }`}
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          {/[a-z]/.test(password) ? (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M5 13l4 4L19 7'
+                            />
+                          ) : (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          )}
+                        </svg>
+                        Lowercase
+                      </div>
+                      <div
+                        className={`flex items-center ${
+                          /\d/.test(password) ? 'text-green-600' : 'text-red-600'
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 mr-1 ${
+                            /\d/.test(password) ? 'text-green-600' : 'text-red-600'
+                          }`}
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          {/\d/.test(password) ? (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M5 13l4 4L19 7'
+                            />
+                          ) : (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          )}
+                        </svg>
+                        Number
+                      </div>
+                      <div
+                        className={`flex items-center ${
+                          /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                            ? 'text-green-600'
+                            : 'text-red-600'
+                        }`}
+                      >
+                        <svg
+                          className={`w-4 h-4 mr-1 ${
+                            /[!@#$%^&*(),.?":{}|<>]/.test(password)
+                              ? 'text-green-600'
+                              : 'text-red-600'
+                          }`}
+                          fill='none'
+                          viewBox='0 0 24 24'
+                          stroke='currentColor'
+                        >
+                          {/[!@#$%^&*(),.?":{}|<>]/.test(password) ? (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M5 13l4 4L19 7'
+                            />
+                          ) : (
+                            <path
+                              strokeLinecap='round'
+                              strokeLinejoin='round'
+                              strokeWidth={2}
+                              d='M6 18L18 6M6 6l12 12'
+                            />
+                          )}
+                        </svg>
+                        Special character
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <label htmlFor='confirmPassword' className='sr-only'>
