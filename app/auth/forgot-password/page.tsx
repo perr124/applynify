@@ -8,11 +8,13 @@ export default function ForgotPassword() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleUser, setIsGoogleUser] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setIsGoogleUser(false);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -27,6 +29,9 @@ export default function ForgotPassword() {
       const data = await res.json();
 
       if (!res.ok) {
+        if (data.isGoogleUser) {
+          setIsGoogleUser(true);
+        }
         throw new Error(data.error || 'Something went wrong');
       }
 
@@ -61,6 +66,16 @@ export default function ForgotPassword() {
             {error && (
               <div className='rounded-lg bg-red-50 p-4'>
                 <div className='text-sm text-red-700'>{error}</div>
+                {isGoogleUser && (
+                  <div className='mt-2 text-sm text-red-700'>
+                    <Link
+                      href='/auth/signin'
+                      className='font-medium text-[#0d824a] hover:opacity-80'
+                    >
+                      Sign in with Google
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
             <div>
