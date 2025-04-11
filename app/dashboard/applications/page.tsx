@@ -239,7 +239,9 @@ export default function Applications() {
                       <label className='block text-sm font-medium text-gray-500'>Location</label>
                       <div className='mt-1 flex items-center text-gray-900'>
                         <MapPin className='flex-shrink-0 mr-1.5 h-4 w-4' />
-                        {selectedApplication.location}
+                        {selectedApplication.jobType === 'remote'
+                          ? 'Remote'
+                          : selectedApplication.location}
                       </div>
                     </div>
                     {selectedApplication.salary && (
