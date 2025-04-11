@@ -1,6 +1,8 @@
 import { sendEmail } from './mailgun';
 import config from '@/config';
 
+const logoUrl = `${process.env.NEXTAUTH_URL}/icon.png`;
+
 export async function sendPasswordResetEmail(email: string, token: string) {
   const resetLink = `${process.env.NEXTAUTH_URL}/auth/reset-password?token=${token}`;
 
@@ -9,8 +11,12 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     subject: 'Reset your password',
     text: `Click the following link to reset your password: ${resetLink}`,
     html: `
-      <p>Click the following link to reset your password:</p>
-      <p><a href="${resetLink}">${resetLink}</a></p>
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px;" />
+        <h1>Reset your password</h1>
+        <p>Click the following link to reset your password:</p>
+        <p><a href="${resetLink}">${resetLink}</a></p>
+      </div>
     `,
   });
 }
@@ -25,9 +31,12 @@ export async function sendVerificationEmail(email: string, token: string) {
   console.log('Verification URL:', verificationUrl);
 
   const html = `
-    <h1>Verify your email</h1>
-    <p>Click the link below to verify your email address:</p>
-    <a href="${verificationUrl}">Verify Email</a>
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+      <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
+      <h1>Verify your email</h1>
+      <p>Click the link below to verify your email address:</p>
+      <a href="${verificationUrl}" style="display: inline-block; margin-top: 10px;">Verify Email</a>
+    </div>
   `;
 
   try {
@@ -51,7 +60,8 @@ export async function sendAdminMessageNotification(email: string, userFirstName:
     subject: 'New Message from Applynify Admin',
     text: `Hello ${userFirstName}, you have received a new message from Admin. Please log in to your dashboard to view and respond to this message.`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
         <h2 style="color: #333;">New Message from Admin</h2>
         <p>Hello ${userFirstName},</p>
         <p>You have received a new message from Admin.</p>
@@ -77,7 +87,8 @@ export async function sendApplicationCompleteNotification(email: string, userFir
     subject: 'Your Applications Have Been Completed',
     text: `Hello ${userFirstName}, your job applications have been completed and submitted. Please log in to your dashboard to view the status.`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
         <h2 style="color: #333;">Applications Completed</h2>
         <p>Hello ${userFirstName},</p>
         <p>All your job applications have been completed and submitted successfully.</p>
@@ -103,7 +114,8 @@ export async function sendPaymentConfirmationEmail(email: string, userFirstName:
     subject: 'Thank You for Your Purchase',
     text: `Hello ${userFirstName}, thank you for your purchase. We are working on your order and will notify you once it's complete.`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
         <h2 style="color: #333;">Thank You for Your Purchase</h2>
         <p>Hello ${userFirstName},</p>
         <p>Thank you for your purchase. We are working on your order and will notify you once it's complete.</p>
