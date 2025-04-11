@@ -15,15 +15,34 @@ export async function POST(req: Request) {
 
     const { applications, userId, applicationComplete } = await req.json();
 
+    // First, get the existing applications to preserve their appliedAt timestamps
+    const user = await User.findById(userId).select('appliedRoles');
+    const existingApplications = user?.appliedRoles || [];
+
+    // Create a map of existing applications by company name and job title
+    const existingAppsMap = new Map();
+    existingApplications.forEach((app: any) => {
+      const key = `${app.companyName}-${app.jobTitle}`;
+      existingAppsMap.set(key, app);
+    });
+
+    // Prepare the new applications array, preserving existing appliedAt timestamps
+    const updatedApplications = applications.map((app: any) => {
+      const key = `${app.companyName}-${app.jobTitle}`;
+      const existingApp = existingAppsMap.get(key);
+
+      return {
+        ...app,
+        status: applicationComplete ? 'completed' : 'draft',
+        appliedAt: existingApp?.appliedAt || new Date(),
+      };
+    });
+
     const result = await User.updateOne(
       { _id: userId },
       {
         $set: {
-          appliedRoles: applications.map((app: any) => ({
-            ...app,
-            status: applicationComplete ? 'completed' : 'draft',
-            appliedAt: app.appliedAt || new Date(),
-          })),
+          appliedRoles: updatedApplications,
           ...(applicationComplete && { applicationsStatus: 'completed' }),
         },
       }
