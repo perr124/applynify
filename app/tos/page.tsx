@@ -10,8 +10,8 @@ export const metadata = getSEOTags({
 const PrivacyPolicy = () => {
   return (
     <main className='max-w-xl mx-auto'>
-      <div className='p-5'>
-        <Link href='/' className='btn btn-ghost'>
+      <div className='p-5 pt-16'>
+        <Link href='/' className='btn btn-ghost absolute top-4 left-4'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 20 20'
@@ -47,8 +47,8 @@ const PrivacyPolicy = () => {
             do not use our services. These Terms apply to your use of applynify.com ("Website") and
             any services provided through it. If you wish to terminate this Agreement at any time,
             you can request for your account to be closed by contacting{' '}
-            <a href='mailto:hello@applnify.com' className='text-blue-600 hover:underline'>
-              hello@applnify.com
+            <a href='mailto:hello@applynify.com' className='text-blue-600 hover:underline'>
+              hello@applynify.com
             </a>{' '}
             and no longer accessing or using our services.
           </p>

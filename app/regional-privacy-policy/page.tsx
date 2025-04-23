@@ -10,8 +10,8 @@ export const metadata = getSEOTags({
 const RegionalPrivacyPolicy = () => {
   return (
     <main className='max-w-xl mx-auto'>
-      <div className='p-5'>
-        <Link href='/' className='btn btn-ghost'>
+      <div className='p-5 pt-16'>
+        <Link href='/' className='btn btn-ghost absolute top-4 left-4'>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             viewBox='0 0 20 20'
