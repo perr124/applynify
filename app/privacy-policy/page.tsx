@@ -139,7 +139,18 @@ const PrivacyPolicy = () => {
             notify you via email of significant changes.
           </p>
 
-          <h2 className='text-xl font-bold'>8. Contact Information</h2>
+          <h2 className='text-xl font-bold'>8. Regional Privacy Rights</h2>
+          <p>
+            Depending on your location, you may have additional rights under local data protection
+            laws. We have prepared region-specific privacy information for users in the European
+            Union (EU), United Kingdom (UK), United States (US), Canada, and Australia. To review
+            this information, please visit{' '}
+            <a href='/regional-privacy-policy' className='text-blue-600 hover:underline'>
+              our Regional Privacy Policy.
+            </a>
+          </p>
+
+          <h2 className='text-xl font-bold'>9. Contact Information</h2>
           <p>
             If you have any questions or concerns about this Privacy Policy, please contact us at{' '}
             <a href='mailto:hello@applynify.com' className='text-blue-600 hover:underline'>

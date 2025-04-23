@@ -177,8 +177,15 @@ const PrivacyPolicy = () => {
 
           <h2 className='text-xl font-bold'>8. Governing Law and Dispute Resolution</h2>
           <p>
-            These Terms are governed by the laws of [Insert Jurisdiction]. Any disputes shall be
-            resolved through arbitration or the courts in [Insert Location].
+            These Terms shall be governed by applicable laws, and your use of our services is also
+            subject to{' '}
+            <a href='/privacy-policy' className='text-blue-600 hover:underline'>
+              our Privacy Policy.
+            </a>
+            , which includes region-specific information for users in the EU, UK, US, Canada, and
+            Australia. By using our services, you agree to resolve any disputes in a fair and
+            reasonable manner, including—where applicable—negotiation, mediation, arbitration, or
+            legal proceedings in an appropriate and competent forum.
           </p>
 
           <h2 className='text-xl font-bold'>9. Changes to These Terms</h2>
