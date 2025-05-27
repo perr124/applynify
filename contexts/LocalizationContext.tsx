@@ -6,7 +6,7 @@ import { getUserLocation } from '@/libs/geolocation';
 interface Region {
   code: string;
   name: string;
-  flag: string;
+  flagPath: string;
   currency: string;
 }
 
@@ -19,16 +19,16 @@ interface LocalizationContextType {
 const defaultRegion: Region = {
   code: 'US',
   name: 'United States',
-  flag: '🇺🇸',
+  flagPath: '/us.svg',
   currency: 'USD',
 };
 
 const regions: Record<string, Region> = {
-  US: { code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD' },
-  GB: { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP' },
-  EU: { code: 'EU', name: 'Europe', flag: '🇪🇺', currency: 'EUR' },
-  CA: { code: 'CA', name: 'Canada', flag: '🇨🇦', currency: 'CAD' },
-  AU: { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
+  US: { code: 'US', name: 'United States', flagPath: '/us.svg', currency: 'USD' },
+  GB: { code: 'GB', name: 'United Kingdom', flagPath: '/gb.svg', currency: 'GBP' },
+  EU: { code: 'EU', name: 'Europe', flagPath: '/eu.svg', currency: 'EUR' },
+  CA: { code: 'CA', name: 'Canada', flagPath: '/ca.svg', currency: 'CAD' },
+  AU: { code: 'AU', name: 'Australia', flagPath: '/au.svg', currency: 'AUD' },
 };
 
 const LocalizationContext = createContext<LocalizationContextType | undefined>(undefined);

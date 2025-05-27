@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 interface Region {
   code: string;
   name: string;
-  flag: string;
+  flagPath: string;
   currency: string;
 }
 
@@ -15,11 +15,11 @@ interface LanguageSelectorProps {
 }
 
 const regions: Region[] = [
-  { code: 'US', name: 'United States', flag: '🇺🇸', currency: 'USD' },
-  { code: 'GB', name: 'United Kingdom', flag: '🇬🇧', currency: 'GBP' },
-  { code: 'EU', name: 'Europe', flag: '🇪🇺', currency: 'EUR' },
-  { code: 'CA', name: 'Canada', flag: '🇨🇦', currency: 'CAD' },
-  { code: 'AU', name: 'Australia', flag: '🇦🇺', currency: 'AUD' },
+  { code: 'US', name: 'United States', flagPath: '/us.svg', currency: 'USD' },
+  { code: 'GB', name: 'United Kingdom', flagPath: '/gb.svg', currency: 'GBP' },
+  { code: 'EU', name: 'Europe', flagPath: '/eu.svg', currency: 'EUR' },
+  { code: 'CA', name: 'Canada', flagPath: '/ca.svg', currency: 'CAD' },
+  { code: 'AU', name: 'Australia', flagPath: '/au.svg', currency: 'AUD' },
 ];
 
 const LanguageSelector = ({ currentRegion, onRegionChange }: LanguageSelectorProps) => {
@@ -50,7 +50,11 @@ const LanguageSelector = ({ currentRegion, onRegionChange }: LanguageSelectorPro
         onClick={() => setIsOpen(!isOpen)}
         className='flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-base-300 transition-colors'
       >
-        <span className='text-xl'>{currentRegion.flag}</span>
+        <img
+          src={currentRegion.flagPath}
+          alt={`${currentRegion.name} flag`}
+          className='w-5 h-4 object-contain'
+        />
         <span className='text-sm font-medium'>{currentRegion.code}</span>
       </button>
 
@@ -68,7 +72,11 @@ const LanguageSelector = ({ currentRegion, onRegionChange }: LanguageSelectorPro
                   currentRegion.code === region.code ? 'bg-base-300' : ''
                 }`}
               >
-                <span className='text-xl'>{region.flag}</span>
+                <img
+                  src={region.flagPath}
+                  alt={`${region.name} flag`}
+                  className='w-5 h-4 object-contain'
+                />
                 <span className='text-sm font-medium'>{region.name}</span>
                 <span className='text-sm text-base-content/60 ml-auto'>{region.currency}</span>
               </button>

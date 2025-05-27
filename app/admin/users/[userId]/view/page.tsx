@@ -11,12 +11,12 @@ import type {
 } from '@/libs/validations/userPreferences';
 
 // Add regions mapping
-const regions: Record<string, { name: string; flag: string }> = {
-  US: { name: 'United States', flag: '🇺🇸' },
-  GB: { name: 'United Kingdom', flag: '🇬🇧' },
-  EU: { name: 'Europe', flag: '🇪🇺' },
-  CA: { name: 'Canada', flag: '🇨🇦' },
-  AU: { name: 'Australia', flag: '🇦🇺' },
+const regions: Record<string, { name: string; flagPath: string }> = {
+  US: { name: 'United States', flagPath: '/us.svg' },
+  GB: { name: 'United Kingdom', flagPath: '/gb.svg' },
+  EU: { name: 'Europe', flagPath: '/eu.svg' },
+  CA: { name: 'Canada', flagPath: '/ca.svg' },
+  AU: { name: 'Australia', flagPath: '/au.svg' },
 };
 
 type User = {
@@ -111,7 +111,11 @@ export default function ViewUser() {
               <div>
                 <dt className='text-sm font-medium text-gray-500'>Country</dt>
                 <dd className='mt-1 flex items-center gap-2'>
-                  <span className='text-lg'>{regions[user.localization]?.flag}</span>
+                  <img
+                    src={regions[user.localization]?.flagPath}
+                    alt={`${regions[user.localization]?.name || user.localization} flag`}
+                    className='w-5 h-4 object-contain'
+                  />
                   <span>{regions[user.localization]?.name || user.localization}</span>
                 </dd>
               </div>
