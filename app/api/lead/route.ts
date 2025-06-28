@@ -10,22 +10,28 @@ export async function POST(req: NextRequest) {
 
   const body = await req.json();
 
-  if (!body.email) {
-    return NextResponse.json({ error: 'Email is required' }, { status: 400 });
+  if (!body.email || !body.name || !body.industry) {
+    return NextResponse.json(
+      {
+        error: 'Email, name, and industry are required',
+      },
+      { status: 400 }
+    );
   }
 
   try {
-    // Here you can add your own logic
-    // For instance, sending a welcome email (use the the sendEmail helper function from /libs/mailgun)
-    // For instance, saving the lead in the database (uncomment the code below)
+    // Check if lead already exists
+    const existingLead = await Lead.findOne({ email: body.email });
 
-    // const lead = await Lead.findOne({ email: body.email });
+    if (!existingLead) {
+      await Lead.create({
+        email: body.email,
+        name: body.name,
+        industry: body.industry,
+      });
+    }
 
-    // if (!lead) {
-    // 	await Lead.create({ email: body.email });
-    // }
-
-    return NextResponse.json({});
+    return NextResponse.json({ success: true });
   } catch (e) {
     console.error(e);
     return NextResponse.json({ error: e.message }, { status: 500 });
