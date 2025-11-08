@@ -74,3 +74,16 @@ function patch(method: ConsoleMethod) {
 (['log', 'debug', 'info', 'warn', 'error'] as ConsoleMethod[]).forEach(patch);
 
 export {}; // side-effect only module
+// Also export an audit logger that ALWAYS logs (even in production)
+export function logAudit(event: string, data?: unknown): void {
+  try {
+    const payload =
+      data === undefined
+        ? ''
+        : ' ' + JSON.stringify({ data: sanitize(data) });
+    // Write directly to stdout to bypass patched console in production
+    process.stdout.write(`[Applynify][AUDIT] ${new Date().toISOString()} ${event}${payload}\n`);
+  } catch {
+    process.stdout.write(`[Applynify][AUDIT] ${new Date().toISOString()} ${event}\n`);
+  }
+}
