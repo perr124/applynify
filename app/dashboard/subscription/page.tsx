@@ -100,8 +100,9 @@ export default function ServicesPage() {
             features: [
               `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
               'Write cover letters on your behalf',
-              'Priority service within 5 days',
+              'Priority service within 4 days',
               'Advanced Application tracking in your dashboard',
+              'Live chat with your Career Representative',
               '24/7 priority support',
               'Custom job search strategies',
             ],

@@ -29,8 +29,9 @@ const Pricing = () => {
       features: [
         `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
         'Write cover letters on your behalf',
-        'Quick service within 5 days',
+        'Service within 4 days',
         'Advanced Application tracking in your dashboard',
+        'Live chat with your Career Representative',
         'Standard support',
       ],
       buttonText: 'Get Started',
@@ -46,8 +47,9 @@ const Pricing = () => {
       features: [
         `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
         'Write cover letters on your behalf',
-        'Priority service within 4 days',
+        'Priority service within 6 days',
         'Advanced Application tracking in your dashboard',
+        'Live chat with your Career Representative',
         '24/7 priority support',
         'Custom job search strategies',
       ],
@@ -67,7 +69,7 @@ const Pricing = () => {
               Choose the plan that's right for your job search
             </p>
             <p className='text-sm text-gray-400 mt-4'>
-              One-time payment, no recurring fees or hidden charges
+              One-time payment, no recurring fees or hidden charges!
             </p>
           </div>
           <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
@@ -98,7 +100,7 @@ const Pricing = () => {
           <h2 className='text-4xl font-bold mb-4'>Simple, Transparent Pricing</h2>
           <p className='text-gray-600 text-lg'>Choose the plan that's right for your job search</p>
           <p className='text-sm text-gray-400 mt-4'>
-            One-time payment, no recurring fees or hidden charges
+            One-time payment, no recurring fees or hidden charges!
           </p>
         </div>
 

@@ -45,7 +45,7 @@ const faqList: FAQItemProps[] = [
     answer: (
       <div className='space-y-2 leading-relaxed'>
         Yes! Every application is handled by a real, professionally trained assistant. No bots or
-        generic spam — just personalized, high-quality submissions.
+        generic spam, just personalized, high-quality submissions.
       </div>
     ),
   },

@@ -28,8 +28,8 @@ const Hero = () => {
 
           <p className='text-lg opacity-80 leading-relaxed max-w-2xl mx-auto'>
             Our team of dedicated assistants take care of your job applications from start to
-            finish—vetting and enhancing your resume, finding the best opportunities, and submitting
-            tailored applications to help you skip the frustrating process.
+            finish. Finding the best opportunities, and submitting tailored applications to help you
+            skip the frustrating process.
           </p>
         </div>
 
@@ -46,8 +46,8 @@ const Hero = () => {
         {/* Stats */}
         <div className='grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12 pt-8'>
           <div className='space-y-2'>
-            <h3 className='text-4xl font-bold'>450+</h3>
-            <p className='text-base-content/60'>Applications Sent</p>
+            <h3 className='text-4xl font-bold'>2.5k+</h3>
+            <p className='text-base-content/60'>People Reached</p>
           </div>
           <div className='space-y-2'>
             <h3 className='text-4xl font-bold'>40+</h3>
