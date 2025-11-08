@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
         url: stripePortalUrl,
       });
     } catch (e) {
-      console.error(e);
+      console.error('Create portal error', { error: e });
       return NextResponse.json({ error: e?.message }, { status: 500 });
     }
   } else {

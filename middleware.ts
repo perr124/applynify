@@ -67,7 +67,7 @@ export default withAuth(
         return NextResponse.redirect(new URL('/onboarding', req.url));
       }
     } catch (error) {
-      console.error('Error checking user status:', error);
+      console.error('Error checking user status', { error });
     }
 
     return NextResponse.next();

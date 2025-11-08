@@ -28,7 +28,6 @@ export async function sendVerificationEmail(email: string, token: string) {
   }
 
   const verificationUrl = `${process.env.NEXTAUTH_URL}/auth/verify?token=${token}`;
-  console.log('Verification URL:', verificationUrl);
 
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">

@@ -9,10 +9,7 @@ export const sendOpenAi = async (
 ) => {
   const url = 'https://api.openai.com/v1/chat/completions';
 
-  console.log('Ask GPT >>>');
-  messages.map((m) =>
-    console.log(' - ' + m.role.toUpperCase() + ': ' + m.content)
-  );
+  console.debug('Ask GPT');
 
   const body = JSON.stringify({
     model: 'gpt-4',
@@ -35,21 +32,16 @@ export const sendOpenAi = async (
     const answer = res.data.choices[0].message.content;
     const usage = res?.data?.usage;
 
-    console.log('>>> ' + answer);
-    console.log(
-      'TOKENS USED: ' +
-        usage?.total_tokens +
-        ' (prompt: ' +
-        usage?.prompt_tokens +
-        ' / response: ' +
-        usage?.completion_tokens +
-        ')'
-    );
-    console.log('\n');
+    console.debug('GPT answer', { length: answer?.length });
+    console.debug('Tokens used', {
+      total: usage?.total_tokens,
+      prompt: usage?.prompt_tokens,
+      completion: usage?.completion_tokens,
+    });
 
     return answer;
   } catch (e) {
-    console.error('GPT Error: ' + e?.response?.status, e?.response?.data);
+    console.error('GPT Error', { status: e?.response?.status, data: e?.response?.data });
     return null;
   }
 };

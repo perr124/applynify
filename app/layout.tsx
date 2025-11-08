@@ -4,6 +4,7 @@ import { Viewport } from 'next';
 import { getSEOTags } from '@/libs/seo';
 import ClientLayout from '@/components/LayoutClient';
 import config from '@/config';
+import '@/libs/logger';
 import './globals.css';
 import { MessageProvider } from './contexts/MessageContext';
 

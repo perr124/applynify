@@ -11,7 +11,7 @@ export async function getUserLocation(): Promise<GeoLocation | null> {
     const data = await response.json();
 
     if (data.status === 'success') {
-      console.log(data, 'geolo');
+      console.debug('Geo lookup success');
       // Map country codes to our supported regions
       const countryToRegion: Record<string, { code: string; currency: string }> = {
         US: { code: 'US', currency: 'USD' },
@@ -35,7 +35,7 @@ export async function getUserLocation(): Promise<GeoLocation | null> {
     }
     return null;
   } catch (error) {
-    console.error('Error fetching location:', error);
+    console.error('Error fetching location', { error });
     return null;
   }
 }

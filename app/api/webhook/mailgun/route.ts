@@ -50,7 +50,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({});
   } catch (e) {
     const error = e as Error;
-    console.error(error.message);
+    console.error('Mailgun webhook error', { message: error.message });
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

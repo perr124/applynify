@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   try {
     await connectMongo();
     const body = await req.json();
-    console.log('Received checkout request:', body); // Debug log
+    console.debug('Received checkout request', { hasBody: !!body, mode: body?.mode, priceId: body?.priceId });
 
     if (!body.priceId) {
       return NextResponse.json({ error: 'Price ID is required' }, { status: 400 });
@@ -29,13 +29,12 @@ export async function POST(req: NextRequest) {
     }
 
     const session = await getServerSession(authOptions);
-    console.log('User session:', session); // Debug log
+    console.debug('User session retrieved', { hasSession: !!session, hasUser: !!session?.user });
 
     const user = session?.user?.email ? await User.findOne({ email: session.user.email }) : null;
-    console.log('Found user:', user?._id); // Debug log
+    console.debug('Found user', { hasUser: !!user, userId: user?._id?.toString() });
 
     const { priceId, mode, successUrl, cancelUrl } = body;
-    console.log(session?.user?.email, user, 'stripe user');
     const stripeSessionURL = await createCheckout({
       priceId,
       mode,
@@ -51,10 +50,10 @@ export async function POST(req: NextRequest) {
       // couponId: body.couponId,
     });
 
-    console.log('Created stripe session URL:', stripeSessionURL); // Debug log
+    console.debug('Created stripe session URL', { hasUrl: !!stripeSessionURL });
     return NextResponse.json({ url: stripeSessionURL });
   } catch (e) {
-    console.error('Checkout error:', e);
+    console.error('Checkout error', { error: e });
     return NextResponse.json({ error: e?.message }, { status: 500 });
   }
 }

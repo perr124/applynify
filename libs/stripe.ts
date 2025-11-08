@@ -38,11 +38,7 @@ export const createCheckout = async ({
   couponId,
 }: CreateCheckoutParams): Promise<string> => {
   try {
-    console.log('Creating checkout session with:', {
-      priceId,
-      mode,
-      clientReferenceId,
-    });
+    console.debug('Creating checkout session', { priceId, mode, hasClientRef: !!clientReferenceId });
 
     const extraParams: {
       customer?: string;
@@ -93,7 +89,7 @@ export const createCheckout = async ({
     // @ts-ignore
     return session.url;
   } catch (error) {
-    console.error('Stripe checkout error:', error);
+    console.error('Stripe checkout error', { error });
     throw error;
   }
 };

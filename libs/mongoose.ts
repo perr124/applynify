@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import User from '@/models/User';
+import '@/libs/logger';
 
 const connectMongo = async () => {
   if (!process.env.MONGODB_URI) {

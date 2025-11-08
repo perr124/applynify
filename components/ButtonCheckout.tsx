@@ -19,7 +19,7 @@ const ButtonCheckout = ({
 
   const handlePayment = async () => {
     setIsLoading(true);
-    console.log('Starting payment flow with:', { priceId, mode }); // Debug log
+    console.debug('Starting payment flow', { priceId, mode }); // Debug log
 
     try {
       const response = await apiClient.post('/stripe/create-checkout', {
@@ -29,7 +29,7 @@ const ButtonCheckout = ({
         mode,
       });
 
-      console.log('Checkout response:', response); // Debug log
+      console.debug('Checkout response received', { hasUrl: !!response?.url }); // Debug log
 
       // @ts-ignore
       if (!response.url) {
@@ -40,7 +40,7 @@ const ButtonCheckout = ({
       // @ts-ignore
       window.location.href = response.url;
     } catch (e) {
-      console.error('Payment error:', e);
+      console.error('Payment error', { error: e });
     } finally {
       setIsLoading(false);
     }

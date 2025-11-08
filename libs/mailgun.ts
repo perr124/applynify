@@ -9,10 +9,7 @@ const mg = mailgun.client({
 });
 
 if (!process.env.MAILGUN_API_KEY && process.env.NODE_ENV === 'development') {
-  console.group('⚠️ MAILGUN_API_KEY missing from .env');
-  console.error("It's not mandatory but it's required to send emails.");
-  console.error("If you don't need it, remove the code from /libs/mailgun.js");
-  console.groupEnd();
+  console.warn('MAILGUN_API_KEY missing from .env (emails will not be sent in dev).');
 }
 
 /**
@@ -47,7 +44,6 @@ export const sendEmail = async ({
     html,
     ...(replyTo && { 'h:Reply-To': replyTo }),
   };
-  console.log(process.env.MAILGUN_API_KEY, 'process.env.MAILGUN_API_KEY');
   try {
     await mg.messages.create(
       (config.mailgun.subdomain ? `${config.mailgun.subdomain}.` : '') + config.domainName,

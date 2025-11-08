@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
-    console.error(`Webhook signature verification failed. ${err.message}`);
+    console.error('Webhook signature verification failed', { message: err.message });
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
         const stripeObject: Stripe.Checkout.Session = event.data.object as Stripe.Checkout.Session;
 
         const session = await findCheckoutSession(stripeObject.id);
-        console.log('Retrieved checkout session:', {
+        console.debug('Retrieved checkout session', {
           sessionId: stripeObject.id,
           hasCustomer: !!session?.customer,
           hasLineItems: !!session?.line_items?.data?.length,
@@ -58,21 +58,21 @@ export async function POST(req: NextRequest) {
         const priceId = session?.line_items?.data[0]?.price.id;
         const userId = stripeObject.client_reference_id;
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
-        console.log('plansss', plan);
+        console.debug('Matched plan for price', { hasPlan: !!plan });
 
         // Add error handling and logging
         if (!session) {
-          console.error('Failed to retrieve checkout session:', stripeObject.id);
+          console.error('Failed to retrieve checkout session', { sessionId: stripeObject.id });
           throw new Error('Failed to retrieve checkout session');
         }
 
         if (!customerId) {
-          console.error('No customer ID found in session:', stripeObject.id);
+          console.error('No customer ID found in session', { sessionId: stripeObject.id });
           throw new Error('No customer ID found in session');
         }
 
         if (!priceId) {
-          console.error('No price ID found in session:', stripeObject.id);
+          console.error('No price ID found in session', { sessionId: stripeObject.id });
           throw new Error('No price ID found in session');
         }
 
@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
           if (!user) {
             throw new Error(`User not found with ID: ${userId}`);
           }
-          console.log('user found', user);
+          console.debug('User found for client_reference_id', { userId: user?._id?.toString() });
         } else if (customer.email) {
           user = await User.findOne({ email: customer.email });
 
@@ -98,13 +98,13 @@ export async function POST(req: NextRequest) {
             await user.save();
           }
         } else {
-          console.error('No user found');
+          console.error('No user found for checkout session', { sessionId: stripeObject.id });
           throw new Error('No user found');
         }
 
         // Add extra validation before saving
         if (!priceId || !customerId) {
-          console.error('Missing required fields before user save:', { priceId, customerId });
+          console.error('Missing required fields before user save', { hasPriceId: !!priceId, hasCustomerId: !!customerId });
           throw new Error('Missing required fields for user update');
         }
 
@@ -119,14 +119,14 @@ export async function POST(req: NextRequest) {
         // Send payment confirmation email
         try {
           await sendPaymentConfirmationEmail(user.email, user.name || 'there');
-          console.log('Payment confirmation email sent successfully');
+          console.debug('Payment confirmation email sent successfully', { userId: user._id?.toString() });
         } catch (emailError) {
-          console.error('Failed to send payment confirmation email:', emailError);
+          console.error('Failed to send payment confirmation email', { error: emailError });
           // Don't throw the error as the payment was successful, just log it
         }
 
         // Add success logging
-        console.log('Successfully updated user after payment:', {
+        console.debug('Successfully updated user after payment', {
           userId: user._id,
           priceId,
           customerId,
@@ -197,7 +197,7 @@ export async function POST(req: NextRequest) {
       // Unhandled event type
     }
   } catch (e) {
-    console.error('stripe error: ', e.message);
+    console.error('Stripe webhook error', { message: e.message });
   }
 
   return NextResponse.json({});
