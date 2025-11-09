@@ -1530,7 +1530,7 @@ export default function OnboardingQuestionnaire() {
                           Native Hawaiian or Other Pacific Islander
                         </option>
                         <option value='white'>White</option>
-                        <option value='two-or-more'>Two or More Races</option>
+                        <option value='two-or-more'>Mixed or Multiple ethnic groups</option>
                         <option value='other'>Other</option>
                       </select>
                     </div>
@@ -1609,7 +1609,7 @@ export default function OnboardingQuestionnaire() {
                       onChange={(e) => updateFormData('availability', 'startDate', e.target.value)}
                     >
                       <option value=''>Select availability</option>
-                      <option value='immediately'>Immediately</option>
+                      <option value='Immediately'>Immediately</option>
                       <option value='2-weeks'>In 2 weeks</option>
                       <option value='1-month'>In 1 month</option>
                       <option value='2-months'>In 2 months</option>
@@ -1787,7 +1787,7 @@ export default function OnboardingQuestionnaire() {
                     <textarea
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       rows={5}
-                      placeholder="This could include any additional languages you speak, job roles you've recently applied to, or any other important information we should know."
+                      placeholder="This could include job roles you've recently applied to, any additional languages you speak, disabilities, or any other important information we should know."
                       value={formData.availability.additionalInfo}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         updateFormData('availability', 'additionalInfo', e.target.value)
@@ -1874,6 +1874,7 @@ export default function OnboardingQuestionnaire() {
                       <option value='linkedin'>LinkedIn</option>
                       <option value='facebook'>Facebook</option>
                       <option value='instagram'>Instagram</option>
+                      <option value='instagram'>TikTok</option>
                       <option value='twitter'>X</option>
                       <option value='friend'>Friend</option>
                       <option value='other'>Other</option>

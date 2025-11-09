@@ -1,5 +1,7 @@
 export const countries = [
   { value: '', label: 'Select Country' },
+  { value: 'United Kingdom', label: 'United Kingdom' },
+  { value: 'United States', label: 'United States' },
   { value: 'Afghanistan', label: 'Afghanistan' },
   { value: 'Albania', label: 'Albania' },
   { value: 'Algeria', label: 'Algeria' },
@@ -183,8 +185,6 @@ export const countries = [
   { value: 'Uganda', label: 'Uganda' },
   { value: 'Ukraine', label: 'Ukraine' },
   { value: 'United Arab Emirates', label: 'United Arab Emirates' },
-  { value: 'United Kingdom', label: 'United Kingdom' },
-  { value: 'United States', label: 'United States' },
   { value: 'Uruguay', label: 'Uruguay' },
   { value: 'Uzbekistan', label: 'Uzbekistan' },
   { value: 'Vanuatu', label: 'Vanuatu' },

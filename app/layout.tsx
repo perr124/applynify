@@ -7,6 +7,7 @@ import config from '@/config';
 import '@/libs/logger';
 import './globals.css';
 import { MessageProvider } from './contexts/MessageContext';
+import { Analytics } from '@vercel/analytics/react';
 
 const font = Inter({ subsets: ['latin'] });
 
@@ -27,6 +28,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <MessageProvider>
           <ClientLayout>{children}</ClientLayout>
+          <Analytics />
         </MessageProvider>
       </body>
     </html>

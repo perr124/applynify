@@ -29,7 +29,7 @@ const PrivacyPolicy = () => {
         <h1 className='text-3xl font-extrabold pb-6'>Terms of Service</h1>
 
         <div className='leading-relaxed space-y-4'>
-          <p>Last Updated: April 1, 2025</p>
+          <p>Last Updated: November 1, 2025</p>
 
           <p>Welcome to Applynify!</p>
 

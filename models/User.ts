@@ -217,7 +217,7 @@ const userSchema = new mongoose.Schema(
     },
     marketingSource: {
       type: String,
-      enum: ['google', 'linkedin', 'facebook', 'instagram', 'x', 'friend', 'other'],
+      enum: ['google', 'linkedin', 'facebook', 'instagram', 'tiktok', 'x', 'friend', 'other'],
       select: true,
     },
     localization: {

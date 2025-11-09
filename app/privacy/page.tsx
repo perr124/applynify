@@ -48,8 +48,8 @@ export default function PrivacyPolicy() {
 
           <h2>6. Contact Us</h2>
           <p>
-            If you have questions or comments about this Privacy Policy, please contact us at: [Your
-            Contact Information]
+            If you have questions or comments about this Privacy Policy, please contact us at:
+            hello@applynify.com
           </p>
         </div>
       </div>
