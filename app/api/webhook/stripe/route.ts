@@ -1,4 +1,3 @@
-// @ts-nocheck
 import { NextResponse, NextRequest } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
@@ -8,7 +7,7 @@ import User from '@/models/User';
 import { findCheckoutSession } from '@/libs/stripe';
 import { sendPaymentConfirmationEmail } from '@/libs/mail';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2023-08-16',
   typescript: true,
 });
@@ -24,6 +23,12 @@ export async function POST(req: NextRequest) {
   const body = await req.text();
 
   const signature = headers().get('stripe-signature');
+  if (!signature || !webhookSecret) {
+    return NextResponse.json(
+      { error: 'Missing Stripe signature or webhook secret' },
+      { status: 400 }
+    );
+  }
 
   let eventType;
   let event;
@@ -55,7 +60,7 @@ export async function POST(req: NextRequest) {
 
         // ISSUE: These could be undefined if session retrieval fails
         const customerId = session?.customer;
-        const priceId = session?.line_items?.data[0]?.price.id;
+        const priceId = session?.line_items?.data[0]?.price?.id;
         const userId = stripeObject.client_reference_id;
         const plan = configFile.stripe.plans.find((p) => p.priceId === priceId);
         console.debug('Matched plan for price', { hasPlan: !!plan });
@@ -104,7 +109,10 @@ export async function POST(req: NextRequest) {
 
         // Add extra validation before saving
         if (!priceId || !customerId) {
-          console.error('Missing required fields before user save', { hasPriceId: !!priceId, hasCustomerId: !!customerId });
+          console.error('Missing required fields before user save', {
+            hasPriceId: !!priceId,
+            hasCustomerId: !!customerId,
+          });
           throw new Error('Missing required fields for user update');
         }
 
@@ -119,7 +127,9 @@ export async function POST(req: NextRequest) {
         // Send payment confirmation email
         try {
           await sendPaymentConfirmationEmail(user.email, user.name || 'there');
-          console.debug('Payment confirmation email sent successfully', { userId: user._id?.toString() });
+          console.debug('Payment confirmation email sent successfully', {
+            userId: user._id?.toString(),
+          });
         } catch (emailError) {
           console.error('Failed to send payment confirmation email', { error: emailError });
           // Don't throw the error as the payment was successful, just log it
@@ -169,10 +179,12 @@ export async function POST(req: NextRequest) {
 
         const stripeObject: Stripe.Invoice = event.data.object as Stripe.Invoice;
 
-        const priceId = stripeObject.lines.data[0].price.id;
+        const priceId = stripeObject.lines.data[0].price?.id;
         const customerId = stripeObject.customer;
 
+        if (!customerId || !priceId) break;
         const user = await User.findOne({ customerId });
+        if (!user) break;
 
         // Make sure the invoice is for the same plan (priceId) the user subscribed to
         if (user.priceId !== priceId) break;

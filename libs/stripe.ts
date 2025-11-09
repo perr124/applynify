@@ -1,5 +1,11 @@
 import Stripe from 'stripe';
 
+const isStripeTestMode =
+  (process.env.STRIPE_TEST_MODE || '').toLowerCase() === 'true' ||
+  process.env.STRIPE_TEST_MODE === '1';
+
+const secretKey = process.env.STRIPE_SECRET_KEY;
+
 interface CreateCheckoutParams {
   priceId: string;
   mode: 'payment' | 'subscription';
@@ -18,11 +24,13 @@ interface CreateCustomerPortalParams {
   returnUrl: string;
 }
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  throw new Error('STRIPE_SECRET_KEY is missing in environment variables');
+if (!secretKey) {
+  throw new Error(
+    'Stripe secret key missing. Set STRIPE_SECRET_KEY in your environment variables.'
+  );
 }
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+const stripe = new Stripe(secretKey, {
   // @ts-ignore
   apiVersion: '2023-10-16',
 });
@@ -38,7 +46,11 @@ export const createCheckout = async ({
   couponId,
 }: CreateCheckoutParams): Promise<string> => {
   try {
-    console.debug('Creating checkout session', { priceId, mode, hasClientRef: !!clientReferenceId });
+    console.debug('Creating checkout session', {
+      priceId,
+      mode,
+      hasClientRef: !!clientReferenceId,
+    });
 
     const extraParams: {
       customer?: string;
@@ -122,3 +134,4 @@ export const findCheckoutSession = async (sessionId: string) => {
 };
 
 export default stripe;
+export { isStripeTestMode };

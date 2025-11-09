@@ -25,7 +25,11 @@ const config = {
     plans: [
       {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
-        priceId: process.env.STRIPE_PRICE_LITE_US || 'price_1R8OigDnSxQsct78i9GMR46f',
+        priceId:
+          (process.env.STRIPE_TEST_MODE?.toLowerCase() === 'true' ||
+          process.env.STRIPE_TEST_MODE === '1'
+            ? process.env.STRIPE_TEST_PRICE_LITE_US
+            : process.env.STRIPE_PRICE_LITE_US) || 'price_1R8OigDnSxQsct78i9GMR46f',
         //  REQUIRED - Name of the plan, displayed on the pricing page
         name: 'Lite',
         // A friendly description of the plan, displayed on the pricing page. Tip: explain why this plan and not others
@@ -44,7 +48,11 @@ const config = {
         ],
       },
       {
-        priceId: process.env.STRIPE_PRICE_PRO_US || 'price_1R8OhODnSxQsct78eGw7xRiE',
+        priceId:
+          (process.env.STRIPE_TEST_MODE?.toLowerCase() === 'true' ||
+          process.env.STRIPE_TEST_MODE === '1'
+            ? process.env.STRIPE_TEST_PRICE_PRO_US
+            : process.env.STRIPE_PRICE_PRO_US) || 'price_1R8OhODnSxQsct78eGw7xRiE',
         // This plan will look different on the pricing page, it will be highlighted. You can only have one plan with isFeatured: true
         isFeatured: true,
         name: 'Pro',
