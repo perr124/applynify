@@ -1,5 +1,5 @@
 const getEnvPrice = (key: string, fallback: string) => {
-  return process.env[key]?.toString() || fallback;
+  return process.env[key] || fallback;
 };
 
 const isProd = process.env.NODE_ENV === 'production';
