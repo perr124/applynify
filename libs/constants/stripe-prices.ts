@@ -1,76 +1,51 @@
-// Toggle via NEXT_PUBLIC_STRIPE_TEST_MODE (client-safe)
 const isTestMode =
-  (process.env.NEXT_PUBLIC_STRIPE_TEST_MODE || '').toLowerCase().trim() === 'true' ||
-  process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === '1';
+  (process.env.NEXT_PUBLIC_STRIPE_TEST_MODE || process.env.STRIPE_TEST_MODE || '')
+    .toLowerCase()
+    .trim() === 'true' ||
+  process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === '1' ||
+  process.env.STRIPE_TEST_MODE === '1';
 
-// Prefer TEST when toggle is on; otherwise LIVE. Always fallback to hardcoded ID.
-const pickPrice = (liveKey: string, testKey: string, fallback: string) => {
-  return isTestMode
-    ? process.env[testKey] || process.env[liveKey] || fallback
-    : process.env[liveKey] || process.env[testKey] || fallback;
-};
-
-export const STRIPE_PRICE_IDS = {
-  LITE: {
-    US: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_LITE_US',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_US',
-      'price_1R8OigDnSxQsct78i9GMR46f'
-    ),
-    GB: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_LITE_GB',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_GB',
-      'price_1R8nmGDnSxQsct78DoqpsN2u'
-    ),
-    EU: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_LITE_EU',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_EU',
-      'price_1R8OigDnSxQsct78i9GMR46f'
-    ),
-    CA: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_LITE_CA',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_CA',
-      'price_1R8OigDnSxQsct78i9GMR46f'
-    ),
-    AU: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_LITE_AU',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_AU',
-      'price_1R8OigDnSxQsct78i9GMR46f'
-    ),
+const ENV_PRICES = {
+  LIVE: {
+    LITE: {
+      US: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_AU,
+    },
+    PRO: {
+      US: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_PRICE_PRO_AU,
+    },
   },
-  PRO: {
-    US: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_PRO_US',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_US',
-      'price_1R8OhODnSxQsct78eGw7xRiE'
-    ),
-    GB: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_PRO_GB',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_GB',
-      'price_1R8nlBDnSxQsct78rGW76kiF'
-    ),
-    EU: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_PRO_EU',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_EU',
-      'price_1R8OhODnSxQsct78eGw7xRiE'
-    ),
-    CA: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_PRO_CA',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_CA',
-      'price_1R8OhODnSxQsct78eGw7xRiE'
-    ),
-    AU: pickPrice(
-      'NEXT_PUBLIC_STRIPE_PRICE_PRO_AU',
-      'NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_AU',
-      'price_1R8OhODnSxQsct78eGw7xRiE'
-    ),
+  TEST: {
+    LITE: {
+      US: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_AU,
+    },
+    PRO: {
+      US: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_PRO_AU,
+    },
   },
 } as const;
 
 // Helper function to get the correct price ID based on plan and region
 export const getStripePriceId = (
-  plan: keyof typeof STRIPE_PRICE_IDS,
-  regionCode: keyof typeof STRIPE_PRICE_IDS.LITE
+  plan: 'LITE' | 'PRO',
+  regionCode: 'US' | 'GB' | 'EU' | 'CA' | 'AU'
 ) => {
-  return STRIPE_PRICE_IDS[plan][regionCode];
+  const source = isTestMode ? ENV_PRICES.TEST : ENV_PRICES.LIVE;
+  const value = source[plan][regionCode];
+  return (value && value.trim()) || '';
 };
