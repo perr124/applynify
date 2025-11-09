@@ -1874,7 +1874,7 @@ export default function OnboardingQuestionnaire() {
                       <option value='linkedin'>LinkedIn</option>
                       <option value='facebook'>Facebook</option>
                       <option value='instagram'>Instagram</option>
-                      <option value='instagram'>TikTok</option>
+                      <option value='tiktok'>TikTok</option>
                       <option value='twitter'>X</option>
                       <option value='friend'>Friend</option>
                       <option value='other'>Other</option>
