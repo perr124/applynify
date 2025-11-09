@@ -386,10 +386,10 @@ export default function OnboardingQuestionnaire() {
         setError('Please enter your city');
         return;
       }
-      if (!formData.availability.address?.state) {
-        setError('Please enter your state');
-        return;
-      }
+      // if (!formData.availability.address?.state) {
+      //   setError('Please enter your state');
+      //   return;
+      // }
       if (!formData.availability.address?.zipCode) {
         setError('Please enter your ZIP code');
         return;

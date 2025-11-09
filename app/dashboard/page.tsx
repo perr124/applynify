@@ -1,29 +1,24 @@
 'use client';
 import { useState, useEffect } from 'react';
 import React from 'react';
-import { Dialog, Menu } from '@headlessui/react';
+// import { Dialog, Menu } from '@headlessui/react';
 import {
-  Home,
   Briefcase,
   FileText,
-  ClipboardList,
-  Users,
-  Settings,
-  Bell,
-  Search,
-  ChevronDown,
-  Menu as MenuIcon,
-  X,
   CheckCircle,
   AlertCircle,
   Clock,
   XCircle,
   ChevronRight,
+  Frown,
+  Meh,
+  Smile,
 } from 'lucide-react';
-import ButtonAccount from '@/components/ButtonAccount';
-import config from '@/config';
-import ButtonCheckout from '@/components/ButtonCheckout';
+// import ButtonAccount from '@/components/ButtonAccount';
+// import config from '@/config';
+// import ButtonCheckout from '@/components/ButtonCheckout';
 import apiClient from '@/libs/api';
+import { toast } from 'react-hot-toast';
 
 function classNames(...classes: (string | boolean | undefined | null)[]): string {
   return classes.filter(Boolean).join(' ');
@@ -44,6 +39,9 @@ export default function DashboardHome() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [feedbackRating, setFeedbackRating] = useState<'sad' | 'mid' | 'happy' | null>(null);
+  const [feedbackNotes, setFeedbackNotes] = useState<string>('');
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState<boolean>(false);
 
   useEffect(() => {
     const checkProfileStatus = async () => {
@@ -284,6 +282,153 @@ export default function DashboardHome() {
             </div>
           )}
         </div>
+      </div>
+
+      {/* Feedback Section */}
+      <div className='bg-white shadow rounded-lg p-6'>
+        <h2 className='text-lg font-semibold text-gray-900 mb-2'>Share Feedback</h2>
+        <p className='text-sm text-gray-500 mb-4'>
+          How satisfied are you with Applynify? Leave an optional note below.
+        </p>
+        <div className='flex items-center space-x-6 mb-4'>
+          <button
+            className={`group flex flex-col items-center outline-none ${
+              feedbackRating === 'sad' ? 'scale-105' : 'hover:scale-105'
+            }`}
+            onClick={() => setFeedbackRating('sad')}
+            aria-label='Unhappy'
+            title='Unhappy'
+            aria-pressed={feedbackRating === 'sad'}
+          >
+            <div
+              className={`h-14 w-14 rounded-full border flex items-center justify-center transition-all ${
+                feedbackRating === 'sad'
+                  ? 'border-red-500 bg-red-50 ring-2 ring-red-200'
+                  : 'border-gray-300 bg-white hover:border-red-300'
+              }`}
+            >
+              <Frown
+                className={`h-7 w-7 ${
+                  feedbackRating === 'sad'
+                    ? 'text-red-700'
+                    : 'text-red-400 group-hover:text-red-500'
+                }`}
+              />
+            </div>
+            <span
+              className={`mt-2 text-xs ${
+                feedbackRating === 'sad'
+                  ? 'text-red-700 font-medium'
+                  : 'text-gray-500 group-hover:text-red-500'
+              }`}
+            >
+              Unhappy
+            </span>
+          </button>
+          <button
+            className={`group flex flex-col items-center outline-none ${
+              feedbackRating === 'mid' ? 'scale-105' : 'hover:scale-105'
+            }`}
+            onClick={() => setFeedbackRating('mid')}
+            aria-label='Okay'
+            title='Okay'
+            aria-pressed={feedbackRating === 'mid'}
+          >
+            <div
+              className={`h-14 w-14 rounded-full border flex items-center justify-center transition-all ${
+                feedbackRating === 'mid'
+                  ? 'border-amber-500 bg-amber-50 ring-2 ring-amber-200'
+                  : 'border-gray-300 bg-white hover:border-amber-300'
+              }`}
+            >
+              <Meh
+                className={`h-7 w-7 ${
+                  feedbackRating === 'mid'
+                    ? 'text-amber-700'
+                    : 'text-amber-400 group-hover:text-amber-500'
+                }`}
+              />
+            </div>
+            <span
+              className={`mt-2 text-xs ${
+                feedbackRating === 'mid'
+                  ? 'text-amber-700 font-medium'
+                  : 'text-gray-500 group-hover:text-amber-500'
+              }`}
+            >
+              Okay
+            </span>
+          </button>
+          <button
+            className={`group flex flex-col items-center outline-none ${
+              feedbackRating === 'happy' ? 'scale-105' : 'hover:scale-105'
+            }`}
+            onClick={() => setFeedbackRating('happy')}
+            aria-label='Happy'
+            title='Happy'
+            aria-pressed={feedbackRating === 'happy'}
+          >
+            <div
+              className={`h-14 w-14 rounded-full border flex items-center justify-center transition-all ${
+                feedbackRating === 'happy'
+                  ? 'border-green-500 bg-green-50 ring-2 ring-green-200'
+                  : 'border-gray-300 bg-white hover:border-green-300'
+              }`}
+            >
+              <Smile
+                className={`h-7 w-7 ${
+                  feedbackRating === 'happy'
+                    ? 'text-green-700'
+                    : 'text-green-400 group-hover:text-green-500'
+                }`}
+              />
+            </div>
+            <span
+              className={`mt-2 text-xs ${
+                feedbackRating === 'happy'
+                  ? 'text-green-700 font-medium'
+                  : 'text-gray-500 group-hover:text-green-500'
+              }`}
+            >
+              Happy
+            </span>
+          </button>
+        </div>
+        <textarea
+          className='w-full border border-gray-200 rounded-md p-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500'
+          rows={3}
+          placeholder='Optional: tell us more (max 2000 characters)'
+          maxLength={2000}
+          value={feedbackNotes}
+          onChange={(e) => setFeedbackNotes(e.target.value)}
+        />
+        <div className='mt-3 flex items-center justify-between'>
+          <span className='text-xs text-gray-400'>{feedbackNotes.length}/2000</span>
+          <button
+            className='btn bg-primary-500 hover:bg-primary-800'
+            disabled={!feedbackRating || isSubmitting || feedbackSubmitted}
+            onClick={async () => {
+              if (!feedbackRating) return;
+              setIsSubmitting(true);
+              setError(null);
+              try {
+                await apiClient.post('/user/feedback', {
+                  rating: feedbackRating,
+                  notes: feedbackNotes || undefined,
+                });
+                setFeedbackSubmitted(true);
+                toast.success('Thanks for your feedback!');
+              } catch (e: any) {
+                setError(e?.message || 'Failed to send feedback');
+              } finally {
+                setIsSubmitting(false);
+              }
+            }}
+          >
+            {isSubmitting ? 'Sending...' : feedbackSubmitted ? 'Submitted' : 'Send Feedback'}
+          </button>
+        </div>
+        {error && <p className='text-sm text-red-600 mt-2'>{error}</p>}
       </div>
 
       {/* Subscription Button */}

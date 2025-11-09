@@ -25,7 +25,7 @@ const faqList: FAQItemProps[] = [
     question: 'How does it work?',
     answer: (
       <p>
-        Once you sign up and complete your profile, we assign you a trained application assistant.
+        Once you sign up and complete your profile, we assign you a trained career representative.
         They’ll search for relevant jobs, tailor applications, and submit them for you directly on
         company websites.
       </p>
@@ -41,7 +41,7 @@ const faqList: FAQItemProps[] = [
     ),
   },
   {
-    question: 'Do real people apply to jobs for me?',
+    question: 'Do real people apply for jobs on my behalf?',
     answer: (
       <div className='space-y-2 leading-relaxed'>
         Yes! Every application is handled by a real, professionally trained assistant. No bots or
