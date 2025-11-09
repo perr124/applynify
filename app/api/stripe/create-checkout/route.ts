@@ -4,7 +4,6 @@ import { authOptions } from '@/libs/next-auth';
 import { createCheckout } from '@/libs/stripe';
 import connectMongo from '@/libs/mongoose';
 import User from '@/models/User';
-import { getPlanByStripeId } from '@/libs/constants/pricing';
 
 // This function is used to create a Stripe Checkout Session (one-time payment or subscription)
 // It's called by the <ButtonCheckout /> component
@@ -31,12 +30,6 @@ export async function POST(req: NextRequest) {
         },
         { status: 400 }
       );
-    }
-
-    // Validate priceId against allowlist of known prices
-    const allowedPlan = getPlanByStripeId(body.priceId);
-    if (!allowedPlan) {
-      return NextResponse.json({ error: 'Unknown or disabled price' }, { status: 400 });
     }
 
     const session = await getServerSession(authOptions);
