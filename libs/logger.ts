@@ -1,6 +1,8 @@
-// Simple console wrapper: formatted in development, silenced in production
+// Simple console wrapper: formatted in development.
+// In production: silence browser logs ONLY, keep server logs visible (for Vercel).
 // Imported for side effects to patch global console methods consistently
 const isProduction = process.env.NODE_ENV === 'production';
+const isBrowser = typeof window !== 'undefined';
 
 type ConsoleMethod = 'log' | 'debug' | 'info' | 'warn' | 'error';
 
@@ -57,17 +59,28 @@ function format(level: ConsoleMethod, args: unknown[]): any[] {
 }
 
 function patch(method: ConsoleMethod) {
-  // Silence entirely in production
-  if (isProduction) {
+  // In production, silence only in the browser to avoid leaking logs to end-users
+  if (isProduction && isBrowser) {
     // @ts-ignore
     console[method] = () => {};
     return;
   }
-  // Pretty, consistent logs in development
+
+  // In development (browser or server): pretty formatted logs
+  if (!isProduction) {
+    // @ts-ignore
+    console[method] = (...args: unknown[]) => {
+      // @ts-ignore
+      originalConsole[method](...format(method, args));
+    };
+    return;
+  }
+
+  // In production on the server: do NOT silence; keep original console behavior
   // @ts-ignore
   console[method] = (...args: unknown[]) => {
     // @ts-ignore
-    originalConsole[method](...format(method, args));
+    originalConsole[method](...args);
   };
 }
 
@@ -77,10 +90,7 @@ export {}; // side-effect only module
 // Also export an audit logger that ALWAYS logs (even in production)
 export function logAudit(event: string, data?: unknown): void {
   try {
-    const payload =
-      data === undefined
-        ? ''
-        : ' ' + JSON.stringify({ data: sanitize(data) });
+    const payload = data === undefined ? '' : ' ' + JSON.stringify({ data: sanitize(data) });
     // Write directly to stdout to bypass patched console in production
     process.stdout.write(`[Applynify][AUDIT] ${new Date().toISOString()} ${event}${payload}\n`);
   } catch {
