@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import React from 'react';
 import config from '@/config';
 import { ChevronRight, ChevronLeft, Upload } from 'lucide-react';
@@ -13,11 +12,7 @@ import logo from '@/app/icon.png';
 import { countries } from '@/app/data/countries';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
-import {
-  citizenshipStatusByCountry,
-  CitizenshipStatus,
-  CountryCode,
-} from '@/app/data/citizenshipStatus';
+import { citizenshipStatusByCountry, CitizenshipStatus } from '@/app/data/citizenshipStatus';
 import LanguageSelector from '@/components/LanguageSelector';
 import { getAddressPlaceholders } from '@/libs/constants/address';
 import { getPhoneFormat } from '@/libs/constants/phone';
@@ -127,7 +122,6 @@ export default function OnboardingQuestionnaire() {
   const [currentLocationInput, setCurrentLocationInput] = useState('');
   const [currentSkillInput, setCurrentSkillInput] = useState('');
   const [selectedPriceId, setSelectedPriceId] = useState<string | null>(null);
-  const router = useRouter();
 
   // Add loading state
   const [isLoading, setIsLoading] = useState(true);
@@ -1875,7 +1869,7 @@ export default function OnboardingQuestionnaire() {
                       <option value='facebook'>Facebook</option>
                       <option value='instagram'>Instagram</option>
                       <option value='tiktok'>TikTok</option>
-                      <option value='twitter'>X</option>
+                      <option value='x'>X</option>
                       <option value='friend'>Friend</option>
                       <option value='other'>Other</option>
                     </select>

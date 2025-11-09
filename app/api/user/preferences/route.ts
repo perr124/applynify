@@ -90,7 +90,7 @@ export async function GET() {
 
     const user = await User.findOne(
       { email: session.user.email },
-      'jobPreferences experience availability applicationsStatus resumes localization'
+      'jobPreferences experience availability applicationsStatus resumes localization marketingSource'
     );
 
     if (!user) {
@@ -104,6 +104,7 @@ export async function GET() {
       applicationsStatus: user.applicationsStatus || 'started',
       resumes: user.resumes || [],
       localization: user.localization || '',
+      marketingSource: user.marketingSource || '',
     });
   } catch (error) {
     console.error('Error fetching preferences:', error);
