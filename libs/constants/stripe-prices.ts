@@ -1,12 +1,13 @@
-// Use NODE_ENV to choose live vs test prices
-const isProd = process.env.NODE_ENV === 'production';
+// Toggle via NEXT_PUBLIC_STRIPE_TEST_MODE (client-safe)
+const isTestMode =
+  (process.env.NEXT_PUBLIC_STRIPE_TEST_MODE || '').toLowerCase().trim() === 'true' ||
+  process.env.NEXT_PUBLIC_STRIPE_TEST_MODE === '1';
 
-// Prefer LIVE in production, TEST in development/preview; fallback to hardcoded ID
+// Prefer TEST when toggle is on; otherwise LIVE. Always fallback to hardcoded ID.
 const pickPrice = (liveKey: string, testKey: string, fallback: string) => {
-  if (isProd) {
-    return process.env[liveKey] || process.env[testKey] || fallback;
-  }
-  return process.env[testKey] || process.env[liveKey] || fallback;
+  return isTestMode
+    ? process.env[testKey] || process.env[liveKey] || fallback
+    : process.env[liveKey] || process.env[testKey] || fallback;
 };
 
 export const STRIPE_PRICE_IDS = {
