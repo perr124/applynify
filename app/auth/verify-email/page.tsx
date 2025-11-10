@@ -30,8 +30,8 @@ export default function VerifyEmailPending() {
           <div className='text-center'>
             <h2 className='text-2xl font-bold'>Check your email</h2>
             <p className='mt-2 text-sm text-gray-600'>
-              We've sent you a verification link. Please check your email and click the link to
-              verify your account.
+              We've sent you a verification link. Please check your email/spam folder and click the
+              link to verify your account.
             </p>
           </div>
         </div>

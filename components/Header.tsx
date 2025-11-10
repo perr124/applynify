@@ -52,7 +52,7 @@ const Header = () => {
 
   return (
     <>
-      <PromoBanner promoCode='NEWJOB2025' message='Get 25% off for a limited time with code' />
+      <PromoBanner promoCode='NEWJOB25' message='Get 25% off for a limited time with code' />
       <header className='bg-base-200'>
         <nav
           className='container flex items-center justify-between px-8 py-4 mx-auto'
