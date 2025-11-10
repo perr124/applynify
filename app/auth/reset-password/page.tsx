@@ -22,7 +22,7 @@ function ResetPasswordForm() {
     const hasUpperCase = /[A-Z]/.test(password);
     const hasLowerCase = /[a-z]/.test(password);
     const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&amp;*(),.?&quot;:{}|&lt;&gt;]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
     if (password.length < minLength) {
       return 'Password must be at least 8 characters long';
