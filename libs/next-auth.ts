@@ -157,7 +157,7 @@ export async function resetPassword(token: string, newPassword: string) {
   const usersCollection = await getUsersCollection();
   const user = await usersCollection.findOne({
     resetPasswordToken: token,
-    resetPasswordExpires: { $gt: Date.now() },
+    resetPasswordExpires: { $gt: new Date() },
   });
 
   if (!user) {
