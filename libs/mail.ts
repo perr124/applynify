@@ -11,8 +11,8 @@ export async function sendPasswordResetEmail(email: string, token: string) {
     subject: 'Reset your password',
     text: `Click the following link to reset your password: ${resetLink}`,
     html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center;">
-        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px;" />
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+      <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
         <h1>Reset your password</h1>
         <p>Click the following link to reset your password:</p>
         <p><a href="${resetLink}">${resetLink}</a></p>
