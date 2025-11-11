@@ -39,6 +39,7 @@ type FormData = {
     hasDisability: boolean;
     ethnicity: string;
     dateOfBirth: string;
+    gender: string;
   };
   availability: {
     startDate: string;
@@ -84,6 +85,7 @@ const initialFormData: FormData = {
     hasDisability: false,
     ethnicity: '',
     dateOfBirth: '',
+    gender: '',
   },
   availability: {
     startDate: '',
@@ -175,6 +177,7 @@ export default function OnboardingQuestionnaire() {
               hasDisability: data.experience?.hasDisability || false,
               ethnicity: data.experience?.ethnicity || '',
               dateOfBirth: data.experience?.dateOfBirth || '',
+              gender: data.experience?.gender || '',
             },
             availability: {
               startDate: data.availability?.startDate || '',
@@ -1558,6 +1561,22 @@ export default function OnboardingQuestionnaire() {
                           updateFormData('experience', 'dateOfBirth', e.target.value)
                         }
                       />
+                    </div>
+                  </div>
+                  <div>
+                    <label className='block text-sm font-medium text-gray-700'>Gender</label>
+                    <div className='mt-1'>
+                      <select
+                        className='block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        value={formData.experience.gender}
+                        onChange={(e) => updateFormData('experience', 'gender', e.target.value)}
+                      >
+                        <option value=''>Prefer not to say</option>
+                        <option value='male'>Male</option>
+                        <option value='female'>Female</option>
+                        <option value='non-binary'>Non-binary</option>
+                        <option value='other'>Other</option>
+                      </select>
                     </div>
                   </div>
                 </div>

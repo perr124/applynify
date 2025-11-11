@@ -19,6 +19,7 @@ export type Experience = {
   hasDisability: boolean;
   ethnicity: string;
   dateOfBirth: string;
+  gender?: string;
 };
 
 export interface Availability {

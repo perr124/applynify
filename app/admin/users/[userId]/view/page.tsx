@@ -299,6 +299,17 @@ export default function ViewUser() {
                     </dd>
                   </div>
                   <div>
+                    <dt className='text-sm font-medium text-gray-500'>Gender</dt>
+                    <dd className='mt-1'>
+                      {user.experience.gender
+                        ? user.experience.gender
+                            .split('-')
+                            .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                            .join(' ')
+                        : 'Not specified'}
+                    </dd>
+                  </div>
+                  <div>
                     <dt className='text-sm font-medium text-gray-500'>Veteran Status</dt>
                     <dd className='mt-1'>{user.experience.isVeteran ? 'Yes' : 'No'}</dd>
                   </div>

@@ -137,6 +137,7 @@ export async function PUT(request: Request) {
             hasDisability: data.experience.hasDisability,
             ethnicity: data.experience.ethnicity,
             dateOfBirth: data.experience.dateOfBirth,
+            gender: data.experience.gender || '',
           },
           availability: {
             startDate: data.availability.startDate,

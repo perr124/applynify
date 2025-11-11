@@ -80,6 +80,7 @@ const userSchema = new mongoose.Schema(
         hasDisability: false,
         ethnicity: '',
         dateOfBirth: '',
+        gender: '',
       },
     },
     availability: {
