@@ -256,8 +256,8 @@ export default function AdminUserMessagesPage() {
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={`Reply to ${user.firstName}...`}
-            className='flex-grow rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none bg-gray-100'
-            rows={1}
+            className='flex-grow rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none bg-gray-100 min-h-[120px]'
+            rows={4}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

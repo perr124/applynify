@@ -48,6 +48,8 @@ export default function UserJobApplication() {
   const [hasUnreadMessages, setHasUnreadMessages] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
 
   const {
     control,
@@ -212,6 +214,17 @@ export default function UserJobApplication() {
       setDeleteIndex(null);
     }
     setIsDeleteModalOpen(false);
+  };
+
+  const confirmCompleteAndNotify = async () => {
+    try {
+      setIsCompleting(true);
+      // Use react-hook-form's handleSubmit to validate before completing
+      await handleSubmit((data) => onSubmit(data, true))();
+    } finally {
+      setIsCompleting(false);
+      setIsCompleteModalOpen(false);
+    }
   };
 
   if (isSubmitting) return <div>Submitting...</div>;
@@ -466,7 +479,7 @@ export default function UserJobApplication() {
 
             <button
               type='button'
-              onClick={handleSubmit((data) => onSubmit(data, true))}
+              onClick={() => setIsCompleteModalOpen(true)}
               disabled={isSubmitting}
               className='inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
             >
@@ -507,6 +520,46 @@ export default function UserJobApplication() {
                   className='px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700'
                 >
                   Delete
+                </button>
+              </div>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Complete & Notify Confirmation Modal */}
+      <Dialog
+        open={isCompleteModalOpen}
+        onClose={() => setIsCompleteModalOpen(false)}
+        className='relative z-50'
+      >
+        <div className='fixed inset-0 bg-black/30' aria-hidden='true' />
+        <div className='fixed inset-0 flex items-center justify-center p-4'>
+          <Dialog.Panel className='mx-auto max-w-sm w-full bg-white rounded-xl shadow-lg'>
+            <div className='p-6'>
+              <Dialog.Title className='text-lg font-medium text-gray-900 mb-4'>
+                Complete & Notify
+              </Dialog.Title>
+              <p className='text-gray-500 mb-6'>
+                Are you sure you want to mark these applications as completed and notify the user?
+                This will send an email and redirect you to the admin dashboard.
+              </p>
+              <div className='flex justify-end gap-4'>
+                <button
+                  type='button'
+                  onClick={() => setIsCompleteModalOpen(false)}
+                  className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                  disabled={isCompleting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type='button'
+                  onClick={confirmCompleteAndNotify}
+                  disabled={isCompleting}
+                  className='px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-70'
+                >
+                  {isCompleting ? 'Processing...' : 'Yes, complete & notify'}
                 </button>
               </div>
             </div>
