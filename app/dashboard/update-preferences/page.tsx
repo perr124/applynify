@@ -24,6 +24,7 @@ type FormData = {
   jobPreferences: {
     roles: string[];
     locations: string[];
+    prefersRemote?: boolean;
     salary: {
       minimum: string;
       preferred: string;
@@ -44,6 +45,7 @@ type FormData = {
   availability: {
     startDate: string;
     phoneNumber?: string;
+    linkedInUrl?: string;
     additionalInfo?: string;
     address?: {
       street: string;
@@ -60,6 +62,7 @@ const initialFormData: FormData = {
   jobPreferences: {
     roles: [],
     locations: [],
+    prefersRemote: false,
     salary: {
       minimum: '',
       preferred: '',
@@ -80,6 +83,7 @@ const initialFormData: FormData = {
   availability: {
     startDate: '',
     phoneNumber: '',
+    linkedInUrl: '',
     additionalInfo: '',
     address: {
       street: '',
@@ -122,6 +126,7 @@ export default function UpdatePreferences() {
           availability: {
             startDate: data.availability?.startDate || '',
             phoneNumber: data.availability?.phoneNumber || '',
+            linkedInUrl: data.availability?.linkedInUrl || '',
             additionalInfo: data.availability?.additionalInfo || '',
             address: data.availability?.address || {
               street: '',
@@ -408,7 +413,7 @@ export default function UpdatePreferences() {
                   <input
                     type='text'
                     className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                    placeholder='e.g., New York, US Remote, London'
+                    placeholder='e.g., New York, London, Amsterdam'
                     value={currentLocationInput}
                     onChange={(e) => {
                       const input = e.target.value;
@@ -488,12 +493,19 @@ export default function UpdatePreferences() {
                   </div>
                 )}
 
-                <p className='mt-1 text-sm text-gray-500'>
-                  Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
-                  <br></br>
-                  Adding multiple locations in addition to "Remote" indicates hybrid opportunities
-                  (e.g., "NY Remote, New York, New Jersey").
-                </p>
+                <div className='mt-3'>
+                  <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
+                    <input
+                      type='checkbox'
+                      checked={Boolean(formData.jobPreferences.prefersRemote)}
+                      onChange={(e) =>
+                        updateFormData('jobPreferences', 'prefersRemote', e.target.checked)
+                      }
+                      className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                    />
+                    Remote
+                  </label>
+                </div>
               </div>
 
               <div>
@@ -1084,9 +1096,19 @@ export default function UpdatePreferences() {
                 <textarea
                   className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                   rows={5}
-                  placeholder="This could include job roles you've recently applied to, any additional languages you speak, disabilities, or any other important information we should know."
+                  placeholder="This could include job roles you've recently applied to that you don't want us to re-apply to, any additional languages you speak, disabilities, or any other important information we should know."
                   value={formData.availability.additionalInfo}
                   onChange={(e) => updateFormData('availability', 'additionalInfo', e.target.value)}
+                />
+              </div>
+              <div>
+                <label className='block text-sm font-medium text-gray-700'>LinkedIn URL</label>
+                <input
+                  type='url'
+                  className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                  placeholder='https://www.linkedin.com/in/username'
+                  value={formData.availability.linkedInUrl}
+                  onChange={(e) => updateFormData('availability', 'linkedInUrl', e.target.value)}
                 />
               </div>
             </div>

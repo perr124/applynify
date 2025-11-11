@@ -88,6 +88,7 @@ const userSchema = new mongoose.Schema(
       default: {
         startDate: '',
         phoneNumber: '',
+        linkedInUrl: '',
         additionalInfo: '',
         address: {
           street: '',

@@ -1,6 +1,7 @@
 export interface JobPreferences {
   roles: string[];
   locations: string[];
+  prefersRemote?: boolean;
   salary: {
     minimum: string;
     preferred: string;
@@ -24,6 +25,7 @@ export interface Availability {
   startDate: string;
   phoneNumber?: string;
   additionalInfo?: string;
+  linkedInUrl?: string;
   address?: {
     street: string;
     city: string;

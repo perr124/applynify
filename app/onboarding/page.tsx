@@ -22,6 +22,7 @@ type FormData = {
   jobPreferences: {
     roles: string[];
     locations: string[];
+    prefersRemote?: boolean;
     salary: {
       minimum: string;
       preferred: string;
@@ -43,6 +44,7 @@ type FormData = {
     startDate: string;
     phoneNumber?: string;
     additionalInfo?: string;
+    linkedInUrl?: string;
     address?: {
       street: string;
       street2?: string;
@@ -65,6 +67,7 @@ const initialFormData: FormData = {
   jobPreferences: {
     roles: [],
     locations: [],
+    prefersRemote: false,
     salary: {
       minimum: '',
       preferred: '',
@@ -86,6 +89,7 @@ const initialFormData: FormData = {
     startDate: '',
     phoneNumber: '',
     additionalInfo: '',
+    linkedInUrl: '',
     address: {
       street: '',
       street2: '',
@@ -154,6 +158,7 @@ export default function OnboardingQuestionnaire() {
             jobPreferences: {
               roles: data.jobPreferences?.roles || [],
               locations: data.jobPreferences?.locations || [],
+              prefersRemote: Boolean(data.jobPreferences?.prefersRemote) || false,
               salary: {
                 minimum: data.jobPreferences?.salary?.minimum || '',
                 preferred: data.jobPreferences?.salary?.preferred || '',
@@ -175,6 +180,7 @@ export default function OnboardingQuestionnaire() {
               startDate: data.availability?.startDate || '',
               phoneNumber: data.availability?.phoneNumber || '',
               additionalInfo: data.availability?.additionalInfo || '',
+              linkedInUrl: data.availability?.linkedInUrl || '',
               address: data.availability?.address || {
                 street: '',
                 street2: '',
@@ -248,6 +254,7 @@ export default function OnboardingQuestionnaire() {
             startDate: data.availability.startDate,
             phoneNumber: data.availability.phoneNumber,
             additionalInfo: data.availability.additionalInfo,
+            linkedInUrl: data.availability.linkedInUrl,
             address: data.availability.address,
             resumeUrl: data.availability.resume?.file ? null : undefined,
           },
@@ -465,6 +472,7 @@ export default function OnboardingQuestionnaire() {
               phoneNumber: formData.availability.phoneNumber,
               additionalInfo: formData.availability.additionalInfo,
               address: formData.availability.address,
+              linkedInUrl: formData.availability.linkedInUrl,
               resumeUrl: resumeUrl,
             },
             marketingSource: formData.marketingSource,
@@ -1099,7 +1107,7 @@ export default function OnboardingQuestionnaire() {
                     <input
                       type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
-                      placeholder='e.g., New York, US Remote, London'
+                      placeholder='e.g., New York, London, Amsterdam'
                       value={currentLocationInput}
                       onChange={(e) => {
                         const input = e.target.value;
@@ -1179,12 +1187,19 @@ export default function OnboardingQuestionnaire() {
                     </div>
                   )}
 
-                  <p className='mt-1 text-sm text-gray-500'>
-                    Tip: For remote roles, specify city/country (e.g., "NY Remote" or "UK Remote").
-                    <br></br>
-                    Adding multiple locations in addition to "Remote" indicates hybrid opportunities
-                    (e.g., "NY Remote, New York, New Jersey").
-                  </p>
+                  <div className='mt-3'>
+                    <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
+                      <input
+                        type='checkbox'
+                        checked={Boolean(formData.jobPreferences.prefersRemote)}
+                        onChange={(e) =>
+                          updateFormData('jobPreferences', 'prefersRemote', e.target.checked)
+                        }
+                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                      />
+                      Remote
+                    </label>
+                  </div>
                 </div>
 
                 <div>
@@ -1781,7 +1796,7 @@ export default function OnboardingQuestionnaire() {
                     <textarea
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       rows={5}
-                      placeholder="This could include job roles you've recently applied to, any additional languages you speak, disabilities, or any other important information we should know."
+                      placeholder="This could include job roles you've recently applied to that you don't want us to re-apply to, any additional languages you speak, disabilities, or any other important information we should know."
                       value={formData.availability.additionalInfo}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         updateFormData('availability', 'additionalInfo', e.target.value)
@@ -1851,6 +1866,21 @@ export default function OnboardingQuestionnaire() {
                 </div>
 
                 {/* Add marketing source field after resume upload */}
+                <div>
+                  <label className='block text-sm font-medium text-gray-700'>LinkedIn URL</label>
+                  <div className='mt-1'>
+                    <input
+                      type='url'
+                      className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      placeholder='https://www.linkedin.com/in/username'
+                      value={formData.availability.linkedInUrl}
+                      onChange={(e) =>
+                        updateFormData('availability', 'linkedInUrl', e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+
                 <div>
                   <label className='block text-sm font-medium text-gray-700'>
                     Where did you hear about Applynify? <span className='text-red-500'>*</span>

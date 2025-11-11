@@ -142,6 +142,7 @@ export async function PUT(request: Request) {
             startDate: data.availability.startDate,
             phoneNumber: data.availability.phoneNumber,
             additionalInfo: data.availability.additionalInfo,
+            linkedInUrl: data.availability.linkedInUrl,
             address: {
               street: data.availability.address.street,
               street2: data.availability.address.street2,

@@ -25,7 +25,7 @@ type User = {
   lastName: string;
   email: string;
   resumes?: Resume[];
-  jobPreferences?: JobPreferences;
+  jobPreferences?: JobPreferences & { prefersRemote?: boolean };
   experience?: Experience;
   availability?: Availability;
   marketingSource?: string;
@@ -204,6 +204,10 @@ export default function ViewUser() {
                     </dd>
                   </div>
                   <div>
+                    <dt className='text-sm font-medium text-gray-500'>Remote Preferred</dt>
+                    <dd className='mt-1'>{user.jobPreferences?.prefersRemote ? 'Yes' : 'No'}</dd>
+                  </div>
+                  <div>
                     <dt className='text-sm font-medium text-gray-500'>Salary Range</dt>
                     <dd className='mt-1 space-y-1'>
                       <p>Minimum: {user.jobPreferences.salary.minimum}</p>
@@ -319,6 +323,21 @@ export default function ViewUser() {
                     <div>
                       <dt className='text-sm font-medium text-gray-500'>Phone Number</dt>
                       <dd className='mt-1'>{user.availability.phoneNumber}</dd>
+                    </div>
+                  )}
+                  {user.availability.linkedInUrl && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>LinkedIn</dt>
+                      <dd className='mt-1'>
+                        <a
+                          href={user.availability.linkedInUrl}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          className='text-primary-600 hover:text-primary-700 underline break-all'
+                        >
+                          {user.availability.linkedInUrl}
+                        </a>
+                      </dd>
                     </div>
                   )}
                   {user.availability.address && (
