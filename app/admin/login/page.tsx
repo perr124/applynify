@@ -19,20 +19,15 @@ export default function AdminLogin() {
     const password = formData.get('password') as string;
 
     try {
-      const result = await signIn('credentials', {
-        email,
-        password,
-        redirect: false,
-      });
+      const result = await signIn('credentials', { email, password, redirect: false });
 
       if (result?.error) {
         setError('Invalid credentials');
         return;
       }
 
-      // After successful login, redirect directly to admin
-      // The middleware will handle the admin check
-      window.location.href = '/admin';
+      // Navigate using Next.js router to avoid hard reload race conditions
+      router.replace('/admin');
     } catch (error) {
       console.error('Login error:', error);
       setError('An error occurred during sign in');

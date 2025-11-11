@@ -27,12 +27,17 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 export default function AdminLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   // Add effect to close sidebar when pathname changes
   useEffect(() => {
     setSidebarOpen(false);
   }, [pathname]);
+
+  // While session is loading, avoid rendering layout pages that may depend on it
+  if (pathname !== '/admin/login' && status === 'loading') {
+    return null;
+  }
 
   // If we're on the login page or user is not admin, just render children without the layout
   if (pathname === '/admin/login' || !session?.user?.isAdmin) {
