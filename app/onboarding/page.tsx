@@ -23,6 +23,9 @@ type FormData = {
     roles: string[];
     locations: string[];
     prefersRemote?: boolean;
+    workModes?: Array<'remote' | 'hybrid' | 'in-person'>;
+    commuteDistance?: 'none' | '10' | '30' | '50' | '100';
+    remoteCityOnly?: boolean;
     salary: {
       minimum: string;
       preferred: string;
@@ -69,6 +72,9 @@ const initialFormData: FormData = {
     roles: [],
     locations: [],
     prefersRemote: false,
+    workModes: [],
+    commuteDistance: 'none',
+    remoteCityOnly: false,
     salary: {
       minimum: '',
       preferred: '',
@@ -161,6 +167,9 @@ export default function OnboardingQuestionnaire() {
               roles: data.jobPreferences?.roles || [],
               locations: data.jobPreferences?.locations || [],
               prefersRemote: Boolean(data.jobPreferences?.prefersRemote) || false,
+              workModes: data.jobPreferences?.workModes || [],
+              commuteDistance: data.jobPreferences?.commuteDistance || 'none',
+              remoteCityOnly: Boolean(data.jobPreferences?.remoteCityOnly) || false,
               salary: {
                 minimum: data.jobPreferences?.salary?.minimum || '',
                 preferred: data.jobPreferences?.salary?.preferred || '',
@@ -1190,18 +1199,79 @@ export default function OnboardingQuestionnaire() {
                     </div>
                   )}
 
-                  <div className='mt-3'>
-                    <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
-                      <input
-                        type='checkbox'
-                        checked={Boolean(formData.jobPreferences.prefersRemote)}
-                        onChange={(e) =>
-                          updateFormData('jobPreferences', 'prefersRemote', e.target.checked)
-                        }
-                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-                      />
-                      Remote
-                    </label>
+                  {/* Work modes: select all that apply */}
+                  <div className='mt-4 space-y-2'>
+                    <div className='text-sm font-medium text-gray-700'>
+                      Work mode(s) – select all that apply
+                    </div>
+                    <div className='flex flex-wrap gap-4'>
+                      {['remote', 'hybrid', 'in-person'].map((mode) => (
+                        <label
+                          key={mode}
+                          className='inline-flex items-center gap-2 text-sm text-gray-700'
+                        >
+                          <input
+                            type='checkbox'
+                            checked={
+                              formData.jobPreferences.workModes?.includes(mode as any) || false
+                            }
+                            onChange={(e) => {
+                              const current = formData.jobPreferences.workModes || [];
+                              const updated = e.target.checked
+                                ? Array.from(new Set([...current, mode as any]))
+                                : current.filter((m) => m !== (mode as any));
+                              updateFormData('jobPreferences', 'workModes', updated);
+                            }}
+                            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                          />
+                          {mode === 'in-person'
+                            ? 'In-person'
+                            : mode.charAt(0).toUpperCase() + mode.slice(1)}
+                        </label>
+                      ))}
+                    </div>
+                    {/* Distance dropdown for hybrid/in-person */}
+                    {(formData.jobPreferences.workModes?.includes('hybrid') ||
+                      formData.jobPreferences.workModes?.includes('in-person')) && (
+                      <div className='mt-2'>
+                        <label className='block text-sm font-medium text-gray-700'>
+                          Commute distance
+                        </label>
+                        <select
+                          className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                          value={formData.jobPreferences.commuteDistance || 'none'}
+                          onChange={(e) =>
+                            updateFormData(
+                              'jobPreferences',
+                              'commuteDistance',
+                              e.target.value as any
+                            )
+                          }
+                        >
+                          <option value='none'>No preference</option>
+                          <option value='10'>Up to 10 miles</option>
+                          <option value='30'>Up to 30 miles</option>
+                          <option value='50'>Up to 50 miles</option>
+                          <option value='100'>Up to 100 miles</option>
+                        </select>
+                      </div>
+                    )}
+                    {/* Remote scope when remote selected */}
+                    {formData.jobPreferences.workModes?.includes('remote') && (
+                      <div className='mt-2'>
+                        <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
+                          <input
+                            type='checkbox'
+                            checked={Boolean(formData.jobPreferences.remoteCityOnly)}
+                            onChange={(e) =>
+                              updateFormData('jobPreferences', 'remoteCityOnly', e.target.checked)
+                            }
+                            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                          />
+                          I only want remote roles in my city
+                        </label>
+                      </div>
+                    )}
                   </div>
                 </div>
 

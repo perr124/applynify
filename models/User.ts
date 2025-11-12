@@ -54,6 +54,9 @@ const userSchema = new mongoose.Schema(
       default: {
         roles: [],
         locations: [],
+        workModes: [],
+        commuteDistance: 'none',
+        remoteCityOnly: false,
         salary: {
           minimum: '',
           preferred: '',

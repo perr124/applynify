@@ -2,6 +2,9 @@ export interface JobPreferences {
   roles: string[];
   locations: string[];
   prefersRemote?: boolean;
+  workModes?: Array<'remote' | 'hybrid' | 'in-person'>;
+  commuteDistance?: 'none' | '10' | '30' | '50' | '100';
+  remoteCityOnly?: boolean;
   salary: {
     minimum: string;
     preferred: string;

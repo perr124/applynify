@@ -204,9 +204,55 @@ export default function ViewUser() {
                     </dd>
                   </div>
                   <div>
-                    <dt className='text-sm font-medium text-gray-500'>Remote Preferred</dt>
-                    <dd className='mt-1'>{user.jobPreferences?.prefersRemote ? 'Yes' : 'No'}</dd>
+                    <dt className='text-sm font-medium text-gray-500'>Work Modes</dt>
+                    <dd className='mt-1'>
+                      {user.jobPreferences?.workModes &&
+                      user.jobPreferences.workModes.length > 0 ? (
+                        <div className='flex flex-wrap gap-2'>
+                          {user.jobPreferences.workModes.map((m: string, i: number) => (
+                            <span
+                              key={`${m}-${i}`}
+                              className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800'
+                            >
+                              {m === 'in-person'
+                                ? 'In-person'
+                                : m.charAt(0).toUpperCase() + m.slice(1)}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        'Not specified'
+                      )}
+                    </dd>
                   </div>
+                  {(user.jobPreferences?.workModes || []).some(
+                    (m: string) => m === 'hybrid' || m === 'in-person'
+                  ) && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>Commute Distance</dt>
+                      <dd className='mt-1'>
+                        {(() => {
+                          const map: Record<string, string> = {
+                            none: 'No preference',
+                            '10': 'Up to 10 miles',
+                            '30': 'Up to 30 miles',
+                            '50': 'Up to 50 miles',
+                            '100': 'Up to 100 miles',
+                          };
+                          const v = user.jobPreferences?.commuteDistance || 'none';
+                          return map[v] || 'No preference';
+                        })()}
+                      </dd>
+                    </div>
+                  )}
+                  {(user.jobPreferences?.workModes || []).includes('remote') && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>Remote Scope</dt>
+                      <dd className='mt-1'>
+                        {user.jobPreferences?.remoteCityOnly ? 'City-only' : 'Nationwide'}
+                      </dd>
+                    </div>
+                  )}
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Salary Range</dt>
                     <dd className='mt-1 space-y-1'>
