@@ -26,6 +26,7 @@ type FormData = {
     workModes?: Array<'remote' | 'hybrid' | 'in-person'>;
     commuteDistance?: 'none' | '10' | '30' | '50' | '100';
     remoteCityOnly?: boolean;
+    salaryNoPreference?: boolean;
     salary: {
       minimum: string;
       preferred: string;
@@ -75,6 +76,7 @@ const initialFormData: FormData = {
     workModes: [],
     commuteDistance: 'none',
     remoteCityOnly: false,
+    salaryNoPreference: false,
     salary: {
       minimum: '',
       preferred: '',
@@ -334,8 +336,8 @@ export default function OnboardingQuestionnaire() {
         setError('Please select at least one job type');
         return;
       }
-      if (!formData.jobPreferences.salary.minimum) {
-        setError('Please enter your minimum salary expectation');
+      if (!formData.jobPreferences.salaryNoPreference && !formData.jobPreferences.salary.minimum) {
+        setError('Please enter your minimum salary expectation or select No preference');
         return;
       }
 
@@ -555,6 +557,12 @@ export default function OnboardingQuestionnaire() {
     uploadFormData.append('isOnboarding', 'true');
 
     try {
+      // indicate uploading
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: true,
+        error: null,
+      });
       const response = await fetch('/api/upload-resume', {
         method: 'POST',
         body: uploadFormData,
@@ -629,6 +637,12 @@ export default function OnboardingQuestionnaire() {
     uploadFormData.append('isOnboarding', 'true');
 
     try {
+      // indicate uploading
+      updateFormData('availability', 'resume', {
+        file: null,
+        uploading: true,
+        error: null,
+      });
       const response = await fetch('/api/upload-resume', {
         method: 'POST',
         body: uploadFormData,
@@ -832,23 +846,8 @@ export default function OnboardingQuestionnaire() {
                 <dt className='text-sm text-gray-500'>Resume</dt>
                 <dd className='mt-1'>
                   {formData.availability.resume?.file && (
-                    <div className='mt-2 flex items-center justify-between'>
-                      <p className='text-sm text-gray-600'>
-                        Selected file: {formData.availability.resume.file.name}
-                      </p>
-                      <button
-                        type='button'
-                        onClick={() => {
-                          updateFormData('availability', 'resume', {
-                            file: null,
-                            uploading: false,
-                            error: null,
-                          });
-                        }}
-                        className='inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
-                      >
-                        <span className='sr-only'>Remove resume</span>×
-                      </button>
+                    <div className='mt-2 text-sm text-gray-600 break-words break-all'>
+                      Selected file: {formData.availability.resume.file.name}
                     </div>
                   )}
                 </dd>
@@ -1259,26 +1258,53 @@ export default function OnboardingQuestionnaire() {
                     {/* Remote scope when remote selected */}
                     {formData.jobPreferences.workModes?.includes('remote') && (
                       <div className='mt-2'>
-                        <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
-                          <input
-                            type='checkbox'
-                            checked={Boolean(formData.jobPreferences.remoteCityOnly)}
-                            onChange={(e) =>
-                              updateFormData('jobPreferences', 'remoteCityOnly', e.target.checked)
-                            }
-                            className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-                          />
-                          I only want remote roles in my city
+                        <label className='block text-sm font-medium text-gray-700'>
+                          Remote preference
                         </label>
+                        <select
+                          className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                          value={formData.jobPreferences.remoteCityOnly ? 'city' : 'nationwide'}
+                          onChange={(e) =>
+                            updateFormData(
+                              'jobPreferences',
+                              'remoteCityOnly',
+                              e.target.value === 'city'
+                            )
+                          }
+                        >
+                          <option value='city'>Only in my preferred locations</option>
+                          <option value='nationwide'>Open to roles anywhere in the country</option>
+                        </select>
                       </div>
                     )}
                   </div>
                 </div>
 
                 <div>
-                  <label className='block text-sm font-medium text-gray-700'>
-                    Minimum salary expectation <span className='text-red-500'>*</span>
-                  </label>
+                  <div className='flex items-center justify-between'>
+                    <label className='block text-sm font-medium text-gray-700'>
+                      Minimum salary expectation
+                    </label>
+                    <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
+                      <input
+                        type='checkbox'
+                        checked={Boolean(formData.jobPreferences.salaryNoPreference)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          updateFormData('jobPreferences', 'salaryNoPreference', checked);
+                          if (checked) {
+                            // Clear the minimum when no preference is selected
+                            updateFormData('jobPreferences', 'salary', {
+                              ...formData.jobPreferences.salary,
+                              minimum: '',
+                            });
+                          }
+                        }}
+                        className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                      />
+                      No preference
+                    </label>
+                  </div>
                   <div className='mt-1 relative'>
                     <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                       <span className='text-gray-500 sm:text-sm whitespace-nowrap'>
@@ -1289,9 +1315,12 @@ export default function OnboardingQuestionnaire() {
                       type='text'
                       className={`appearance-none block w-full ${
                         getCurrencySymbol().length > 1 ? 'pl-10' : 'pl-7'
-                      } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                      } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                        formData.jobPreferences.salaryNoPreference ? 'bg-gray-100 opacity-70' : ''
+                      }`}
                       placeholder={`e.g., ${formatSalary('45000')}`}
                       value={formData.jobPreferences.salary.minimum}
+                      disabled={Boolean(formData.jobPreferences.salaryNoPreference)}
                       onChange={(e) => {
                         const formatted = formatSalary(e.target.value);
                         updateFormData('jobPreferences', 'salary', {
@@ -1585,6 +1614,9 @@ export default function OnboardingQuestionnaire() {
                     >
                       <option value=''>Select education level</option>
                       <option value='high-school'>High School</option>
+                      {currentRegion.code !== 'US' && (
+                        <option value='college-sixth-form'>College/Sixth Form</option>
+                      )}
                       <option value='bachelors'>Bachelor&apos;s Degree</option>
                       <option value='masters'>Master&apos;s Degree</option>
                       <option value='phd'>Ph.D.</option>
@@ -1606,7 +1638,11 @@ export default function OnboardingQuestionnaire() {
                         <option value=''>Prefer not to say</option>
                         <option value='american-indian'>American Indian or Alaska Native</option>
                         <option value='asian'>Asian</option>
-                        <option value='black'>Black or African American</option>
+                        <option value='black'>
+                          {currentRegion.code === 'US'
+                            ? 'Black or African American'
+                            : 'Black African/Caribbean'}
+                        </option>
                         <option value='hispanic'>Hispanic or Latino</option>
                         <option value='native-hawaiian'>
                           Native Hawaiian or Other Pacific Islander
@@ -1899,53 +1935,93 @@ export default function OnboardingQuestionnaire() {
                     Upload your resume (PDF, DOC, or DOCX) <span className='text-red-500'>*</span>
                   </label>
                   <div className='mt-1'>
-                    <div className='flex items-center justify-center w-full'>
-                      <label
-                        onDragOver={handleDragOver}
-                        onDragLeave={handleDragLeave}
-                        onDrop={handleDrop}
-                        className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
-                          isDragging
-                            ? 'border-primary-500 bg-primary-50'
-                            : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-                        }`}
-                      >
-                        <div className='flex flex-col items-center justify-center pt-5 pb-6'>
-                          <Upload className='w-8 h-8 mb-2 text-gray-500' />
-                          <p className='mb-2 text-sm text-gray-500'>
-                            <span className='font-semibold'>Click to upload</span> or drag and drop
-                          </p>
-                          <p className='text-xs text-gray-500'>PDF, DOC, or DOCX (max. 5MB)</p>
-                        </div>
-                        <input
-                          type='file'
-                          className='hidden'
-                          accept='.pdf,.doc,.docx'
-                          onChange={handleFileChange}
-                          disabled={formData.availability.resume?.uploading}
-                        />
-                      </label>
-                    </div>
-                    {formData.availability.resume?.file && (
-                      <div className='mt-2 flex items-center justify-between'>
-                        <p className='text-sm text-gray-600'>
-                          Selected file: {formData.availability.resume.file.name}
-                        </p>
-                        <button
-                          type='button'
-                          onClick={() => {
-                            updateFormData('availability', 'resume', {
-                              file: null,
-                              uploading: false,
-                              error: null,
-                            });
-                          }}
-                          className='inline-flex items-center justify-center w-6 h-6 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                    {!formData.availability.resume?.file && (
+                      <div className='flex items-center justify-center w-full'>
+                        <label
+                          onDragOver={handleDragOver}
+                          onDragLeave={handleDragLeave}
+                          onDrop={handleDrop}
+                          className={`flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors duration-150 ${
+                            isDragging
+                              ? 'border-primary-500 bg-primary-50'
+                              : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                          }`}
                         >
-                          <span className='sr-only'>Remove resume</span>×
-                        </button>
+                          <div className='flex flex-col items-center justify-center pt-5 pb-6'>
+                            <Upload className='w-8 h-8 mb-2 text-gray-500' />
+                            <p className='mb-2 text-sm text-gray-500'>
+                              <span className='font-semibold'>Click to upload</span> or drag and
+                              drop
+                            </p>
+                            <p className='text-xs text-gray-500'>PDF, DOC, or DOCX (max. 5MB)</p>
+                          </div>
+                          <input
+                            type='file'
+                            className='hidden'
+                            accept='.pdf,.doc,.docx'
+                            onChange={handleFileChange}
+                            disabled={formData.availability.resume?.uploading}
+                          />
+                        </label>
                       </div>
                     )}
+                    {formData.availability.resume?.uploading && (
+                      <div className='mt-2 flex items-center gap-2 text-sm text-gray-700'>
+                        <span className='loading loading-spinner loading-sm text-primary-600'></span>
+                        Uploading resume...
+                      </div>
+                    )}
+                    {formData.availability.resume?.file &&
+                      !formData.availability.resume?.uploading && (
+                        <div className='mt-3 rounded-md border border-green-200 bg-green-50 p-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3'>
+                          <div className='flex items-start gap-2 text-sm text-green-800 flex-1 min-w-0'>
+                            <svg
+                              xmlns='http://www.w3.org/2000/svg'
+                              className='h-5 w-5 flex-shrink-0'
+                              fill='none'
+                              viewBox='0 0 24 24'
+                              stroke='currentColor'
+                            >
+                              <path
+                                strokeLinecap='round'
+                                strokeLinejoin='round'
+                                strokeWidth={2}
+                                d='M5 13l4 4L19 7'
+                              />
+                            </svg>
+                            <div className='flex flex-wrap gap-x-2'>
+                              <span>Resume uploaded:</span>
+                              <span className='font-medium break-words break-all sm:truncate sm:max-w-[28rem]'>
+                                {formData.availability.resume.file.name}
+                              </span>
+                            </div>
+                          </div>
+                          <div className='flex items-center gap-3 flex-shrink-0 self-start sm:self-auto'>
+                            <label className='text-primary-600 hover:text-primary-700 text-sm cursor-pointer whitespace-nowrap'>
+                              <input
+                                type='file'
+                                className='hidden'
+                                accept='.pdf,.doc,.docx'
+                                onChange={handleFileChange}
+                              />
+                              Replace file
+                            </label>
+                            <button
+                              type='button'
+                              onClick={() => {
+                                updateFormData('availability', 'resume', {
+                                  file: null,
+                                  uploading: false,
+                                  error: null,
+                                });
+                              }}
+                              className='text-sm text-gray-600 hover:text-gray-800 whitespace-nowrap'
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     {formData.availability.resume?.error && (
                       <p className='mt-2 text-sm text-red-600'>
                         {formData.availability.resume.error}
@@ -1959,7 +2035,7 @@ export default function OnboardingQuestionnaire() {
                   <label className='block text-sm font-medium text-gray-700'>LinkedIn URL</label>
                   <div className='mt-1'>
                     <input
-                      type='url'
+                      type='text'
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       placeholder='https://www.linkedin.com/in/username'
                       value={formData.availability.linkedInUrl}

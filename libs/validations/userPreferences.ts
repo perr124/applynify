@@ -5,6 +5,7 @@ export interface JobPreferences {
   workModes?: Array<'remote' | 'hybrid' | 'in-person'>;
   commuteDistance?: 'none' | '10' | '30' | '50' | '100';
   remoteCityOnly?: boolean;
+  salaryNoPreference?: boolean;
   salary: {
     minimum: string;
     preferred: string;

@@ -28,6 +28,7 @@ type FormData = {
     workModes?: Array<'remote' | 'hybrid' | 'in-person'>;
     commuteDistance?: 'none' | '10' | '30' | '50' | '100';
     remoteCityOnly?: boolean;
+    salaryNoPreference?: boolean;
     salary: {
       minimum: string;
       preferred: string;
@@ -70,6 +71,7 @@ const initialFormData: FormData = {
     workModes: [],
     commuteDistance: 'none',
     remoteCityOnly: false,
+    salaryNoPreference: false,
     salary: {
       minimum: '',
       preferred: '',
@@ -556,27 +558,53 @@ export default function UpdatePreferences() {
                       </select>
                     </div>
                   )}
-                  {/* Remote scope when remote selected */}
+                  {/* Remote preference when remote selected */}
                   {formData.jobPreferences.workModes?.includes('remote') && (
                     <div className='mt-2'>
-                      <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
-                        <input
-                          type='checkbox'
-                          checked={Boolean(formData.jobPreferences.remoteCityOnly)}
-                          onChange={(e) =>
-                            updateFormData('jobPreferences', 'remoteCityOnly', e.target.checked)
-                          }
-                          className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
-                        />
-                        I only want remote roles in my city
+                      <label className='block text-sm font-medium text-gray-700'>
+                        Remote preference
                       </label>
+                      <select
+                        className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        value={formData.jobPreferences.remoteCityOnly ? 'city' : 'nationwide'}
+                        onChange={(e) =>
+                          updateFormData(
+                            'jobPreferences',
+                            'remoteCityOnly',
+                            e.target.value === 'city'
+                          )
+                        }
+                      >
+                        <option value='city'>Only in my preferred locations</option>
+                        <option value='nationwide'>Open to roles anywhere in the country</option>
+                      </select>
                     </div>
                   )}
                 </div>
               </div>
 
               <div>
-                <label className='block text-sm font-medium text-gray-700'>Minimum Salary</label>
+                <div className='flex items-center justify-between'>
+                  <label className='block text-sm font-medium text-gray-700'>Minimum Salary</label>
+                  <label className='inline-flex items-center gap-2 text-sm text-gray-700'>
+                    <input
+                      type='checkbox'
+                      checked={Boolean(formData.jobPreferences.salaryNoPreference)}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        updateFormData('jobPreferences', 'salaryNoPreference', checked);
+                        if (checked) {
+                          updateFormData('jobPreferences', 'salary', {
+                            ...formData.jobPreferences.salary,
+                            minimum: '',
+                          });
+                        }
+                      }}
+                      className='h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded'
+                    />
+                    No preference
+                  </label>
+                </div>
                 <div className='mt-1 relative'>
                   <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
                     <span className='text-gray-500 sm:text-sm whitespace-nowrap'>
@@ -587,7 +615,10 @@ export default function UpdatePreferences() {
                     type='text'
                     className={`appearance-none block w-full ${
                       getCurrencySymbol().length > 1 ? 'pl-12' : 'pl-7'
-                    } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm`}
+                    } px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm ${
+                      formData.jobPreferences.salaryNoPreference ? 'bg-gray-100 opacity-70' : ''
+                    }`}
+                    disabled={Boolean(formData.jobPreferences.salaryNoPreference)}
                     value={formData.jobPreferences.salary.minimum}
                     onChange={(e) => {
                       const formatted = formatSalary(e.target.value);
@@ -1187,7 +1218,7 @@ export default function UpdatePreferences() {
               <div>
                 <label className='block text-sm font-medium text-gray-700'>LinkedIn URL</label>
                 <input
-                  type='url'
+                  type='text'
                   className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                   placeholder='https://www.linkedin.com/in/username'
                   value={formData.availability.linkedInUrl}

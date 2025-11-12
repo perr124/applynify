@@ -247,16 +247,33 @@ export default function ViewUser() {
                   )}
                   {(user.jobPreferences?.workModes || []).includes('remote') && (
                     <div>
-                      <dt className='text-sm font-medium text-gray-500'>Remote Scope</dt>
+                      <dt className='text-sm font-medium text-gray-500'>Remote Preference</dt>
                       <dd className='mt-1'>
-                        {user.jobPreferences?.remoteCityOnly ? 'City-only' : 'Nationwide'}
+                        {user.jobPreferences?.remoteCityOnly
+                          ? 'Only in preferred locations'
+                          : 'Open to roles anywhere in the country'}
                       </dd>
                     </div>
                   )}
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Salary Range</dt>
                     <dd className='mt-1 space-y-1'>
-                      <p>Minimum: {user.jobPreferences.salary.minimum}</p>
+                      <p>
+                        {(() => {
+                          const noPref = Boolean(user.jobPreferences?.salaryNoPreference);
+                          const minVal =
+                            (user.jobPreferences?.salary &&
+                              (user.jobPreferences.salary.minimum || '').toString().trim()) ||
+                            '';
+                          const text = noPref ? 'No preference' : minVal || 'Not specified';
+                          return (
+                            <>
+                              <span>Minimum: </span>
+                              <span>{text}</span>
+                            </>
+                          );
+                        })()}
+                      </p>
                       {/* <p>Preferred: {user.jobPreferences.salary.preferred}</p> */}
                     </dd>
                   </div>
