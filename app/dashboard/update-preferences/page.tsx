@@ -37,6 +37,7 @@ type FormData = {
     requiresSponsorship: boolean;
     jobType: string[];
   };
+  localization?: string;
   experience: {
     yearsOfExperience: string;
     education: string;
@@ -171,11 +172,15 @@ export default function UpdatePreferences() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const updateFormData = (section: keyof FormData, field: string, value: any) => {
+  const updateFormData = <K extends 'jobPreferences' | 'experience' | 'availability'>(
+    section: K,
+    field: string,
+    value: any
+  ) => {
     setFormData((prev) => ({
       ...prev,
       [section]: {
-        ...prev[section],
+        ...(prev[section] as Record<string, any>),
         [field]: value,
       },
     }));
@@ -838,8 +843,11 @@ export default function UpdatePreferences() {
                 >
                   <option value=''>Select education level</option>
                   <option value='high-school'>High School</option>
-                  <option value='bachelors'>Bachelor's Degree</option>
-                  <option value='masters'>Master's Degree</option>
+                  {(formData.localization || 'US') !== 'US' && (
+                    <option value='college-sixth-form'>College/Sixth Form</option>
+                  )}
+                  <option value='bachelors'>Bachelor&apos;s Degree</option>
+                  <option value='masters'>Master&apos;s Degree</option>
                   <option value='phd'>Ph.D.</option>
                   <option value='other'>Other</option>
                 </select>
@@ -937,7 +945,11 @@ export default function UpdatePreferences() {
                       <option value=''>Prefer not to say</option>
                       <option value='american-indian'>American Indian or Alaska Native</option>
                       <option value='asian'>Asian</option>
-                      <option value='black'>Black or African American</option>
+                      <option value='black'>
+                        {(formData.localization || 'US') === 'US'
+                          ? 'Black or African American'
+                          : 'Black African/Caribbean'}
+                      </option>
                       <option value='hispanic'>Hispanic or Latino</option>
                       <option value='native-hawaiian'>
                         Native Hawaiian or Other Pacific Islander

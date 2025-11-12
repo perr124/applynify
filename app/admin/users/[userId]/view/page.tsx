@@ -321,7 +321,20 @@ export default function ViewUser() {
                   </div>
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Education</dt>
-                    <dd className='mt-1'>{user.experience.education}</dd>
+                    <dd className='mt-1'>
+                      {(() => {
+                        const map: Record<string, string> = {
+                          'high-school': 'High School',
+                          bachelors: "Bachelor's Degree",
+                          masters: "Master's Degree",
+                          phd: 'Ph.D.',
+                          other: 'Other',
+                          'college-sixth-form': 'College/Sixth Form',
+                        };
+                        const val = (user.experience?.education || '').toString();
+                        return map[val] ?? (val || 'Not specified');
+                      })()}
+                    </dd>
                   </div>
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Skills</dt>
@@ -340,7 +353,26 @@ export default function ViewUser() {
                   </div>
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Ethnicity</dt>
-                    <dd className='mt-1'>{user.experience.ethnicity || 'Not specified'}</dd>
+                    <dd className='mt-1'>
+                      {(() => {
+                        const val = (user.experience?.ethnicity as string) || '';
+                        if (!val) return 'Not specified';
+                        const baseMap: Record<string, string> = {
+                          'american-indian': 'American Indian or Alaska Native',
+                          asian: 'Asian',
+                          black:
+                            (user.localization || 'US') === 'US'
+                              ? 'Black or African American'
+                              : 'Black African/Caribbean',
+                          hispanic: 'Hispanic or Latino',
+                          'native-hawaiian': 'Native Hawaiian or Other Pacific Islander',
+                          white: 'White',
+                          'two-or-more': 'Mixed or Multiple ethnic groups',
+                          other: 'Other',
+                        };
+                        return baseMap[val] ?? val;
+                      })()}
+                    </dd>
                   </div>
                   <div>
                     <dt className='text-sm font-medium text-gray-500'>Date of Birth</dt>

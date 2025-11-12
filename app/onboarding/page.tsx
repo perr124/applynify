@@ -66,6 +66,7 @@ type FormData = {
   };
   termsAccepted: boolean;
   marketingSource: string;
+  localization: string;
 };
 
 const initialFormData: FormData = {
@@ -116,6 +117,7 @@ const initialFormData: FormData = {
   },
   termsAccepted: false,
   marketingSource: '',
+  localization: 'US',
 };
 
 const formatSalary = (value: string) => {
@@ -211,6 +213,7 @@ export default function OnboardingQuestionnaire() {
             },
             termsAccepted: data.termsAccepted || false,
             marketingSource: data.marketingSource || '',
+            localization: data.localization || 'US',
           });
         }
       } catch (error) {
@@ -1614,7 +1617,7 @@ export default function OnboardingQuestionnaire() {
                     >
                       <option value=''>Select education level</option>
                       <option value='high-school'>High School</option>
-                      {currentRegion.code !== 'US' && (
+                      {(formData.localization || 'US') !== 'US' && (
                         <option value='college-sixth-form'>College/Sixth Form</option>
                       )}
                       <option value='bachelors'>Bachelor&apos;s Degree</option>
@@ -1639,7 +1642,7 @@ export default function OnboardingQuestionnaire() {
                         <option value='american-indian'>American Indian or Alaska Native</option>
                         <option value='asian'>Asian</option>
                         <option value='black'>
-                          {currentRegion.code === 'US'
+                          {(formData.localization || 'US') === 'US'
                             ? 'Black or African American'
                             : 'Black African/Caribbean'}
                         </option>
