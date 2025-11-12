@@ -186,12 +186,7 @@ const userSchema = new mongoose.Schema(
         },
         jobType: {
           type: String,
-          enum: ['remote', 'hybrid', 'on-site'],
-          required: true,
-        },
-        employmentType: {
-          type: String,
-          enum: ['full-time', 'contract', 'part-time'],
+          enum: ['full-time', 'contract', 'part-time', 'internship'],
           required: true,
         },
         jobLink: {

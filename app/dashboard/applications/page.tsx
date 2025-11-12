@@ -18,17 +18,18 @@ type JobApplication = {
   companyName: string;
   location: string;
   salary?: string;
-  jobType: 'remote' | 'hybrid' | 'on-site';
-  employmentType: 'full-time' | 'contract' | 'part-time';
+  // Repurposed: jobType now represents Full-time/Contract/Part-time/Internship
+  jobType: 'full-time' | 'contract' | 'part-time' | 'internship';
   jobLink: string;
   status: 'draft' | 'completed';
   appliedAt: string;
 };
 
-const employmentTypeConfig = {
+const jobTypeConfig = {
   'full-time': { label: 'Full-time', color: 'text-blue-600 bg-blue-50 border-blue-200' },
   contract: { label: 'Contract', color: 'text-purple-600 bg-purple-50 border-purple-200' },
   'part-time': { label: 'Part-time', color: 'text-green-600 bg-green-50 border-green-200' },
+  internship: { label: 'Internship', color: 'text-orange-600 bg-orange-50 border-orange-200' },
 };
 
 export default function Applications() {
@@ -64,9 +65,9 @@ export default function Applications() {
       app.location.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const getEmploymentTypeConfig = (type: string) => {
+  const getJobTypeConfig = (type: string) => {
     return (
-      employmentTypeConfig[type as keyof typeof employmentTypeConfig] || {
+      jobTypeConfig[type as keyof typeof jobTypeConfig] || {
         label: type,
         color: 'text-gray-600 bg-gray-50 border-gray-200',
       }
@@ -189,10 +190,10 @@ export default function Applications() {
                 <div className='ml-4'>
                   <span
                     className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                      getEmploymentTypeConfig(application.employmentType).color
+                      getJobTypeConfig(application.jobType).color
                     }`}
                   >
-                    {getEmploymentTypeConfig(application.employmentType).label}
+                    {getJobTypeConfig(application.jobType).label}
                   </span>
                 </div>
               </div>
@@ -239,9 +240,7 @@ export default function Applications() {
                       <label className='block text-sm font-medium text-gray-500'>Location</label>
                       <div className='mt-1 flex items-center text-gray-900'>
                         <MapPin className='flex-shrink-0 mr-1.5 h-4 w-4' />
-                        {selectedApplication.jobType === 'remote'
-                          ? 'Remote'
-                          : selectedApplication.location}
+                        {selectedApplication.location}
                       </div>
                     </div>
                     {selectedApplication.salary && (
@@ -255,34 +254,23 @@ export default function Applications() {
                       <div className='mt-1'>
                         <span
                           className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${
-                            getEmploymentTypeConfig(selectedApplication.employmentType).color
+                            getJobTypeConfig(selectedApplication.jobType).color
                           }`}
                         >
-                          {getEmploymentTypeConfig(selectedApplication.employmentType).label}
+                          {getJobTypeConfig(selectedApplication.jobType).label}
                         </span>
                       </div>
                     </div>
                     <div>
-                      <label className='block text-sm font-medium text-gray-500'>
-                        Employment Type
-                      </label>
-                      <div className='mt-1'>
-                        <span className='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium text-gray-600 bg-gray-50 border border-gray-200'>
-                          {selectedApplication.employmentType}
-                        </span>
+                      <label className='block text-sm font-medium text-gray-500'>Applied On</label>
+                      <div className='mt-1 text-gray-900'>
+                        {new Date(selectedApplication.appliedAt).toLocaleDateString(undefined, {
+                          weekday: 'long',
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
                       </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className='block text-sm font-medium text-gray-500'>Applied On</label>
-                    <div className='mt-1 text-gray-900'>
-                      {new Date(selectedApplication.appliedAt).toLocaleDateString(undefined, {
-                        weekday: 'long',
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                      })}
                     </div>
                   </div>
 

@@ -99,8 +99,7 @@ export default function UserJobApplication() {
     jobTitle: '',
     companyName: '',
     location: '',
-    jobType: 'remote' as const,
-    employmentType: 'full-time' as const,
+    jobType: 'full-time' as const,
     jobLink: '',
     salary: '',
   };
@@ -329,9 +328,6 @@ export default function UserJobApplication() {
                   Job Type
                 </th>
                 <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
-                  Employment
-                </th>
-                <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
                   Description Link
                 </th>
                 <th className='px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider'>
@@ -403,26 +399,13 @@ export default function UserJobApplication() {
                       {...register(`applications.${index}.jobType`, { required: true })}
                       className='w-full p-1 border rounded text-sm'
                     >
-                      <option value='remote'>Remote</option>
-                      <option value='hybrid'>Hybrid</option>
-                      <option value='on-site'>On-site</option>
-                    </select>
-                    {errors.applications?.[index]?.jobType && (
-                      <p className='text-red-500 text-xs mt-1'>Job type is required</p>
-                    )}
-                  </td>
-                  <td className='px-4 py-2'>
-                    <select
-                      {...register(`applications.${index}.employmentType`, { required: true })}
-                      className='w-full p-1 border rounded text-sm'
-                    >
                       <option value='full-time'>Full-time</option>
                       <option value='part-time'>Part-time</option>
                       <option value='contract'>Contract</option>
                       <option value='internship'>Internship</option>
                     </select>
-                    {errors.applications?.[index]?.employmentType && (
-                      <p className='text-red-500 text-xs mt-1'>Employment type is required</p>
+                    {errors.applications?.[index]?.jobType && (
+                      <p className='text-red-500 text-xs mt-1'>Job type is required</p>
                     )}
                   </td>
                   <td className='px-4 py-2'>
