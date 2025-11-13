@@ -134,9 +134,11 @@ export async function PUT(request: Request) {
             skills: data.experience.skills,
             isVeteran: data.experience.isVeteran,
             hasDisability: data.experience.hasDisability,
+            disabilityDetails: data.experience.disabilityDetails,
             ethnicity: data.experience.ethnicity,
             dateOfBirth: data.experience.dateOfBirth,
             gender: data.experience.gender || '',
+            pronouns: data.experience.pronouns || '',
           },
           availability: {
             startDate: data.availability.startDate,

@@ -405,6 +405,10 @@ export default function ViewUser() {
                     </dd>
                   </div>
                   <div>
+                    <dt className='text-sm font-medium text-gray-500'>Pronouns</dt>
+                    <dd className='mt-1'>{user.experience?.pronouns || 'Not specified'}</dd>
+                  </div>
+                  <div>
                     <dt className='text-sm font-medium text-gray-500'>Veteran Status</dt>
                     <dd className='mt-1'>{user.experience.isVeteran ? 'Yes' : 'No'}</dd>
                   </div>
@@ -412,6 +416,16 @@ export default function ViewUser() {
                     <dt className='text-sm font-medium text-gray-500'>Disability Status</dt>
                     <dd className='mt-1'>{user.experience.hasDisability ? 'Yes' : 'No'}</dd>
                   </div>
+                  {user.experience.hasDisability && user.experience?.disabilityDetails && (
+                    <div>
+                      <dt className='text-sm font-medium text-gray-500'>
+                        Disability or Accessibility Needs
+                      </dt>
+                      <dd className='mt-1 whitespace-pre-wrap'>
+                        {user.experience.disabilityDetails}
+                      </dd>
+                    </div>
+                  )}
                 </dl>
               </div>
             )}

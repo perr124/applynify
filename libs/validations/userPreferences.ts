@@ -21,9 +21,11 @@ export type Experience = {
   skills: string[];
   isVeteran: boolean;
   hasDisability: boolean;
+  disabilityDetails?: string;
   ethnicity: string;
   dateOfBirth: string;
   gender?: string;
+  pronouns?: string;
 };
 
 export interface Availability {
@@ -52,7 +54,7 @@ export interface PreferencesData {
   jobPreferences: JobPreferences;
   experience: Experience;
   availability: Availability;
-  applicationsStatus?: 'started' | 'completed';
+  applicationsStatus?: 'notStarted' | 'started' | 'completed';
   resumes?: Resume[];
   marketingSource?: string;
   termsAccepted?: boolean;

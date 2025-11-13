@@ -41,9 +41,11 @@ type FormData = {
     skills: string[];
     isVeteran: boolean;
     hasDisability: boolean;
+    disabilityDetails?: string;
     ethnicity: string;
     dateOfBirth: string;
     gender: string;
+    pronouns?: string;
   };
   availability: {
     startDate: string;
@@ -92,9 +94,11 @@ const initialFormData: FormData = {
     skills: [],
     isVeteran: false,
     hasDisability: false,
+    disabilityDetails: '',
     ethnicity: '',
     dateOfBirth: '',
     gender: '',
+    pronouns: '',
   },
   availability: {
     startDate: '',
@@ -1688,6 +1692,21 @@ export default function OnboardingQuestionnaire() {
                       </select>
                     </div>
                   </div>
+                  <div className='mt-4'>
+                    <label className='block text-sm font-medium text-gray-700'>Pronouns</label>
+                    <select
+                      className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                      value={formData.experience.pronouns || ''}
+                      onChange={(e) => updateFormData('experience', 'pronouns', e.target.value)}
+                    >
+                      <option value=''>Prefer not to say</option>
+                      <option value='she/her'>She/her</option>
+                      <option value='he/him'>He/him</option>
+                      <option value='they/them'>They/them</option>
+                      <option value='she/they'>She/they</option>
+                      <option value='he/they'>He/they</option>
+                    </select>
+                  </div>
                 </div>
 
                 <div className='space-y-2'>
@@ -1728,6 +1747,22 @@ export default function OnboardingQuestionnaire() {
                       </label>
                     </div>
                   </div>
+                  {formData.experience.hasDisability && (
+                    <div className='mt-3'>
+                      <label className='block text-sm font-medium text-gray-700'>
+                        If you’d like, please share any disability or accessibility requirements
+                      </label>
+                      <textarea
+                        className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
+                        rows={3}
+                        placeholder='Optional'
+                        value={formData.experience.disabilityDetails || ''}
+                        onChange={(e) =>
+                          updateFormData('experience', 'disabilityDetails', e.target.value)
+                        }
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1924,7 +1959,7 @@ export default function OnboardingQuestionnaire() {
                     <textarea
                       className='appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
                       rows={5}
-                      placeholder="This could include job roles you've recently applied to that you don't want us to re-apply to, any additional languages you speak, disabilities, or any other important information we should know."
+                      placeholder="This could include job roles you've recently applied to that you don't want us to re-apply to, any additional languages you speak, or any other important information we should be aware of."
                       value={formData.availability.additionalInfo}
                       onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                         updateFormData('availability', 'additionalInfo', e.target.value)

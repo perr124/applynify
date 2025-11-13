@@ -82,9 +82,11 @@ const userSchema = new mongoose.Schema(
         skills: [],
         isVeteran: false,
         hasDisability: false,
+        disabilityDetails: '',
         ethnicity: '',
         dateOfBirth: '',
         gender: '',
+        pronouns: '',
       },
     },
     availability: {

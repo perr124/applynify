@@ -112,13 +112,13 @@ export async function sendPaymentConfirmationEmail(email: string, userFirstName:
   await sendEmail({
     to: email,
     subject: 'Thank You for Your Purchase',
-    text: `Hello ${userFirstName}, thank you for your purchase. We are working on your order and will notify you once it's complete.`,
+    text: `Hello ${userFirstName}, thank you for your purchase. We will send you an email once we start working on your order.`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
         <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
         <h2 style="color: #333;">Thank You for Your Purchase</h2>
         <p>Hello ${userFirstName},</p>
-        <p>Thank you for your purchase. We are working on your order and will notify you once it's complete.</p>
+        <p>Thank you for your purchase. We will send you an email once we start working on your order.</p>
         <div style="margin: 20px 0;">
           <a href="${dashboardLink}" 
              style="background-color: #0c7543; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
