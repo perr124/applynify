@@ -77,12 +77,24 @@ export const authOptions: NextAuthOptionsExtended = {
         );
 
         if (!user) {
-          throw new Error('No user found with this email');
+          // Avoid revealing whether the email exists
+          throw new Error('Invalid email or password');
         }
 
-        const isValid = await bcrypt.compare(credentials.password, user.password);
+        // If the account was created via Google (no password stored), guide user
+        if (!user.password) {
+          throw new Error('This account is linked to Google. Please sign in with Google.');
+        }
+
+        let isValid = false;
+        try {
+          isValid = await bcrypt.compare(credentials.password, user.password);
+        } catch {
+          // Normalize unexpected compare errors (e.g., bad/missing hash) to a generic message
+          throw new Error('Invalid email or password');
+        }
         if (!isValid) {
-          throw new Error('Invalid password');
+          throw new Error('Invalid email or password');
         }
 
         return {
