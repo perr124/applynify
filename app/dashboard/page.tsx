@@ -27,7 +27,7 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 type ProfileStatus = {
   preferences: boolean;
   resume: boolean;
-  applicationsStatus?: 'started' | 'completed';
+  applicationsStatus?: 'notStarted' | 'started' | 'completed';
   totalApplications?: number;
 };
 
@@ -65,7 +65,7 @@ export default function DashboardHome() {
         setProfileStatus({
           preferences: hasCompletedPreferences(prefsData),
           resume: resumesData.length > 0,
-          applicationsStatus: prefsData.applicationsStatus || 'started',
+          applicationsStatus: prefsData.applicationsStatus || 'notStarted',
           totalApplications,
         });
       } catch (error) {
@@ -88,6 +88,15 @@ export default function DashboardHome() {
 
   const getApplicationStatusInfo = (status: string) => {
     switch (status) {
+      case 'notStarted':
+        return {
+          icon: XCircle,
+          color: 'text-gray-600',
+          bgColor: 'bg-gray-50',
+          borderColor: 'border-gray-200',
+          label: 'Applications Not Started',
+          description: 'We will begin your applications soon',
+        };
       case 'started':
         return {
           icon: Clock,

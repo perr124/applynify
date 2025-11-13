@@ -50,6 +50,8 @@ export default function UserJobApplication() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isStartModalOpen, setIsStartModalOpen] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
 
   const {
     control,
@@ -220,6 +222,40 @@ export default function UserJobApplication() {
     }
   };
 
+  const confirmStartApplications = async () => {
+    try {
+      setIsStarting(true);
+      const statusRes = await fetch(`/api/admin/users/${params.userId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicationsStatus: 'started' }),
+      });
+      if (!statusRes.ok) {
+        throw new Error('Failed to update application status');
+      }
+      try {
+        await fetch('/api/notifications/application-started', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userEmail: user?.email,
+            userFirstName: user?.firstName,
+          }),
+        });
+      } catch (e) {
+        console.error('Failed to send started notification', e);
+      }
+      setUser((prev) => (prev ? { ...prev, applicationsStatus: 'started' } : prev));
+      toast.success('Applications marked as started');
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to start applications');
+    } finally {
+      setIsStarting(false);
+      setIsStartModalOpen(false);
+    }
+  };
+
   if (isSubmitting) return <div>Submitting...</div>;
   if (error) return <div className='p-4 text-red-500'>{error}</div>;
   if (!user) return <div className='p-4'>Loading...</div>;
@@ -236,11 +272,25 @@ export default function UserJobApplication() {
               </p>
               <p className='text-gray-600'>{user?.email}</p>
             </div>
-            {user?.applicationsStatus === 'completed' && (
-              <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'>
-                Completed
-              </span>
-            )}
+            <div className='flex items-center gap-3'>
+              {user?.applicationsStatus === 'completed' && (
+                <span className='inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800'>
+                  Completed
+                </span>
+              )}
+              <button
+                type='button'
+                onClick={() => setIsStartModalOpen(true)}
+                disabled={
+                  isStarting ||
+                  user?.applicationsStatus === 'started' ||
+                  user?.applicationsStatus === 'completed'
+                }
+                className='inline-flex items-center px-3 py-1.5 border border-transparent text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 disabled:bg-gray-300 disabled:text-gray-500 disabled:border-gray-300 disabled:cursor-not-allowed disabled:hover:bg-gray-300 disabled:hover:text-gray-500'
+              >
+                Application Started
+              </button>
+            </div>
           </div>
           <div className='mt-4'>
             <a
@@ -537,6 +587,46 @@ export default function UserJobApplication() {
                   className='px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-70'
                 >
                   {isCompleting ? 'Processing...' : 'Yes, complete & notify'}
+                </button>
+              </div>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+      {/* Start Applications Confirmation Modal */}
+      <Dialog
+        open={isStartModalOpen}
+        onClose={() => setIsStartModalOpen(false)}
+        className='relative z-50'
+      >
+        <div className='fixed inset-0 bg-black/30' aria-hidden='true' />
+        <div className='fixed inset-0 flex items-center justify-center p-4'>
+          <Dialog.Panel className='mx-auto max-w-sm w-full bg-white rounded-xl shadow-lg'>
+            <div className='p-6'>
+              <Dialog.Title className='text-lg font-medium text-gray-900 mb-4'>
+                Mark Applications as Started
+              </Dialog.Title>
+              <p className='text-gray-500 mb-6'>
+                Are you sure you want to mark the application process as started? This will notify
+                the user and update their dashboard status.
+              </p>
+              <div className='flex justify-end gap-4'>
+                <button
+                  type='button'
+                  onClick={() => setIsStartModalOpen(false)}
+                  className='px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50'
+                  disabled={isStarting}
+                >
+                  Cancel
+                </button>
+                <button
+                  type='button'
+                  onClick={confirmStartApplications}
+                  disabled={isStarting}
+                  className='px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-70'
+                >
+                  {isStarting ? 'Starting...' : 'Yes, mark as started'}
                 </button>
               </div>
             </div>

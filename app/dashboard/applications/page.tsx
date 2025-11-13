@@ -38,10 +38,21 @@ export default function Applications() {
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedApplication, setSelectedApplication] = useState<JobApplication | null>(null);
+  const [applicationsStatus, setApplicationsStatus] = useState<
+    'notStarted' | 'started' | 'completed' | null
+  >(null);
 
   const loadApplications = async () => {
     try {
       setIsLoading(true);
+      // Fetch status first
+      const statusRes = await fetch('/api/user/preferences');
+      if (!statusRes.ok) throw new Error('Failed to fetch status');
+      const statusData = await statusRes.json();
+      const status =
+        (statusData?.applicationsStatus as 'notStarted' | 'started' | 'completed') || 'notStarted';
+      setApplicationsStatus(status);
+      // Only fetch applications list if we have started or completed (still okay to fetch if started)
       const applicationsResponse = await fetch('/api/job-applications');
       if (!applicationsResponse.ok) throw new Error('Failed to fetch applications');
       const data = await applicationsResponse.json();
@@ -85,6 +96,18 @@ export default function Applications() {
             </div>
           ))}
         </div>
+      </div>
+    );
+  }
+
+  if (applicationsStatus === 'notStarted') {
+    return (
+      <div className='bg-white shadow rounded-xl p-8 text-center border border-gray-100'>
+        <Clock className='mx-auto h-12 w-12 text-gray-400' />
+        <h3 className='mt-2 text-lg font-medium text-gray-900'>Applications Not Started</h3>
+        <p className='mt-2 text-sm text-gray-500 max-w-sm mx-auto'>
+          We haven't started your applications yet. You'll see updates here once we begin.
+        </p>
       </div>
     );
   }

@@ -69,8 +69,8 @@ const userSchema = new mongoose.Schema(
     },
     applicationsStatus: {
       type: String,
-      enum: ['started', 'completed'],
-      default: 'started',
+      enum: ['notStarted', 'started', 'completed'],
+      default: 'notStarted',
       select: true,
     },
     experience: {

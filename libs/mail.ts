@@ -131,3 +131,30 @@ export async function sendPaymentConfirmationEmail(email: string, userFirstName:
     `,
   });
 }
+
+export async function sendApplicationStartedNotification(email: string, userFirstName: string) {
+  const applicationsLink = `${process.env.NEXTAUTH_URL}/dashboard/applications`;
+
+  await sendEmail({
+    to: email,
+    subject: 'Your Applications Have Started',
+    text: `Hello ${userFirstName}, we've started working on your job applications. We'll notify you once they're completed.`,
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
+        <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
+        <h2 style="color: #333;">Applications Started</h2>
+        <p>Hello ${userFirstName},</p>
+        <p>We've started working on your job applications.</p>
+        <p>You'll be able to view your applications in your dashboard by clicking the button below.</p>
+        <div style="margin: 20px 0;">
+          <a href="${applicationsLink}" 
+             style="background-color: #0c7543; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            View Applications in Dashboard
+          </a>
+        </div>
+        <p>If you have any questions, please don't hesitate to contact us.</p>
+        <p>Best regards,<br>Applynify Support</p>
+      </div>
+    `,
+  });
+}
