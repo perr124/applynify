@@ -335,8 +335,8 @@ export default function UpdatePreferences() {
           <div className='flex items-start'>
             <AlertCircle className='h-5 w-5 text-amber-500 mr-2 flex-shrink-0' />
             <div className='text-sm text-amber-800'>
-              Your applications have started. To request any changes, please send us a message in
-              your inbox.
+              Your application process has started. To request any changes, please send us a message
+              in your inbox.
               <a href='/dashboard/messages' className='ml-1 underline text-amber-900'>
                 Go to Messages
               </a>
