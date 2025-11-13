@@ -28,6 +28,10 @@ export async function POST(request: Request) {
 
     // Convert file to buffer
     const buffer = Buffer.from(await file.arrayBuffer());
+    if (!buffer || buffer.length === 0) {
+      console.error('Uploaded file buffer is empty');
+      return NextResponse.json({ error: 'Uploaded file is empty' }, { status: 400 });
+    }
 
     // Generate unique file name
     const fileName = `${session.user.email}/${Date.now()}-${file.name}`;
@@ -38,6 +42,8 @@ export async function POST(request: Request) {
       Key: fileName,
       Body: buffer,
       ContentType: file.type,
+      // ContentLength is optional, but including it can help prevent 0-byte anomalies
+      ContentLength: buffer.length,
     });
 
     await s3Client.send(uploadCommand);

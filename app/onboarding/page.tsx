@@ -64,6 +64,7 @@ type FormData = {
       file: File | null;
       uploading: boolean;
       error: string | null;
+      url?: string | null;
     };
   };
   termsAccepted: boolean;
@@ -117,6 +118,7 @@ const initialFormData: FormData = {
       file: null,
       uploading: false,
       error: null,
+      url: null,
     },
   },
   termsAccepted: false,
@@ -213,6 +215,7 @@ export default function OnboardingQuestionnaire() {
                 file: activeResume ? new File([], activeResume.filename) : null,
                 uploading: false,
                 error: null,
+                url: null,
               },
             },
             termsAccepted: data.termsAccepted || false,
@@ -277,7 +280,7 @@ export default function OnboardingQuestionnaire() {
             additionalInfo: data.availability.additionalInfo,
             linkedInUrl: data.availability.linkedInUrl,
             address: data.availability.address,
-            resumeUrl: data.availability.resume?.file ? null : undefined,
+            resumeUrl: data.availability.resume?.url || undefined,
           },
           marketingSource: data.marketingSource,
           termsAccepted: data.termsAccepted,
@@ -449,8 +452,8 @@ export default function OnboardingQuestionnaire() {
       // Save preferences before moving to pricing step
       try {
         // Upload resume if exists
-        let resumeUrl = null;
-        if (formData.availability.resume?.file) {
+        let resumeUrl = formData.availability.resume?.url || null;
+        if (!resumeUrl && formData.availability.resume?.file) {
           const uploadFormData = new FormData();
           uploadFormData.append('file', formData.availability.resume.file);
           uploadFormData.append('isOnboarding', 'true');
@@ -579,10 +582,13 @@ export default function OnboardingQuestionnaire() {
         throw new Error('Failed to upload resume');
       }
 
+      const upload = await response.json();
+
       updateFormData('availability', 'resume', {
         file,
         uploading: false,
         error: null,
+        url: upload?.url || null,
       });
     } catch (error) {
       console.error('Resume upload error:', error);
@@ -659,10 +665,13 @@ export default function OnboardingQuestionnaire() {
         throw new Error('Failed to upload resume');
       }
 
+      const upload = await response.json();
+
       updateFormData('availability', 'resume', {
         file,
         uploading: false,
         error: null,
+        url: upload?.url || null,
       });
     } catch (error) {
       console.error('Resume upload error:', error);
@@ -1750,7 +1759,7 @@ export default function OnboardingQuestionnaire() {
                   {formData.experience.hasDisability && (
                     <div className='mt-3'>
                       <label className='block text-sm font-medium text-gray-700'>
-                        If you’d like, please share any disability or accessibility requirements
+                        If you'd like, please share any disability or accessibility requirements
                       </label>
                       <textarea
                         className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm'
