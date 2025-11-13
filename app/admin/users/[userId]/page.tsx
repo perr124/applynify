@@ -132,13 +132,7 @@ export default function UserJobApplication() {
   // Add a function to count non-empty applications
   const countNonEmptyApplications = (applications: any[]) => {
     return applications.filter(
-      (app) =>
-        app.jobTitle &&
-        app.companyName &&
-        app.location &&
-        app.jobType &&
-        app.employmentType &&
-        app.jobLink
+      (app) => app.jobTitle && app.companyName && app.location && app.jobType && app.jobLink
     ).length;
   };
 
@@ -268,7 +262,7 @@ export default function UserJobApplication() {
                     Plan: {getPlanByStripeId(user.priceId)?.name || 'Unknown'}
                   </span>
                   <span className='text-sm font-medium text-gray-900'>
-                    {countNonEmptyApplications(fields)} /{' '}
+                    {countNonEmptyApplications(watch('applications'))} /{' '}
                     {getPlanByStripeId(user.priceId)?.applicationLimit || 0}
                   </span>
                 </div>
@@ -277,7 +271,7 @@ export default function UserJobApplication() {
                     className='bg-blue-600 h-2.5 rounded-full transition-all duration-300'
                     style={{
                       width: `${
-                        (countNonEmptyApplications(fields) /
+                        (countNonEmptyApplications(watch('applications')) /
                           (getPlanByStripeId(user.priceId)?.applicationLimit || 1)) *
                         100
                       }%`,
@@ -287,7 +281,7 @@ export default function UserJobApplication() {
                 <p className='text-sm text-gray-500'>
                   {getPlanByStripeId(user.priceId)?.applicationLimit &&
                     getPlanByStripeId(user.priceId)!.applicationLimit -
-                      countNonEmptyApplications(fields)}{' '}
+                      countNonEmptyApplications(watch('applications'))}{' '}
                   applications remaining
                 </p>
               </div>
@@ -440,7 +434,7 @@ export default function UserJobApplication() {
             onClick={() => append(defaultApplication)}
             disabled={Boolean(
               user?.priceId &&
-                countNonEmptyApplications(fields) >=
+                countNonEmptyApplications(watch('applications')) >=
                   (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
             )}
             className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'

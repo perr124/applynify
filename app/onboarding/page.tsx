@@ -1976,8 +1976,14 @@ export default function OnboardingQuestionnaire() {
                     )}
                     {formData.availability.resume?.file &&
                       !formData.availability.resume?.uploading && (
-                        <div className='mt-3 rounded-md border border-green-200 bg-green-50 p-3 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3'>
-                          <div className='flex items-start gap-2 text-sm text-green-800 flex-1 min-w-0'>
+                        <div
+                          className='mt-3 rounded-md border border-green-200 bg-green-50 p-3 
+    flex flex-wrap gap-3'
+                        >
+                          <div
+                            className='flex items-start gap-2 text-sm text-green-800 
+      flex-[1_1_100%] min-w-0'
+                          >
                             <svg
                               xmlns='http://www.w3.org/2000/svg'
                               className='h-5 w-5 flex-shrink-0'
@@ -1992,15 +1998,17 @@ export default function OnboardingQuestionnaire() {
                                 d='M5 13l4 4L19 7'
                               />
                             </svg>
-                            <div className='flex flex-wrap gap-x-2'>
-                              <span>Resume uploaded:</span>
-                              <span className='font-medium break-words break-all sm:truncate sm:max-w-[28rem]'>
+
+                            <div className='min-w-0'>
+                              <div>Resume uploaded:</div>
+                              <div className='font-medium break-words break-all whitespace-normal'>
                                 {formData.availability.resume.file.name}
-                              </span>
+                              </div>
                             </div>
                           </div>
-                          <div className='flex items-center gap-3 flex-shrink-0 self-start sm:self-auto'>
-                            <label className='text-primary-600 hover:text-primary-700 text-sm cursor-pointer whitespace-nowrap'>
+
+                          <div className='flex items-center gap-2 ml-auto'>
+                            <label className='inline-flex items-center px-2.5 py-1 rounded-md border border-primary-300 bg-white text-primary-700 hover:bg-primary-50 text-sm cursor-pointer'>
                               <input
                                 type='file'
                                 className='hidden'
@@ -2009,16 +2017,17 @@ export default function OnboardingQuestionnaire() {
                               />
                               Replace file
                             </label>
+
                             <button
                               type='button'
-                              onClick={() => {
+                              onClick={() =>
                                 updateFormData('availability', 'resume', {
                                   file: null,
                                   uploading: false,
                                   error: null,
-                                });
-                              }}
-                              className='text-sm text-gray-600 hover:text-gray-800 whitespace-nowrap'
+                                })
+                              }
+                              className='inline-flex items-center px-2.5 py-1 rounded-md border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 text-sm'
                             >
                               Remove
                             </button>

@@ -57,7 +57,7 @@ export async function sendAdminMessageNotification(email: string, userFirstName:
   await sendEmail({
     to: email,
     subject: 'New Message from Applynify Admin',
-    text: `Hello ${userFirstName}, you have received a new message from Admin. Please log in to your dashboard to view and respond to this message.`,
+    text: `Hello ${userFirstName}, you have received a new message from Admin. Please log in to your dashboard to view and respond to this message. Note: If your response is delayed, it may delay your application timeline.`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: left; border: 1px solid #ccc; padding: 20px; border-radius: 8px;">
         <img src="${logoUrl}" alt="Logo" style="max-width: 100px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto;" />
@@ -71,6 +71,7 @@ export async function sendAdminMessageNotification(email: string, userFirstName:
             View Message in Dashboard
           </a>
         </div>
+        <p style="color: #555; font-size: 12px; margin-top: 8px;"><strong>Note:</strong> If your response is delayed, it may delay your application timeline.</p>
         <p>If you have any questions, please don't hesitate to contact us.</p>
         <p>Best regards,<br>Applynify Support</p>
       </div>
