@@ -167,6 +167,10 @@ const PrivacyPolicy = () => {
 
           <h2 className='text-xl font-bold'>7. Disclaimers and Liability Limitations</h2>
           <ul className='list-disc pl-6 space-y-2'>
+            <li>
+              Applynify aims to begin processing most applications within one day of payment being
+              made.
+            </li>
             <li>Applynify is provided "as is" without warranties of any kind.</li>
             <li>We do not guarantee job placement or employment outcomes.</li>
             <li>
@@ -190,8 +194,8 @@ const PrivacyPolicy = () => {
 
           <h2 className='text-xl font-bold'>9. Changes to These Terms</h2>
           <p>
-            We may update these Terms from time to time. If we make material changes, we will notify
-            you via email or our{' '}
+            We may update these Terms from time to time. If we make material changes, this will be
+            reflected for your viewing on our{' '}
             <a href='https://applynify.com' className='text-blue-600 hover:underline'>
               Website
             </a>
