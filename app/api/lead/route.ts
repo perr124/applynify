@@ -30,6 +30,18 @@ export async function POST(req: NextRequest) {
         industry: body.industry,
         source: body.source || 'initial-waitlist',
       });
+    } else {
+      // Merge latest fields (including source) for existing emails
+      await Lead.updateOne(
+        { email: body.email },
+        {
+          $set: {
+            name: body.name,
+            industry: body.industry,
+            ...(body.source ? { source: body.source } : {}),
+          },
+        }
+      );
     }
 
     return NextResponse.json({ success: true });
