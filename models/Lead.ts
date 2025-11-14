@@ -23,6 +23,13 @@ const leadSchema = new mongoose.Schema(
       trim: true,
       required: true,
     },
+    source: {
+      type: String,
+      trim: true,
+      enum: ['initial-waitlist', 'shortlist', 'marketing', 'other'],
+      default: 'initial-waitlist',
+      index: true,
+    },
   },
   {
     timestamps: true,

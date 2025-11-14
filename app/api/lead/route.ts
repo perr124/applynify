@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
         email: body.email,
         name: body.name,
         industry: body.industry,
+        source: body.source || 'initial-waitlist',
       });
     }
 

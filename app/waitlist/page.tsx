@@ -28,6 +28,7 @@ export default function WaitlistPage() {
     name: '',
     email: '',
     industry: '',
+    source: 'shortlist',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -39,9 +40,9 @@ export default function WaitlistPage() {
 
     try {
       await apiClient.post('/lead', formData);
-      toast.success("You're on the list! We'll notify you when we launch.");
+      toast.success("You're on the shortlist. We'll reach out when it's your turn.");
       setIsSubmitted(true);
-      setFormData({ name: '', email: '', industry: '' });
+      setFormData({ name: '', email: '', industry: '', source: 'shortlist' });
     } catch (error: any) {
       toast.error(error?.response?.data?.error || 'Something went wrong. Please try again.');
     } finally {
@@ -62,7 +63,7 @@ export default function WaitlistPage() {
           </div>
           <h1 className='text-3xl font-bold text-gray-900'>You're on the list!</h1>
           <p className='text-gray-600'>
-            Thanks for joining our waitlist. We'll notify you as soon as Applynify launches.
+            Thanks for joining our shortlist. We'll notify as soon as it's your turn to get started.
           </p>
           <button onClick={() => setIsSubmitted(false)} className='btn btn-primary'>
             Join With Another Email
@@ -87,7 +88,7 @@ export default function WaitlistPage() {
             />
           </div>
           <div className='flex items-center space-x-4 text-sm text-gray-600'>
-            <span>Coming Soon</span>
+            <span>Temporary Shortlist</span>
           </div>
         </div>
       </header>
@@ -95,8 +96,8 @@ export default function WaitlistPage() {
       {/* Main Content */}
       <main className='container mx-auto px-4 py-12'>
         <div className='max-w-4xl mx-auto'>
-          {/* Hero Section */}
-          <div className='text-center mb-16'>
+          {/* Hero + Announcement */}
+          <div className='text-center mb-8'>
             <h1 className='font-extrabold text-4xl lg:text-6xl tracking-tight mb-6'>
               <span className='relative z-10'>We takeover your </span>
               <br />
@@ -109,21 +110,23 @@ export default function WaitlistPage() {
               </span>
               <span className='relative z-10'>.</span>
             </h1>
-            <p className='text-xl text-gray-600 max-w-2xl mx-auto mb-8'>
-              Stop spending hours on applications. Let our real human experts handle the heavy
-              lifting, concierge-style, so you can focus on what matters most.
+            <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
+              Human-led. Done for you. We apply so you can focus on interviews.
             </p>
-
-            {/* Stats */}
-            <div className='flex flex-wrap justify-center gap-8 mb-12'>
-              <div className='flex items-center space-x-2 text-gray-600'>
-                <Clock className='w-5 h-5' />
-                <span>Launching Q3 2025</span>
-              </div>
-              <div className='flex items-center space-x-2 text-gray-600'>
-                <Zap className='w-5 h-5' />
-                <span>Real Human Experts</span>
-              </div>
+          </div>
+          {/* Announcement Section */}
+          <div className='text-center mb-12'>
+            <h1 className='font-extrabold text-4xl lg:text-5xl tracking-tight mb-4'>
+              Wow — the response has been amazing!
+            </h1>
+            <div className='max-w-2xl mx-auto text-gray-700 text-lg space-y-4'>
+              <p>
+                We’ve received more applications than anticipated and are temporarily pausing new
+                submissions.
+              </p>
+              <p>
+                Join our shortlist, and we’ll reach out as soon as it’s your turn to get started.
+              </p>
             </div>
           </div>
 
@@ -131,9 +134,11 @@ export default function WaitlistPage() {
           <div className='max-w-md mx-auto'>
             <div className='bg-white rounded-2xl shadow-xl p-8 border border-gray-100'>
               <h2 className='text-2xl font-bold text-gray-900 mb-2 text-center'>
-                Join the Waitlist
+                Join the Shortlist
               </h2>
-              <p className='text-gray-600 text-center mb-6'>Be the first to know when we launch</p>
+              <p className='text-gray-600 text-center mb-6'>
+                We’ll notify you as soon as spots open up.
+              </p>
 
               <form onSubmit={handleSubmit} className='space-y-4'>
                 <div>
@@ -198,7 +203,7 @@ export default function WaitlistPage() {
                     </>
                   ) : (
                     <>
-                      Join Waitlist
+                      Join Shortlist
                       <ArrowRight className='w-4 h-4' />
                     </>
                   )}
@@ -211,35 +216,28 @@ export default function WaitlistPage() {
             </div>
           </div>
 
-          {/* Features Preview */}
-          <div className='mt-16 grid md:grid-cols-3 gap-8'>
-            <div className='text-center'>
-              <div className='w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4'>
-                <Zap className='w-6 h-6 text-blue-600' />
+          {/* Quick value props */}
+          <div className='mt-12 grid md:grid-cols-3 gap-6'>
+            <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
+              <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
+                <Zap className='w-5 h-5 text-blue-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-2'>Concierge-Style Service</h3>
-              <p className='text-gray-600 text-sm'>
-                Our real human experts write personalized cover letters and optimize your resume for
-                each job.
-              </p>
+              <h3 className='font-semibold text-gray-900 mb-1'>Human‑led</h3>
+              <p className='text-gray-600 text-sm'>Your applications handled by real experts.</p>
             </div>
-            <div className='text-center'>
-              <div className='w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4'>
-                <Clock className='w-6 h-6 text-purple-600' />
+            <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
+              <div className='w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
+                <Clock className='w-5 h-5 text-purple-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-2'>Save Hours</h3>
-              <p className='text-gray-600 text-sm'>
-                Apply to 10x more jobs in the same time. Focus on interviews, not applications.
-              </p>
+              <h3 className='font-semibold text-gray-900 mb-1'>Faster Starts</h3>
+              <p className='text-gray-600 text-sm'>Shortlist moves first when slots open.</p>
             </div>
-            <div className='text-center'>
-              <div className='w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4'>
-                <Users className='w-6 h-6 text-green-600' />
+            <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
+              <div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
+                <Users className='w-5 h-5 text-green-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-2'>Track Everything</h3>
-              <p className='text-gray-600 text-sm'>
-                Monitor your applications, resumes, and cover letters all in one place.
-              </p>
+              <h3 className='font-semibold text-gray-900 mb-1'>Clear Updates</h3>
+              <p className='text-gray-600 text-sm'>We’ll email you when it’s your turn.</p>
             </div>
           </div>
         </div>
