@@ -7,6 +7,13 @@ const isTestMode =
 
 const ENV_PRICES = {
   LIVE: {
+    STARTER: {
+      US: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_PRICE_STARTER_AU,
+    },
     LITE: {
       US: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_US,
       GB: process.env.NEXT_PUBLIC_STRIPE_PRICE_LITE_GB,
@@ -23,6 +30,13 @@ const ENV_PRICES = {
     },
   },
   TEST: {
+    STARTER: {
+      US: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_STARTER_US,
+      GB: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_STARTER_GB,
+      EU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_STARTER_EU,
+      CA: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_STARTER_CA,
+      AU: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_STARTER_AU,
+    },
     LITE: {
       US: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_US,
       GB: process.env.NEXT_PUBLIC_STRIPE_TEST_PRICE_LITE_GB,
@@ -42,7 +56,7 @@ const ENV_PRICES = {
 
 // Helper function to get the correct price ID based on plan and region
 export const getStripePriceId = (
-  plan: 'LITE' | 'PRO',
+  plan: 'STARTER' | 'LITE' | 'PRO',
   regionCode: 'US' | 'GB' | 'EU' | 'CA' | 'AU'
 ) => {
   const source = isTestMode ? ENV_PRICES.TEST : ENV_PRICES.LIVE;

@@ -1,6 +1,12 @@
 import { getStripePriceId } from './stripe-prices';
 
 export const PRICING_PLANS = {
+  STARTER: {
+    name: 'Starter',
+    applicationLimit: 10,
+    getStripeId: (regionCode: 'US' | 'GB' | 'EU' | 'CA' | 'AU') =>
+      getStripePriceId('STARTER', regionCode),
+  },
   LITE: {
     name: 'Lite',
     applicationLimit: 25,
@@ -17,6 +23,7 @@ export const PRICING_PLANS = {
 
 // Base prices in USD for each plan
 const BASE_PRICES_USD = {
+  STARTER: 19.99,
   LITE: 49.99,
   PRO: 89.99,
 };

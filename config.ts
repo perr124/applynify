@@ -3,6 +3,7 @@ import { ConfigProps } from './types/config';
 
 // Base prices in USD
 const BASE_PRICES = {
+  starter: 19,
   lite: 49,
   pro: 89,
 };
@@ -23,6 +24,23 @@ const config = {
   stripe: {
     // Create multiple plans in your Stripe dashboard, then add them here. You can add as many plans as you want, just make sure to add the priceId
     plans: [
+      {
+        // REQUIRED — used in the webhook to identify the plan
+        priceId:
+          (process.env.STRIPE_TEST_MODE?.toLowerCase() === 'true' ||
+          process.env.STRIPE_TEST_MODE === '1'
+            ? process.env.STRIPE_TEST_PRICE_STARTER_US
+            : process.env.STRIPE_PRICE_STARTER_US) || 'price_starter_us_placeholder',
+        name: 'Starter',
+        description: 'Get a taste of Applynify with 10 applications',
+        price: BASE_PRICES.starter,
+        priceAnchor: BASE_PRICES.starter,
+        features: [
+          { name: '10 job applications' },
+          { name: 'Cover letters' },
+          { name: 'Application tracking' },
+        ],
+      },
       {
         // REQUIRED — we use this to find the plan in the webhook (for instance if you want to update the user's credits based on the plan)
         priceId:

@@ -901,6 +901,22 @@ export default function OnboardingQuestionnaire() {
   const renderPricingSection = () => {
     const pricingTiers = [
       {
+        name: PRICING_PLANS.STARTER.name,
+        price: getPlanPrice('STARTER', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+        priceId: PRICING_PLANS.STARTER.getStripeId(
+          currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+        ),
+        description: 'A taste of Applynify with a small batch',
+        features: [
+          `${PRICING_PLANS.STARTER.applicationLimit} jobs applied to directly on company sites`,
+          'Write cover letters on your behalf',
+          'Service within 3 days',
+          'Advanced Application tracking in your dashboard',
+          'Live chat with your Career Representative',
+          'Standard support',
+        ],
+      },
+      {
         name: PRICING_PLANS.LITE.name,
         price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
         priceId: PRICING_PLANS.LITE.getStripeId(
@@ -926,7 +942,7 @@ export default function OnboardingQuestionnaire() {
         features: [
           `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
           'Write cover letters on your behalf',
-          'Priority service within 6 days',
+          'Service within 6 days',
           'Advanced Application tracking in your dashboard',
           '24/7 priority support',
           'Custom job search strategies',

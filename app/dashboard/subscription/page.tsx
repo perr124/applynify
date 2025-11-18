@@ -2,7 +2,6 @@
 import { useState } from 'react';
 import React from 'react';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
-import config from '@/config';
 import apiClient from '@/libs/api';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
@@ -72,8 +71,24 @@ export default function ServicesPage() {
         </div>
       )}
 
-      <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+      <div className='grid grid-cols-1 lg:grid-cols-3 gap-8'>
         {[
+          {
+            name: PRICING_PLANS.STARTER.name,
+            price: getPlanPrice('STARTER', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+            priceId: PRICING_PLANS.STARTER.getStripeId(
+              currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+            ),
+            description: 'Small batch to try the platform',
+            features: [
+              `${PRICING_PLANS.STARTER.applicationLimit} job applications submitted on your behalf`,
+              'Professional cover letters written for each application',
+              '5-day turnaround time',
+              'Email response categorization',
+              'Basic application tracking dashboard',
+              'Standard email support',
+            ],
+          },
           {
             name: PRICING_PLANS.LITE.name,
             price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
@@ -100,7 +115,7 @@ export default function ServicesPage() {
             features: [
               `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
               'Write cover letters on your behalf',
-              'Priority service within 4 days',
+              'Service within 4 days',
               'Advanced Application tracking in your dashboard',
               'Live chat with your Career Representative',
               '24/7 priority support',

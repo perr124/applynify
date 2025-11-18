@@ -20,6 +20,24 @@ const Pricing = () => {
 
   const tiers = [
     {
+      name: PRICING_PLANS.STARTER.name,
+      price: getPlanPrice('STARTER', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
+      priceId: PRICING_PLANS.STARTER.getStripeId(
+        currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
+      ),
+      description: 'Try Applynify with a small batch',
+      features: [
+        `${PRICING_PLANS.STARTER.applicationLimit} jobs applied to directly on company sites`,
+        'Write cover letters on your behalf',
+        'Service within 3 days',
+        'Advanced Application tracking in your dashboard',
+        'Live chat with your Career Representative',
+        'Standard support',
+      ],
+      buttonText: 'Start Now',
+      mostPopular: false,
+    },
+    {
       name: PRICING_PLANS.LITE.name,
       price: getPlanPrice('LITE', currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'),
       priceId: PRICING_PLANS.LITE.getStripeId(
@@ -35,7 +53,7 @@ const Pricing = () => {
         'Standard support',
       ],
       buttonText: 'Get Started',
-      mostPopular: false,
+      mostPopular: true,
     },
     {
       name: PRICING_PLANS.PRO.name,
@@ -47,14 +65,14 @@ const Pricing = () => {
       features: [
         `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
         'Write cover letters on your behalf',
-        'Priority service within 6 days',
+        'Service within 6 days',
         'Advanced Application tracking in your dashboard',
         'Live chat with your Career Representative',
         '24/7 priority support',
         'Custom job search strategies',
       ],
       buttonText: 'Go Pro',
-      mostPopular: true,
+      mostPopular: false,
     },
   ];
 
@@ -72,8 +90,8 @@ const Pricing = () => {
               One-time payment, no recurring fees or hidden charges!
             </p>
           </div>
-          <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
-            {[1, 2].map((i) => (
+          <div className='grid md:grid-cols-3 gap-8 max-w-6xl mx-auto'>
+            {[1, 2, 3].map((i) => (
               <div key={i} className='relative rounded-2xl p-8 border border-gray-200 bg-white'>
                 <div className='animate-pulse space-y-4'>
                   <div className='h-8 bg-gray-200 rounded w-1/3 mx-auto'></div>
@@ -104,7 +122,7 @@ const Pricing = () => {
           </p>
         </div>
 
-        <div className='grid md:grid-cols-2 gap-8 max-w-5xl mx-auto'>
+        <div className='grid md:grid-cols-3 gap-8 max-w-6xl mx-auto'>
           {tiers.map((tier) => (
             <div
               key={tier.name}
