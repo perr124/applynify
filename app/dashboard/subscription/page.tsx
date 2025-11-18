@@ -79,14 +79,14 @@ export default function ServicesPage() {
             priceId: PRICING_PLANS.STARTER.getStripeId(
               currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
             ),
-            description: 'Small batch to try the platform',
+            description: 'Try Applynify with a small batch',
             features: [
-              `${PRICING_PLANS.STARTER.applicationLimit} job applications submitted on your behalf`,
-              'Professional cover letters written for each application',
-              '5-day turnaround time',
-              'Email response categorization',
-              'Basic application tracking dashboard',
-              'Standard email support',
+              `${PRICING_PLANS.STARTER.applicationLimit} jobs applied to directly on company sites`,
+              'Write cover letters on your behalf',
+              'Service within 3 days',
+              'Advanced Application tracking in your dashboard',
+              'Live chat with your Career Representative',
+              'Standard support',
             ],
           },
           {
@@ -95,14 +95,14 @@ export default function ServicesPage() {
             priceId: PRICING_PLANS.LITE.getStripeId(
               currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
             ),
-            description: 'Perfect for getting started',
+            description: 'Perfect for job seekers getting started',
             features: [
-              `${PRICING_PLANS.LITE.applicationLimit} job applications submitted on your behalf`,
-              'Professional cover letters written for each application',
-              '5-day turnaround time',
-              'Email response categorization',
-              'Basic application tracking dashboard',
-              'Standard email support',
+              `${PRICING_PLANS.LITE.applicationLimit} jobs applied to directly on company sites`,
+              'Write cover letters on your behalf',
+              'Service within 4 days',
+              'Advanced Application tracking in your dashboard',
+              'Live chat with your Career Representative',
+              'Standard support',
             ],
           },
           {
@@ -111,11 +111,11 @@ export default function ServicesPage() {
             priceId: PRICING_PLANS.PRO.getStripeId(
               currentRegion.code as 'US' | 'GB' | 'EU' | 'CA' | 'AU'
             ),
-            description: 'For serious job seekers',
+            description: 'Optimized for maximizing career opportunities',
             features: [
               `${PRICING_PLANS.PRO.applicationLimit} jobs applied to directly on company sites`,
               'Write cover letters on your behalf',
-              'Service within 4 days',
+              'Service within 6 days',
               'Advanced Application tracking in your dashboard',
               'Live chat with your Career Representative',
               '24/7 priority support',
