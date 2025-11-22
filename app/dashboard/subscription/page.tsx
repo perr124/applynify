@@ -5,6 +5,7 @@ import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import apiClient from '@/libs/api';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { getPlanPrice, PRICING_PLANS } from '@/libs/constants/pricing';
+import KlarnaBadge from '@/components/KlarnaBadge';
 
 export default function ServicesPage() {
   const { formatCurrency, currentRegion } = useLocalization();
@@ -129,7 +130,12 @@ export default function ServicesPage() {
                 <h2 className='text-xl font-semibold text-gray-900'>{tier.name}</h2>
                 <p className='text-sm text-gray-500'>{tier.description}</p>
               </div>
-              <div className='text-2xl font-bold text-gray-900'>{formatCurrency(tier.price)}</div>
+              <div>
+                <div className='text-2xl font-bold text-gray-900'>{formatCurrency(tier.price)}</div>
+              </div>
+            </div>
+            <div className='flex justify-center'>
+              <KlarnaBadge />
             </div>
 
             <div className='space-y-4'>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useLocalization } from '@/contexts/LocalizationContext';
 import { PRICING_PLANS, getPlanPrice } from '@/libs/constants/pricing';
 import { useEffect, useState } from 'react';
+import KlarnaBadge from './KlarnaBadge';
 
 // <Pricing/> displays the pricing plans for your app
 // It's your Stripe config in config.js.stripe.plans[] that will be used to display the plans
@@ -147,6 +148,9 @@ const Pricing = () => {
                     {formatCurrency(tier.price)}
                   </span>
                   <span className='text-gray-400'>one-time</span>
+                </div>
+                <div className='mt-3'>
+                  <KlarnaBadge />
                 </div>
                 <p className='mt-4 text-gray-600'>{tier.description}</p>
               </div>

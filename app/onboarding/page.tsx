@@ -17,6 +17,7 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { getAddressPlaceholders } from '@/libs/constants/address';
 import { getPhoneFormat } from '@/libs/constants/phone';
 import { countryCodes, getCountryCodeByRegion } from '@/libs/constants/countryCodes';
+import KlarnaBadge from '@/components/KlarnaBadge';
 
 type FormData = {
   jobPreferences: {
@@ -972,6 +973,9 @@ export default function OnboardingQuestionnaire() {
                   <p className='text-gray-600'>{tier.description}</p>
                 </div>
                 <div className='text-2xl font-bold'>{formatCurrency(tier.price)}</div>
+              </div>
+              <div className='mb-4'>
+                <KlarnaBadge />
               </div>
               <ul className='space-y-3'>
                 {tier.features.map((feature) => (
