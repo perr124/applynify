@@ -4,10 +4,16 @@ import { generateVerificationToken } from '@/libs/next-auth';
 import { sendVerificationEmail } from '@/libs/mail';
 import connectMongo from '@/libs/mongoose';
 import mongoose from 'mongoose';
+import { verifyRecaptchaToken } from '@/libs/recaptcha';
 
 export async function POST(req: Request) {
   try {
-    const { email, password, name, firstName, lastName } = await req.json();
+    const { email, password, name, firstName, lastName, recaptchaToken } = await req.json();
+
+    const isHuman = await verifyRecaptchaToken(recaptchaToken);
+    if (!isHuman) {
+      return NextResponse.json({ error: 'Human verification failed' }, { status: 400 });
+    }
 
     console.log('Connecting to MongoDB...');
     await connectMongo();

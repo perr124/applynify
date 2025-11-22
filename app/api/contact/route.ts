@@ -1,10 +1,15 @@
 import { NextResponse } from 'next/server';
 import { sendEmail } from '@/libs/mailgun';
-import config from '@/config';
+import { verifyRecaptchaToken } from '@/libs/recaptcha';
 
 export async function POST(request: Request) {
   try {
-    const { name, email, subject, message } = await request.json();
+    const { name, email, subject, message, recaptchaToken } = await request.json();
+
+    const isHuman = await verifyRecaptchaToken(recaptchaToken);
+    if (!isHuman) {
+      return NextResponse.json({ error: 'Human verification failed' }, { status: 400 });
+    }
 
     await sendEmail({
       to: 'applynify@gmail.com',

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, Suspense } from 'react';
+import { useState, useRef, Suspense } from 'react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function ContactForm() {
   const [formData, setFormData] = useState({
@@ -12,9 +13,24 @@ function ContactForm() {
     message: '',
   });
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!recaptchaSiteKey) {
+      setCaptchaError('Human verification is not configured. Please contact support.');
+      return;
+    }
+
+    if (!captchaToken) {
+      setCaptchaError('Please confirm you are not a robot.');
+      return;
+    }
+
     setStatus('loading');
 
     try {
@@ -23,20 +39,33 @@ function ContactForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, recaptchaToken: captchaToken }),
       });
 
       if (!response.ok) throw new Error('Failed to send message');
 
       setStatus('success');
       setFormData({ name: '', email: '', subject: '', message: '' });
+      setCaptchaError(null);
     } catch (error) {
       setStatus('error');
+    } finally {
+      recaptchaRef.current?.reset();
+      setCaptchaToken(null);
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
+
+  const handleCaptchaChange = (token: string | null) => {
+    setCaptchaToken(token);
+    if (token) {
+      setCaptchaError(null);
+    } else {
+      setCaptchaError('Please confirm you are not a robot.');
+    }
   };
 
   return (
@@ -105,6 +134,25 @@ function ContactForm() {
           className='w-full px-4 py-3 rounded-lg border border-slate-200 bg-white text-slate-900 shadow-sm transition-all duration-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-200 focus:outline-none placeholder:text-slate-400 resize-none'
           placeholder='Your message here...'
         />
+      </div>
+
+      <div className='space-y-2 flex flex-col items-center'>
+        {recaptchaSiteKey ? (
+          <ReCAPTCHA
+            ref={recaptchaRef}
+            sitekey={recaptchaSiteKey}
+            onChange={handleCaptchaChange}
+            onExpired={() => {
+              setCaptchaToken(null);
+              setCaptchaError('Captcha expired. Please try again.');
+            }}
+          />
+        ) : (
+          <p className='text-sm text-red-600 text-center'>
+            reCAPTCHA is not configured. Please contact support.
+          </p>
+        )}
+        {captchaError && <p className='text-sm text-red-600 text-center'>{captchaError}</p>}
       </div>
 
       <div className='pt-4'>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import React from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -8,6 +8,7 @@ import { signIn, useSession } from 'next-auth/react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Suspense } from 'react';
+import ReCAPTCHA from 'react-google-recaptcha';
 
 function RegisterPage() {
   const router = useRouter();
@@ -19,6 +20,10 @@ function RegisterPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [password, setPassword] = useState('');
   const [passwordFocused, setPasswordFocused] = useState(false);
+  const [captchaError, setCaptchaError] = useState<string | null>(null);
+  const [recaptchaToken, setRecaptchaToken] = useState<string | null>(null);
+  const recaptchaRef = useRef<ReCAPTCHA | null>(null);
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   const validatePassword = (password: string) => {
     const minLength = 8;
@@ -66,9 +71,9 @@ function RegisterPage() {
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setIsLoading(true);
     setError(null);
     setPasswordError(null);
+    setCaptchaError(null);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -81,15 +86,25 @@ function RegisterPage() {
     const passwordValidationError = validatePassword(password);
     if (passwordValidationError) {
       setPasswordError(passwordValidationError);
-      setIsLoading(false);
       return;
     }
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
-      setIsLoading(false);
       return;
     }
+
+    if (!recaptchaSiteKey) {
+      setError('Human verification is not configured. Please contact support.');
+      return;
+    }
+
+    if (!recaptchaToken) {
+      setCaptchaError('Please confirm you are not a robot.');
+      return;
+    }
+
+    setIsLoading(true);
 
     try {
       // First register the user
@@ -102,6 +117,7 @@ function RegisterPage() {
           firstName,
           lastName,
           name: `${firstName} ${lastName}`,
+          recaptchaToken,
         }),
       });
 
@@ -130,6 +146,8 @@ function RegisterPage() {
       setError(error instanceof Error ? error.message : 'An error occurred');
     } finally {
       setIsLoading(false);
+      recaptchaRef.current?.reset();
+      setRecaptchaToken(null);
     }
   }
 
@@ -484,6 +502,27 @@ function RegisterPage() {
             </div>
 
             <div>
+              <div className='flex flex-col items-center space-y-2'>
+                {recaptchaSiteKey ? (
+                  <ReCAPTCHA
+                    ref={recaptchaRef}
+                    sitekey={recaptchaSiteKey}
+                    onChange={(token) => {
+                      setRecaptchaToken(token);
+                      setCaptchaError(token ? null : 'Please confirm you are not a robot.');
+                    }}
+                    onExpired={() => {
+                      setRecaptchaToken(null);
+                      setCaptchaError('Captcha expired. Please try again.');
+                    }}
+                  />
+                ) : (
+                  <p className='text-sm text-red-600 text-center'>
+                    reCAPTCHA is not configured. Please contact support.
+                  </p>
+                )}
+                {captchaError && <p className='text-sm text-red-600 text-center'>{captchaError}</p>}
+              </div>
               <button
                 type='submit'
                 disabled={isLoading}
