@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Inter } from 'next/font/google';
 import { Viewport } from 'next';
+import Script from 'next/script';
 import { getSEOTags } from '@/libs/seo';
 import ClientLayout from '@/components/LayoutClient';
 import config from '@/config';
@@ -26,6 +27,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang='en' data-theme={config.colors.theme} className={font.className}>
       <body>
+        {/* Google tag (gtag.js) */}
+        <Script
+          src='https://www.googletagmanager.com/gtag/js?id=AW-17752172279'
+          strategy='afterInteractive'
+        />
+        <Script id='google-analytics' strategy='afterInteractive'>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'AW-17752172279');
+          `}
+        </Script>
         <MessageProvider>
           <ClientLayout>{children}</ClientLayout>
           <Analytics />
