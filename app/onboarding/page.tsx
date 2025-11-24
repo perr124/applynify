@@ -18,6 +18,7 @@ import { getAddressPlaceholders } from '@/libs/constants/address';
 import { getPhoneFormat } from '@/libs/constants/phone';
 import { countryCodes, getCountryCodeByRegion } from '@/libs/constants/countryCodes';
 import KlarnaBadge from '@/components/KlarnaBadge';
+import PromoBanner from '@/components/PromoBanner';
 
 type FormData = {
   jobPreferences: {
@@ -953,6 +954,9 @@ export default function OnboardingQuestionnaire() {
 
     return (
       <div className='space-y-6'>
+        <div className='mb-4 -mx-4'>
+          <PromoBanner promoCode='NEWJOB25' message='Get 25% off for a limited time with code' />
+        </div>
         <h3 className='text-lg font-medium text-gray-900 mb-4'>Select Your Plan</h3>
         <div className='grid gap-6'>
           {pricingTiers.map((tier) => (
