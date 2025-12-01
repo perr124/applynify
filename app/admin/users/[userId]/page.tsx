@@ -482,11 +482,11 @@ export default function UserJobApplication() {
           <button
             type='button'
             onClick={() => append(defaultApplication)}
-            disabled={Boolean(
-              user?.priceId &&
-                countNonEmptyApplications(watch('applications')) >=
-                  (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
-            )}
+            // disabled={Boolean(
+            //   user?.priceId &&
+            //     countNonEmptyApplications(watch('applications')) >=
+            //       (getPlanByStripeId(user.priceId)?.applicationLimit || 0)
+            // )}
             className='inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed'
           >
             <Plus className='h-4 w-4 mr-2' />
