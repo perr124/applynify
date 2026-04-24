@@ -1,8 +1,10 @@
-# Waitlist Setup Guide
+# Waitlist / Maintenance Mode Setup Guide
 
 ## Overview
 
 This waitlist system allows you to collect emails, names, and industry information from potential users before your product launch. It's environment-controlled, so you can easily switch between the full site and waitlist mode.
+
+When `NEXT_PUBLIC_WAITLIST_MODE=true`, the root page (`/`) renders a maintenance-themed page at `app/waitlist/page.tsx` letting visitors know we're doing internal work. The form still captures leads via the existing waitlist flow and tags them with `source: 'maintenance'` so these signups can be distinguished from earlier `shortlist` / `initial-waitlist` entries in `/admin/waitlist`.
 
 ## Features
 
@@ -43,7 +45,10 @@ The waitlist uses the existing `Lead` model with enhanced fields:
 - `email` (required)
 - `name` (required)
 - `industry` (required)
+- `source` (one of `initial-waitlist`, `shortlist`, `marketing`, `maintenance`, `other`)
 - `createdAt` (automatic timestamp)
+
+Maintenance-mode signups are tagged with `source: 'maintenance'`.
 
 ## API Endpoints
 

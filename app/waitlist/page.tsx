@@ -3,7 +3,7 @@
 import React, { useState, useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import apiClient from '@/libs/api';
-import { ArrowRight, CheckCircle, Users, Clock, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle, Bell, Sparkles, Wrench } from 'lucide-react';
 import Image from 'next/image';
 import config from '@/config';
 import logo from '@/app/icon.png';
@@ -28,7 +28,7 @@ export default function WaitlistPage() {
     name: '',
     email: '',
     industry: '',
-    source: 'shortlist',
+    source: 'maintenance',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -40,9 +40,9 @@ export default function WaitlistPage() {
 
     try {
       await apiClient.post('/lead', formData);
-      toast.success("You're on the shortlist. We'll reach out when it's your turn.");
+      toast.success("You're on the list. We'll email you as soon as we're back.");
       setIsSubmitted(true);
-      setFormData({ name: '', email: '', industry: '', source: 'shortlist' });
+      setFormData({ name: '', email: '', industry: '', source: 'maintenance' });
     } catch (error: any) {
       toast.error(error?.response?.data?.error || 'Something went wrong. Please try again.');
     } finally {
@@ -63,10 +63,10 @@ export default function WaitlistPage() {
           </div>
           <h1 className='text-3xl font-bold text-gray-900'>You're on the list!</h1>
           <p className='text-gray-600'>
-            Thanks for joining our shortlist. We'll notify as soon as it's your turn to get started.
+            Thanks for signing up. We'll email you as soon as we're back and better than ever.
           </p>
           <button onClick={() => setIsSubmitted(false)} className='btn btn-primary'>
-            Join With Another Email
+            Sign Up With Another Email
           </button>
         </div>
       </div>
@@ -88,7 +88,10 @@ export default function WaitlistPage() {
             />
           </div>
           <div className='flex items-center space-x-4 text-sm text-gray-600'>
-            <span>Temporary Shortlist</span>
+            <span className='inline-flex items-center gap-1.5 rounded-full bg-amber-100 text-amber-800 px-3 py-1 font-medium'>
+              <Wrench className='w-3.5 h-3.5' />
+              We'll be back soon
+            </span>
           </div>
         </div>
       </header>
@@ -96,36 +99,26 @@ export default function WaitlistPage() {
       {/* Main Content */}
       <main className='container mx-auto px-4 py-12'>
         <div className='max-w-4xl mx-auto'>
-          {/* Hero + Announcement */}
-          <div className='text-center mb-8'>
+          {/* Hero */}
+          <div className='text-center mb-12'>
             <h1 className='font-extrabold text-4xl lg:text-6xl tracking-tight mb-6'>
-              <span className='relative z-10'>We takeover your </span>
-              <br />
+              <span className='relative z-10'>We're making </span>
               <span className='relative inline-block whitespace-nowrap'>
                 <span
                   className='absolute -left-2 -top-1 -bottom-1 -right-2 md:-left-3 md:-top-0 md:-bottom-0 md:-right-3 -rotate-1 bg-[#0d824a]'
                   style={{ zIndex: 1 }}
                 />
-                <span className='relative z-10 text-white'>job applications</span>
+                <span className='relative z-10 text-white'>Applynify</span>
               </span>
-              <span className='relative z-10'>.</span>
-            </h1>
-            <p className='text-lg text-gray-600 max-w-2xl mx-auto'>
-              Human-led. Done for you. We apply so you can focus on interviews.
-            </p>
-          </div>
-          {/* Announcement Section */}
-          <div className='text-center mb-12'>
-            <h1 className='font-extrabold text-4xl lg:text-5xl tracking-tight mb-4'>
-              Wow — the response has been amazing!
+              <span className='relative z-10'> even better.</span>
             </h1>
             <div className='max-w-2xl mx-auto text-gray-700 text-lg space-y-4'>
               <p>
-                We’ve received more applications than anticipated and are temporarily pausing new
-                submissions.
+                We're temporarily offline while we do some internal work to improve your
+                experience.
               </p>
               <p>
-                Join our shortlist, and we’ll reach out as soon as it’s your turn to get started.
+                Leave your details below and we'll let you know the moment we're back and better.
               </p>
             </div>
           </div>
@@ -134,10 +127,10 @@ export default function WaitlistPage() {
           <div className='max-w-md mx-auto'>
             <div className='bg-white rounded-2xl shadow-xl p-8 border border-gray-100'>
               <h2 className='text-2xl font-bold text-gray-900 mb-2 text-center'>
-                Join the Shortlist
+                Get notified when we're back
               </h2>
               <p className='text-gray-600 text-center mb-6'>
-                We’ll notify you as soon as spots open up.
+                Drop your details and we'll email you as soon as we relaunch.
               </p>
 
               <form onSubmit={handleSubmit} className='space-y-4'>
@@ -199,11 +192,11 @@ export default function WaitlistPage() {
                   {isLoading ? (
                     <>
                       <span className='loading loading-spinner loading-sm'></span>
-                      Joining...
+                      Signing up...
                     </>
                   ) : (
                     <>
-                      Join Shortlist
+                      Notify me
                       <ArrowRight className='w-4 h-4' />
                     </>
                   )}
@@ -219,33 +212,47 @@ export default function WaitlistPage() {
           {/* Quick value props */}
           <div className='mt-12 grid md:grid-cols-3 gap-6'>
             <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
-              <div className='w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
-                <Zap className='w-5 h-5 text-blue-600' />
+              <div className='w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
+                <Wrench className='w-5 h-5 text-amber-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-1'>Human‑led</h3>
-              <p className='text-gray-600 text-sm'>Your applications handled by real experts.</p>
+              <h3 className='font-semibold text-gray-900 mb-1'>Under the hood</h3>
+              <p className='text-gray-600 text-sm'>
+                Doing some internal work to make Applynify even better.
+              </p>
             </div>
             <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
               <div className='w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
-                <Clock className='w-5 h-5 text-purple-600' />
+                <Sparkles className='w-5 h-5 text-purple-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-1'>Faster Starts</h3>
-              <p className='text-gray-600 text-sm'>Shortlist moves first when slots open.</p>
+              <h3 className='font-semibold text-gray-900 mb-1'>Improvements coming</h3>
+              <p className='text-gray-600 text-sm'>
+                A faster, smoother experience for your job search.
+              </p>
             </div>
             <div className='bg-white rounded-xl border border-gray-100 p-5 text-center'>
               <div className='w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-3'>
-                <Users className='w-5 h-5 text-green-600' />
+                <Bell className='w-5 h-5 text-green-600' />
               </div>
-              <h3 className='font-semibold text-gray-900 mb-1'>Clear Updates</h3>
-              <p className='text-gray-600 text-sm'>We’ll email you when it’s your turn.</p>
+              <h3 className='font-semibold text-gray-900 mb-1'>First to know</h3>
+              <p className='text-gray-600 text-sm'>We'll email you the moment we relaunch.</p>
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer className='container mx-auto px-4 py-8 text-center'>
+      <footer className='container mx-auto px-4 py-8 text-center space-y-1'>
         <p className='text-gray-500 text-sm'>© 2025 Applynify. All rights reserved.</p>
+        <p className='text-gray-400 text-xs'>
+          Questions? Reach us at{' '}
+          <a
+            href={`mailto:${config.mailgun.supportEmail}`}
+            className='underline hover:text-gray-600'
+          >
+            {config.mailgun.supportEmail}
+          </a>
+          .
+        </p>
       </footer>
     </div>
   );

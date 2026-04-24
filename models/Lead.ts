@@ -26,7 +26,7 @@ const leadSchema = new mongoose.Schema(
     source: {
       type: String,
       trim: true,
-      enum: ['initial-waitlist', 'shortlist', 'marketing', 'other'],
+      enum: ['initial-waitlist', 'shortlist', 'marketing', 'maintenance', 'other'],
       default: 'initial-waitlist',
       index: true,
     },
